@@ -1,0 +1,18 @@
+﻿Field=#~Integer~#~50|Field=Comment~String~Comment~100|Field=Description~String~Description~100|Field=Designator~String~Designator~100|Field=Footprint~String~Footprint~100|Field=LibRef~String~LibRef~100|Field=Quantity~Integer~Quantity~100|ReportField=Currency~<none>|ReportField=ProductionQuantity~1|ReportField=ProjectFileName~ina_board_1.PrjPcb|ReportField=ProjectFullPath~D:\HPT\Altium\ina_board_1\ina_board_1.PrjPcb|ReportField=Title~Bill of Materials For PCB Document [board_1.PcbDoc]|ReportField=TotalQuantity~26|ReportField=ReportTime~3:15:31 AM|ReportField=ReportDate~7/20/2021|ReportField=ReportDateTime~7/20/2021 3:15:31 AM|ReportField=OutputName~Bill of Materials|ReportField=OutputType~BOM_PartType|ReportField=GeneratorName~BOM|ReportField=GeneratorDescription~Bill of Materials|ReportField=VariantName~None|ReportField=DataSourceFileName~board_1.PcbDoc|ReportField=DataSourceFullPath~D:\HPT\Altium\ina_board_1\board_1.PcbDoc
+1|JP8x2|WR-PHD 2.54 mm Dual Socket Header|C1, C2|JP8-C2T|JP8x2|2
+2|104||C3, C4|SM-CAP-0805|CN|2
+3|470uF|Polarized Capacitor (Axial)|C5|CAP-ALU-SMD-6.3x7.7x2.2|CN-ALU-SMD|1
+4|CN-ALU-SMD|Polarized Capacitor (Axial)|C6, C7|CAP-ALU-SMD-4.5x5x1.4|CN-ALU-SMD|2
+5|Diode SMD|Default Diode|DIO1, DIO2|DIO-SMD-106|Diode SMD|2
+6|xl1509-5V|Electronic Two-Tone Ringer|IC1|SO-8|LS1240A|1
+7|10118194-0001LF|USB - micro B USB 2.0 Receptacle Connector 5 Position Surface Mount, Right Angle; Through Hole|J1|AMPHENOL_10118194-0001LF|10118194-0001LF|1
+8|1.0 μH||L1|L-SMD-M-7.3x4.5|L-SMD-1|1
+9|LED||LED1|LED-0805-Blue|LED SMD|1
+10|ESP32S_Module|Esp-32S|M1|ESP32S|ESP32S_Module|1
+11|10K|Resistor|R1, R2|RES-SMD-0603|Res-SMD|2
+12|4K7|Resistor|R3, R4|RES-SMD-0603|Res-SMD|2
+13|1K|Resistor|R5, R6, R9|RES-SMD-0603|Res-SMD|3
+14|2K|Resistor|R7, R8|RES-SMD-0603|Res-SMD|2
+15|Reset|Switch button 2 pin|SW1|SW1-SMD|SW2|1
+16|Flash|Switch button 2 pin|SW2|SW-DIP1-1|SW2|1
+17|LM1117-3.3V|800mA Low-Dropout Linear Regulator|U1|SOT223|LM1117|1
