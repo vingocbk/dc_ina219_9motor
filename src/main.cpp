@@ -686,6 +686,81 @@ void checkButtonControl()
             stop_motor(MOTOR_6);
         }
     }
+    if(!digitalRead(BTN_IN_M7))
+    {
+        while (!digitalRead(BTN_IN_M7))
+        {
+            delay(10);
+        }
+        btn_in_control_motor[MOTOR_7] ++;
+        if(btn_in_control_motor[MOTOR_7] == 1)
+        {
+            open_motor(MOTOR_7);
+        }
+        else if(btn_in_control_motor[MOTOR_7] == 2)
+        {
+            stop_motor(MOTOR_7);
+        }
+        else if(btn_in_control_motor[MOTOR_7] == 3)
+        {
+            close_motor(MOTOR_7);
+        }
+        else if(btn_in_control_motor[MOTOR_7] == 4)
+        {
+            btn_in_control_motor[MOTOR_7] = 0;
+            stop_motor(MOTOR_7);
+        }
+    }
+    if(!digitalRead(BTN_IN_M8))
+    {
+        while (!digitalRead(BTN_IN_M8))
+        {
+            delay(10);
+        }
+        btn_in_control_motor[MOTOR_8] ++;
+        if(btn_in_control_motor[MOTOR_8] == 1)
+        {
+            open_motor(MOTOR_8);
+        }
+        else if(btn_in_control_motor[MOTOR_8] == 2)
+        {
+            stop_motor(MOTOR_8);
+        }
+        else if(btn_in_control_motor[MOTOR_8] == 3)
+        {
+            close_motor(MOTOR_8);
+        }
+        else if(btn_in_control_motor[MOTOR_8] == 4)
+        {
+            btn_in_control_motor[MOTOR_8] = 0;
+            stop_motor(MOTOR_8);
+        }
+    }
+    if(!digitalRead(BTN_IN_M9))
+    {
+        while (!digitalRead(BTN_IN_M9))
+        {
+            delay(10);
+        }
+        btn_in_control_motor[MOTOR_9] ++;
+        if(btn_in_control_motor[MOTOR_9] == 1)
+        {
+            open_motor(MOTOR_9);
+        }
+        else if(btn_in_control_motor[MOTOR_9] == 2)
+        {
+            stop_motor(MOTOR_9);
+        }
+        else if(btn_in_control_motor[MOTOR_9] == 3)
+        {
+            close_motor(MOTOR_9);
+        }
+        else if(btn_in_control_motor[MOTOR_9] == 4)
+        {
+            btn_in_control_motor[MOTOR_9] = 0;
+            stop_motor(MOTOR_9);
+        }
+    }
     
 
 }
@@ -751,12 +826,12 @@ void tickerUpdate()
     checkCurrentMotor7.update();
     checkCurrentMotor8.update();
     checkCurrentMotor9.update();
-    sendDatatoAppTicker.update();
 }
 
 void checkButtonConfigModeRun()
 {
     static bool check_mode_setup = true;
+    static unsigned long time_check_button = 0;
     if(!digitalRead(BTN_MODE_SETUP) && check_mode_setup)
     {
         delay(100);

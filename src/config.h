@@ -23,12 +23,12 @@
 #define BTN_MODE_RUN        25
 
 #define DATA_PIN_LED        16
-#define LATCH_PIN_LED       13
+#define LATCH_PIN_LED       13  
 #define CLOCK_PIN_LED       14
 
 #define DATA_PIN_MOTOR      19
-#define LATCH_PIN_MOTOR     17
-#define CLOCK_PIN_MOTOR     18
+#define LATCH_PIN_MOTOR     18      //17
+#define CLOCK_PIN_MOTOR     17      //18
 
 
 #define ADDRESS_INA_M1          0x40

@@ -136,6 +136,21 @@ void stop_motor(int number){
 
     motor_is_stop[number] = true;
     statusCurrentMotor[number] = MOTOR_STOP;
+
+    // //------------TEST-------------------------
+    // digitalWrite(LATCH_PIN_MOTOR, LOW);
+    // shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, 0);
+    // digitalWrite(LATCH_PIN_MOTOR, HIGH);
+
+    // digitalWrite(LATCH_PIN_LED, LOW);
+    // shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, 255);
+    // digitalWrite(LATCH_PIN_LED, HIGH);
+
+
+
+    // //------------TEST-------------------------
+
+
     if(btn_in_control_motor[number] == 1)     //motor stop, press button on board next to close or open
     {
         btn_in_control_motor[number] = 2;
@@ -169,6 +184,16 @@ void open_motor(int number)
     statusCurrentMotor[number] = MOTOR_OPEN;
     btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
 
+    // //------------TEST-------------------------
+    // digitalWrite(LATCH_PIN_MOTOR, LOW);
+    // shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, 170);
+    // digitalWrite(LATCH_PIN_MOTOR, HIGH);
+
+    // digitalWrite(LATCH_PIN_LED, LOW);
+    // shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, 170);
+    // digitalWrite(LATCH_PIN_LED, HIGH);
+
+    // //------------TEST-------------------------
 
     //stop first
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
@@ -222,6 +247,19 @@ void close_motor(int number)
     
     btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
 
+    // //------------TEST-------------------------
+    // digitalWrite(LATCH_PIN_MOTOR, LOW);
+    // shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, 85);
+    // digitalWrite(LATCH_PIN_MOTOR, HIGH);
+
+    // digitalWrite(LATCH_PIN_LED, LOW);
+    // shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, 85);
+    // digitalWrite(LATCH_PIN_LED, HIGH);
+
+
+
+    // //------------TEST-------------------------
+
     //stop first
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
     Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
@@ -265,15 +303,16 @@ void open_led(int number)
 {
     // ECHO("led: ");
     // ECHOLN(number);
-    Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.open_led[number];
+    Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.open_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
-    digitalWrite(LATCH_PIN_LED, LOW);
-    shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *Set_Motor.data_send_led);
-    digitalWrite(LATCH_PIN_LED, HIGH);
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_LED, LOW);
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+        digitalWrite(LATCH_PIN_LED, HIGH);
+    }
 
-    digitalWrite(LATCH_PIN_LED, LOW);
-    shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + 1));
-    digitalWrite(LATCH_PIN_LED, HIGH);
+    
 }
 
 //----------------------------------------------------------------------------------------
@@ -283,26 +322,24 @@ void close_led(int number)
     // ECHOLN(number);
     Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.close_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
-    digitalWrite(LATCH_PIN_LED, LOW);
-    shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *Set_Motor.data_send_led);
-    digitalWrite(LATCH_PIN_LED, HIGH);
-
-    digitalWrite(LATCH_PIN_LED, LOW);
-    shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + 1));
-    digitalWrite(LATCH_PIN_LED, HIGH);
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_LED, LOW);
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+        digitalWrite(LATCH_PIN_LED, HIGH);
+    }
 }
 //----------------------------------------------------------------------------------------
 void stop_led(int number)
 {
     // ECHO("led: ");
     // ECHOLN(number);
-    Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.stop_led[number];
+    Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.stop_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
-    digitalWrite(LATCH_PIN_LED, LOW);
-    shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *Set_Motor.data_send_led);
-    digitalWrite(LATCH_PIN_LED, HIGH);
-
-    digitalWrite(LATCH_PIN_LED, LOW);
-    shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + 1));
-    digitalWrite(LATCH_PIN_LED, HIGH);
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_LED, LOW);
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+        digitalWrite(LATCH_PIN_LED, HIGH);
+    }
 }
