@@ -5,6 +5,7 @@ struct motor Set_Motor;
 bool motor_is_stop[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
 uint8_t statusCurrentMotor[MAX_NUMBER_MOTOR] = {MOTOR_STOP,MOTOR_STOP,MOTOR_STOP,MOTOR_STOP,MOTOR_STOP,MOTOR_STOP,MOTOR_STOP,MOTOR_STOP,MOTOR_STOP};
 uint8_t btn_in_control_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
+int count_to_start_check_current[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 bool start_check_motor_stop[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
 bool reverse_motor[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
 bool is_done_step()
@@ -31,12 +32,6 @@ bool is_done_step()
 
 void initMotor()
 {
-    pinMode(DATA_PIN_LED, OUTPUT);
-    pinMode(LATCH_PIN_LED, OUTPUT);
-    pinMode(CLOCK_PIN_LED, OUTPUT);
-    pinMode(DATA_PIN_MOTOR, OUTPUT);
-    pinMode(LATCH_PIN_MOTOR, OUTPUT);
-    pinMode(CLOCK_PIN_MOTOR, OUTPUT);
 
     Set_Motor.open_motor[MOTOR_1]               = 0b10000000000000000000000000000000;
     Set_Motor.close_motor[MOTOR_1]              = 0b01000000000000000000000000000000;
@@ -118,6 +113,7 @@ void initMotor()
     Set_Motor.open_led[MOTOR_9]     = 0b11111111111111110111111111111111;
     Set_Motor.close_led[MOTOR_9]    = 0b11111111111111111011111111111111;
     Set_Motor.stop_led[MOTOR_9]     = 0b00000000000000001100000000000000;
+    
 
     Set_Motor.off_led_r             = 0b00000000000000000000100000000000;
     Set_Motor.on_led_r              = 0b11111111111111111111011111111111;
@@ -136,19 +132,6 @@ void stop_motor(int number){
 
     motor_is_stop[number] = true;
     statusCurrentMotor[number] = MOTOR_STOP;
-
-    // //------------TEST-------------------------
-    // digitalWrite(LATCH_PIN_MOTOR, LOW);
-    // shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, 0);
-    // digitalWrite(LATCH_PIN_MOTOR, HIGH);
-
-    // digitalWrite(LATCH_PIN_LED, LOW);
-    // shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, 255);
-    // digitalWrite(LATCH_PIN_LED, HIGH);
-
-
-
-    // //------------TEST-------------------------
 
 
     if(btn_in_control_motor[number] == 1)     //motor stop, press button on board next to close or open
@@ -179,21 +162,11 @@ void open_motor(int number)
     ECHO("Open Motor ");
     ECHOLN(number + 1);
 
+    count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
     start_check_motor_stop[number] = true;
     motor_is_stop[number] = false;
     statusCurrentMotor[number] = MOTOR_OPEN;
     btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
-
-    // //------------TEST-------------------------
-    // digitalWrite(LATCH_PIN_MOTOR, LOW);
-    // shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, 170);
-    // digitalWrite(LATCH_PIN_MOTOR, HIGH);
-
-    // digitalWrite(LATCH_PIN_LED, LOW);
-    // shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, 170);
-    // digitalWrite(LATCH_PIN_LED, HIGH);
-
-    // //------------TEST-------------------------
 
     //stop first
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
@@ -241,24 +214,11 @@ void close_motor(int number)
     ECHO("Close Motor ");
     ECHOLN(number + 1);
 
+    count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
     start_check_motor_stop[number] = true;
     motor_is_stop[number] = false;
     statusCurrentMotor[number] = MOTOR_CLOSE;
-    
     btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
-
-    // //------------TEST-------------------------
-    // digitalWrite(LATCH_PIN_MOTOR, LOW);
-    // shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, 85);
-    // digitalWrite(LATCH_PIN_MOTOR, HIGH);
-
-    // digitalWrite(LATCH_PIN_LED, LOW);
-    // shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, 85);
-    // digitalWrite(LATCH_PIN_LED, HIGH);
-
-
-
-    // //------------TEST-------------------------
 
     //stop first
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
@@ -296,6 +256,33 @@ void close_motor(int number)
 
     stop_led(number);
     close_led(number);
+}
+
+
+//----------------------------------------------------------------------------------------
+void on_led_mosfet(int number)
+{
+    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.on_out_led_mosfet[number];
+    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_MOTOR, LOW);
+        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+        digitalWrite(LATCH_PIN_MOTOR, HIGH);
+    }
+}
+
+//----------------------------------------------------------------------------------------
+void off_led_mosfet(int number)
+{
+    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.off_out_led_mosfet[number];
+    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_MOTOR, LOW);
+        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+        digitalWrite(LATCH_PIN_MOTOR, HIGH);
+    }
 }
 
 //----------------------------------------------------------------------------------------
@@ -336,6 +323,66 @@ void stop_led(int number)
     // ECHOLN(number);
     Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.stop_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_LED, LOW);
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+        digitalWrite(LATCH_PIN_LED, HIGH);
+    }
+}
+//----------------------------------------------------------------------------------------
+void set_led_R(bool status)
+{
+    if(status)
+    {
+        Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.on_led_r;
+        Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    }
+    else
+    {
+        Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.off_led_r;
+        Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    }
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_LED, LOW);
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+        digitalWrite(LATCH_PIN_LED, HIGH);
+    }
+}
+//----------------------------------------------------------------------------------------
+void set_led_G(bool status)
+{
+    if(status)
+    {
+        Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.on_led_g;
+        Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    }
+    else
+    {
+        Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.off_led_g;
+        Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    }
+    for(int i = 0; i < 4; i++)
+    {
+        digitalWrite(LATCH_PIN_LED, LOW);
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+        digitalWrite(LATCH_PIN_LED, HIGH);
+    }
+}
+//----------------------------------------------------------------------------------------
+void set_led_B(bool status)
+{
+    if(status)
+    {
+        Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.on_led_b;
+        Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    }
+    else
+    {
+        Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.off_led_b;
+        Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    }
     for(int i = 0; i < 4; i++)
     {
         digitalWrite(LATCH_PIN_LED, LOW);

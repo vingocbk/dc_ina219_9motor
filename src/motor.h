@@ -67,14 +67,20 @@ struct motor
     uint32_t off_led_b;
 };
 
+
 void initMotor();
 bool is_done_step();
 void stop_motor(int number);
 void open_motor(int number);
 void close_motor(int number);
+void on_led_mosfet(int number);
+void off_led_mosfet(int number);
 
 void open_led(int number);
 void stop_led(int number);
 void close_led(int number);
 
+void set_led_R(bool status);
+void set_led_G(bool status);
+void set_led_B(bool status);
 #endif

@@ -61,10 +61,15 @@
 #define EEPROM_CLOSE_STEP_1_MTOR_3  81
 
 
-
 #define VALUE_CONVERT           10
+#define MIN_CURRENT_MOTOR_CHECK_START       200          //mA
 
-#define MIN_CURRENT_MOTOR       50          //mA
+#define MIN_VALUE_READ_RX       1000
+#define MAX_VALUE_READ_RX       2000
+#define ON_LED      true
+#define OFF_LED     false
+
+#define CONFIG_HOLD_TIME        3000
 
 enum
 {

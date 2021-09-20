@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "config.h"
 #include "AppDebug.h"
+#include "app_state.h"
 #include <Wire.h>
 #include "Adafruit_INA219.h"
 #include "motor.h"
@@ -26,7 +27,7 @@ struct SETUPMOTOR
     float value_current[MAX_NUMBER_MOTOR];    //gia tri hien tai 
     uint8_t define_max_current[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
     uint8_t define_min_current[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
-    
+    bool isMotorOn[MAX_NUMBER_MOTOR];
     // uint8_t define_time_return[MAX_NUMBER_MOTOR];
 };
 
@@ -42,12 +43,19 @@ struct RUNMOTOR
     bool beginChangeStep;
     int mode_run_open_step;
     int mode_run_close_step;
+    volatile int pwm_value_mode_run = 0;
+    volatile int prev_time_mode_run = 0;
+    volatile int pwm_value_led1 = 0;
+    volatile int prev_time_led1 = 0;
+    volatile int pwm_value_led2 = 0;
+    volatile int prev_time_led2 = 0;
 };
 
 
 void readValueIna219();
 void sendDatatoApp();
 void setupPinMode();
+void bluetoothInit();
 void setupI2c();
 void loadDataBegin();
 void scannerI2cAddress();
@@ -65,6 +73,17 @@ void checkButtonControl();
 void checkStartCalCurrent();
 void tickerUpdate();
 void checkButtonConfigModeRun();
+void checkPwmRxControlRun();
+void checkPwmRxControlLed();
+void CheckMotorInit();
+void checkMotorIsOnStart();
+
+void IRAM_ATTR readRxModeRunRising();
+void IRAM_ATTR readRxModeRunFalling();
+void IRAM_ATTR readRxLed1Rising();
+void IRAM_ATTR readRxLed1Falling();
+void IRAM_ATTR readRxLed2Rising();
+void IRAM_ATTR readRxLed2Falling();
 
 Ticker checkCurrentMotor1(check_current_motor_1, 100);   //every 100ms
 Ticker checkCurrentMotor2(check_current_motor_2, 100);   //every 100ms
@@ -76,6 +95,7 @@ Ticker checkCurrentMotor7(check_current_motor_7, 100);   //every 100ms
 Ticker checkCurrentMotor8(check_current_motor_8, 100);   //every 100ms
 Ticker checkCurrentMotor9(check_current_motor_9, 100);   //every 100ms
 Ticker sendDatatoAppTicker(sendDatatoApp, 1000);   //every 500ms
+Ticker blinkMotorOnStart(checkMotorIsOnStart, 200);   //every 200ms
 
 
 #endif

@@ -6,7 +6,7 @@ struct SETUPMOTOR setup_motor;
 struct RUNMOTOR run_motor;
 Adafruit_INA219 ina219[MAX_NUMBER_MOTOR];
 extern int ngoc;
-int count_to_start_check_current[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
+extern int count_to_start_check_current[MAX_NUMBER_MOTOR];
 
 void readValueIna219()
 {
@@ -23,6 +23,8 @@ void readValueIna219()
         setup_motor.value_current[MOTOR_7] = abs(ina219[MOTOR_7].getCurrent_mA());
         setup_motor.value_current[MOTOR_8] = abs(ina219[MOTOR_8].getCurrent_mA());
         setup_motor.value_current[MOTOR_9] = abs(ina219[MOTOR_9].getCurrent_mA());
+        // ECHO("motor 1: ");
+        // ECHOLN(ina219[MOTOR_1].getCurrent_mA());
         // setup_motor.value_bus_voltage[MOTOR_1] = abs(ina219[MOTOR_1].getBusVoltage_V());
         // setup_motor.value_bus_voltage[MOTOR_2] = abs(ina219[MOTOR_2].getBusVoltage_V());
         // setup_motor.value_bus_voltage[MOTOR_3] = abs(ina219[MOTOR_3].getBusVoltage_V());
@@ -59,6 +61,37 @@ void sendDatatoApp()
     }
 }
 
+
+void IRAM_ATTR readRxModeRunRising()
+{
+    attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunFalling, FALLING);    
+    run_motor.prev_time_mode_run = micros();
+}
+void IRAM_ATTR readRxModeRunFalling()
+{
+    attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
+    run_motor.pwm_value_mode_run = micros()-run_motor.prev_time_mode_run;
+}
+void IRAM_ATTR readRxLed1Rising()
+{
+    attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Falling, FALLING);    
+    run_motor.prev_time_led1 = micros();
+}
+void IRAM_ATTR readRxLed1Falling()
+{
+    attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Rising, RISING);    
+    run_motor.pwm_value_led1 = micros()-run_motor.prev_time_led1;
+}
+void IRAM_ATTR readRxLed2Rising()
+{
+    attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxLed2Falling, FALLING);    
+    run_motor.prev_time_led2 = micros();
+}
+void IRAM_ATTR readRxLed2Falling()
+{
+    attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxLed2Rising, RISING);    
+    run_motor.pwm_value_led2 = micros()-run_motor.prev_time_led2;
+}
 void setupPinMode()
 {
     pinMode(BTN_IN_M1, INPUT);
@@ -76,8 +109,17 @@ void setupPinMode()
     pinMode(BTN_IN_LED_1, INPUT);
     pinMode(BTN_IN_LED_2, INPUT);
 
+    pinMode(DATA_PIN_LED, OUTPUT);
+    pinMode(LATCH_PIN_LED, OUTPUT);
+    pinMode(CLOCK_PIN_LED, OUTPUT);
+    pinMode(DATA_PIN_MOTOR, OUTPUT);
+    pinMode(LATCH_PIN_MOTOR, OUTPUT);
+    pinMode(CLOCK_PIN_MOTOR, OUTPUT);
     initMotor();
-    
+
+    attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
+    attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Rising, RISING);
+    attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_2), readRxLed2Rising, RISING);
 }
 
 void setupI2c()
@@ -106,10 +148,17 @@ void setupI2c()
 
 void loadDataBegin()
 {
-    run_motor.isModeConfig = true;
+    run_motor.isModeConfig = false;
     run_motor.beginChangeStep = true;
     run_motor.mode_run_open_step = OPEN_STEP_1;
     run_motor.mode_run_close_step = CLOSE_STEP_1;
+
+    for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.value_current[i] = 0;
+        setup_motor.isMotorOn[i] = false;
+    }
+
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
         setup_motor.define_max_current[i] = EEPROM.read(EEPROM_MAX_CURRENT_1 + i);
@@ -120,18 +169,18 @@ void loadDataBegin()
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
-        setup_motor.define_max_current[i] = EEPROM.read(EEPROM_MAX_CURRENT_1 + i);
+        setup_motor.define_min_current[i] = EEPROM.read(EEPROM_MIN_CURRENT_1 + i);
         ECHO("define_min_current[");
         ECHO(i+1);
         ECHO("] : ");
-        ECHOLN(setup_motor.define_max_current[MOTOR_1]*VALUE_CONVERT);
+        ECHOLN(setup_motor.define_min_current[i]);
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
         ECHO("reverse_motor[");
         ECHO(i+1);
         ECHO("] : ");
-        if(EEPROM.read(EEPROM_MIN_CURRENT_1 + i) == 1)
+        if(EEPROM.read(EEPROM_REVERSE_MOTOR_1 + i) == 1)
         {
             reverse_motor[i] = true;
             ECHOLN("TRUE");
@@ -143,6 +192,17 @@ void loadDataBegin()
     }
 }
 
+void bluetoothInit()
+{
+    SerialBT.flush();
+    SerialBT.end(); 
+    if(!SerialBT.begin("Test Motor")){
+        ECHOLN("An error occurred initializing Bluetooth");
+    }else{
+        ECHOLN("Bluetooth initialized");
+    }
+	SerialBT.register_callback(callbackBluetooth);
+}
 
 void scannerI2cAddress()
 {
@@ -197,19 +257,20 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
             ECHOLN(data);
             StaticJsonBuffer<MAX_RESPONSE_LENGTH> jsonBuffer;
             JsonObject& rootData = jsonBuffer.parseObject(data);
-            if(run_motor.isModeConfig)
+            if(APP_FLAG(MODE_CONFIG))
             {
 				if (rootData.success())
                 {
 					String type = rootData["type"];
-					String name = rootData["name"];
                     if(type == "run_no_step")
                     {
+                        String name = rootData["name"];
                         String data = rootData["command"];
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
                             if(i == name.toInt())
                             {
+                                
                                 if(data == "open")
                                 {
                                     open_motor(i);
@@ -249,8 +310,6 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                     default:
                                         break;
                                     }
-                                    
-                                    count_to_start_check_current[i] = 0;
                                 }
                                 else if(data == "close")
                                 {
@@ -261,6 +320,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                     }
                     else if(type == "save_data")
                     {
+                        String name = rootData["name"];
                         String max_current = rootData["max_current"];
                         String min_current = rootData["min_current"];
                         String reverse = rootData["reverse"];
@@ -272,20 +332,28 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                 if(max_current != "")
                                 {
                                     setup_motor.define_max_current[i] = max_current.toInt()/VALUE_CONVERT;
-                                    // ECHOLN(setup_motor.define_max_current[i]);
+                                    ECHOLN(setup_motor.define_max_current[i]);
                                     EEPROM.write(EEPROM_MAX_CURRENT_1 + i,setup_motor.define_max_current[i]);
                                 }
                                 if(min_current != "")
                                 {
                                     setup_motor.define_min_current[i] = min_current.toInt();
-                                    // ECHOLN(setup_motor.define_max_current[i]);
+                                    ECHOLN(setup_motor.define_min_current[i]);
                                     EEPROM.write(EEPROM_MIN_CURRENT_1 + i,setup_motor.define_min_current[i]);
                                 }
                                 if(reverse == "true")
                                 {
-                                    reverse_motor[i] = reverse.toInt();
-                                    // ECHOLN(reverse_motor[i]);
-                                    EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,reverse_motor[i]);
+                                    ECHOLN("TRUE");
+                                    if(reverse_motor[i])
+                                    {
+                                        reverse_motor[i] = false;
+                                        EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,0);
+                                    }
+                                    else
+                                    {
+                                       reverse_motor[i] = true; 
+                                       EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,1);
+                                    }
                                 }
                                 EEPROM.commit();
                                 break;
@@ -826,27 +894,163 @@ void tickerUpdate()
     checkCurrentMotor7.update();
     checkCurrentMotor8.update();
     checkCurrentMotor9.update();
+    blinkMotorOnStart.update();
 }
 
 void checkButtonConfigModeRun()
 {
-    static bool check_mode_setup = true;
+    // static bool check_mode_setup = true;
     static unsigned long time_check_button = 0;
-    if(!digitalRead(BTN_MODE_SETUP) && check_mode_setup)
-    {
-        delay(100);
-        ECHOLN("MODE SETUP");
-        check_mode_setup = false;
-        run_motor.isModeConfig = true;
+
+    //hold to config mode
+    if(digitalRead(BTN_MODE_SETUP)){
+        time_check_button = millis();
     }
-    else if(digitalRead(BTN_MODE_SETUP) && !check_mode_setup)
+    if(!digitalRead(BTN_MODE_SETUP) && (time_check_button + CONFIG_HOLD_TIME) <= millis()){
+        time_check_button = millis();
+        blinkMotorOnStart.stop();
+        for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
+        {
+            stop_led(i);
+        }
+        
+        if(APP_FLAG(MODE_CONFIG))
+        {
+            APP_FLAG_CLEAR(MODE_CONFIG);
+            APP_FLAG_SET(MODE_RUNNING);
+            set_led_G(ON_LED);
+            set_led_B(OFF_LED);
+            set_led_R(OFF_LED);
+        }
+        else
+        {
+            APP_FLAG_CLEAR(MODE_RUNNING);
+            APP_FLAG_SET(MODE_CONFIG);
+            set_led_R(ON_LED);
+            set_led_B(OFF_LED);
+            set_led_G(OFF_LED);
+        }
+
+    }
+
+
+
+    // if(!digitalRead(BTN_MODE_SETUP) && check_mode_setup)
+    // {
+    //     delay(100);
+    //     ECHOLN("MODE SETUP");
+    //     check_mode_setup = false;
+    //     APP_FLAG_CLEAR(MODE_CONFIG);
+    //     run_motor.isModeConfig = true;
+    // }
+    // else if(digitalRead(BTN_MODE_SETUP) && !check_mode_setup)
+    // {
+    //     delay(100);
+    //     ECHOLN("MODE RUN");
+    //     check_mode_setup = true;
+    //     APP_FLAG_SET(MODE_CONFIG);
+    //     run_motor.isModeConfig = false;
+    // }
+}
+
+
+void checkPwmRxControlLed()
+{
+    static uint32_t time_check = 0;
+    if(abs(millis() - time_check) >= 100)
     {
-        delay(100);
-        ECHOLN("MODE RUN");
-        check_mode_setup = true;
-        run_motor.isModeConfig = false;
+        time_check = millis();
+        if(run_motor.pwm_value_led1 > 1700 && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
+        {
+            on_led_mosfet(LED_MOSFET_1);
+        }
+        else if(run_motor.pwm_value_led1 < 1300 && run_motor.pwm_value_led1 > MIN_VALUE_READ_RX)
+        {
+            off_led_mosfet(LED_MOSFET_1);
+        }
+        if(run_motor.pwm_value_led2 > 1700  && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
+        {
+            on_led_mosfet(LED_MOSFET_2);
+        }
+        else if(run_motor.pwm_value_led2 < 1300  && run_motor.pwm_value_led1 > MIN_VALUE_READ_RX)
+        {
+            off_led_mosfet(LED_MOSFET_2);
+        }
+    }
+    
+}
+
+
+void checkPwmRxControlRun()
+{
+    static uint32_t time_check = 0;
+    if(abs(millis() - time_check) >= 100)
+    {
+        time_check = millis();
+        if(run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
+        {
+
+        }
+        else if(run_motor.pwm_value_mode_run < 1300 && run_motor.pwm_value_mode_run > MIN_VALUE_READ_RX)
+        {
+
+        }
+
     }
 }
+
+void checkMotorIsOnStart()
+{
+    static uint32_t count = 0;
+    count ++;
+    if(count % 2 == 0)
+    {
+        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+        {
+            if(setup_motor.isMotorOn[i])
+            {
+                open_led(i);
+            }
+        }
+    }
+    else
+    {
+        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+        {
+            if(setup_motor.isMotorOn[i])
+            {
+                stop_led(i);
+            }
+        }
+    }
+}
+
+
+void CheckMotorInit()
+{
+    for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
+    {
+        open_motor(i);
+    }
+    delay(20);
+
+    for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.value_current[i] = abs(ina219[i].getCurrent_mA());
+        ECHO("motor ");
+        ECHO(i);
+        ECHO(": ");
+        ECHOLN(setup_motor.value_current[i]);
+        if(setup_motor.value_current[i] > MIN_CURRENT_MOTOR_CHECK_START)
+        {
+            setup_motor.isMotorOn[i] = true;
+        }
+        stop_motor(i);
+    }
+    blinkMotorOnStart.start();
+    
+}
+
 
 void setup()
 {
@@ -858,20 +1062,11 @@ void setup()
     scannerI2cAddress();
     setupI2c();
     loadDataBegin();
+    bluetoothInit();
+    CheckMotorInit();
 
-    SerialBT.flush();
-    SerialBT.end(); 
-    if(!SerialBT.begin("Test Motor")){
-        ECHOLN("An error occurred initializing Bluetooth");
-    }else{
-        ECHOLN("Bluetooth initialized");
-    }
-	SerialBT.register_callback(callbackBluetooth);
-
-    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-    {
-        stop_motor(i);
-    }
+    set_led_B(ON_LED);
+    APP_FLAG_SET(MODE_WAIT_RUNNING);
 }
 
 
@@ -882,10 +1077,11 @@ void loop()
     tickerUpdate();
     checkStartCalCurrent();
     checkButtonConfigModeRun();
-
-    if(!run_motor.isModeConfig)
+    checkPwmRxControlLed();
+    if(!APP_FLAG(MODE_CONFIG))
     {
-        if(digitalRead(BTN_MODE_RUN))
+        checkPwmRxControlRun();
+        if(run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
         {
             run_motor.mode_run_close_step = CLOSE_STEP_1;
             switch (run_motor.mode_run_open_step)
@@ -894,6 +1090,7 @@ void loop()
                 if(run_motor.beginChangeStep)
                 {
                     ECHOLN("START MODE RUN OPEN STEP 1");
+                    APP_FLAG_SET(MODE_RUNNING);
                     run_motor.beginChangeStep = false;
                     open_motor(MOTOR_1);
                     open_motor(MOTOR_2);
@@ -931,6 +1128,8 @@ void loop()
                 break;
             case DONE_MODE_OPEN:
                 ECHOLN("DONE RUN OPEN MODE");
+                APP_FLAG_CLEAR(MODE_RUNNING);
+                APP_FLAG_SET(MODE_WAIT_RUNNING);
                 run_motor.mode_run_open_step++;
                 break;
             default:
@@ -938,7 +1137,7 @@ void loop()
             }
         }
         //-----------------------------------------------
-        else
+        else if(run_motor.pwm_value_mode_run < 1300 && run_motor.pwm_value_mode_run > MIN_VALUE_READ_RX)
         {
             run_motor.mode_run_open_step = OPEN_STEP_1;
             switch (run_motor.mode_run_close_step)
@@ -946,6 +1145,7 @@ void loop()
             case CLOSE_STEP_1:
                 if(run_motor.beginChangeStep)
                 {
+                    APP_FLAG_SET(MODE_RUNNING);
                     ECHOLN("START MODE RUN CLOSE STEP 1");
                     run_motor.beginChangeStep = false;
                     open_motor(MOTOR_1);
@@ -984,15 +1184,14 @@ void loop()
                 break;
             case DONE_MODE_CLOSE:
                 ECHOLN("DONE RUN CLOSE MODE");
+                APP_FLAG_CLEAR(MODE_RUNNING);
+                APP_FLAG_SET(MODE_WAIT_RUNNING);
                 run_motor.mode_run_close_step++;
                 break;
             default:
                 break;
             }
         }
-        
-
-
     }
     else{
         checkButtonControl();
