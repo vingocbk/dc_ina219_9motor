@@ -28,6 +28,12 @@ struct SETUPMOTOR
     uint8_t define_max_current[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
     uint8_t define_min_current[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
     bool isMotorOn[MAX_NUMBER_MOTOR];
+    uint8_t open_step_1[MAX_NUMBER_MOTOR];
+    uint8_t open_step_2[MAX_NUMBER_MOTOR];
+    uint8_t open_step_3[MAX_NUMBER_MOTOR];
+    uint8_t close_step_1[MAX_NUMBER_MOTOR];
+    uint8_t close_step_2[MAX_NUMBER_MOTOR];
+    uint8_t close_step_3[MAX_NUMBER_MOTOR];
     // uint8_t define_time_return[MAX_NUMBER_MOTOR];
 };
 
@@ -49,11 +55,14 @@ struct RUNMOTOR
     volatile int prev_time_led1 = 0;
     volatile int pwm_value_led2 = 0;
     volatile int prev_time_led2 = 0;
+    uint32_t time_delay_send_step_after_send_current;
 };
 
 
 void readValueIna219();
 void sendDatatoApp();
+void sendDataMinMaxCurrenttoApp();
+void sendDataSteptoApp();
 void setupPinMode();
 void bluetoothInit();
 void setupI2c();

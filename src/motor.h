@@ -11,12 +11,12 @@ extern uint8_t btn_in_control_motor[MAX_NUMBER_MOTOR];
 extern bool start_check_motor_stop[MAX_NUMBER_MOTOR];
 extern bool reverse_motor[MAX_NUMBER_MOTOR];
 //----mode run for each motor in each step
-enum
-{
-    RUN_OPEN,
-    RUN_STOP,
-    RUN_CLOSE
-};
+// enum
+// {
+//     RUN_OPEN,
+//     RUN_STOP,
+//     RUN_CLOSE
+// };
 
 
 struct _controlStep

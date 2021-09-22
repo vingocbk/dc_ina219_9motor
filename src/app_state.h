@@ -11,8 +11,9 @@ int app_flags_custom = 0;
 #define MODE_CONFIG               0x01          //config via bluetooh           --  LED BLUE On
 #define MODE_WAIT_RUNNING         0x02          //Wait user control on or off   --  LED GREEN Blink 200ms
 #define MODE_RUNNING              0x04          //RUNING                        -- LED GREEN On
-
-
+#define SEND_DATA_DEFINE_CURRENT  0x08
+#define SEND_DATA_STEP            0x10
+#define SEND_CURRENT_AND_STEP     0x20
 
 /* Exported macros -----------------------------------------------------------*/
 #define APP_FLAG(flag) (app_flags & flag)

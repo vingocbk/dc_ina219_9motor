@@ -37,25 +37,200 @@ void readValueIna219()
 
 void sendDatatoApp()
 {
-    String data = "{\"1\":\"";
+    //{"1":[1,2,3,4,5,6,7,8,9]}
+    // String data = "{\"1\":\"";
+    // data += String(setup_motor.value_current[MOTOR_1], 1);
+    // data += "\",\"2\":\"";
+    // data += String(setup_motor.value_current[MOTOR_2], 1);
+    // data += "\",\"3\":\"";
+    // data += String(setup_motor.value_current[MOTOR_3], 1);
+    // data += "\",\"4\":\"";
+    // data += String(setup_motor.value_current[MOTOR_4], 1);
+    // data += "\",\"5\":\"";
+    // data += String(setup_motor.value_current[MOTOR_5], 1);
+    // data += "\",\"6\":\"";
+    // data += String(setup_motor.value_current[MOTOR_6], 1);
+    // data += "\",\"7\":\"";
+    // data += String(setup_motor.value_current[MOTOR_7], 1);
+    // data += "\",\"8\":\"";
+    // data += String(setup_motor.value_current[MOTOR_8], 1);
+    // data += "\",\"9\":\"";
+    // data += String(setup_motor.value_current[MOTOR_9], 1);
+    // data += "\"}";
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+
+
+    String data = "{\"1\":[";
     data += String(setup_motor.value_current[MOTOR_1], 1);
-    data += "\",\"2\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_2], 1);
-    data += "\",\"3\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_3], 1);
-    data += "\",\"4\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_4], 1);
-    data += "\",\"5\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_5], 1);
-    data += "\",\"6\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_6], 1);
-    data += "\",\"7\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_7], 1);
-    data += "\",\"8\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_8], 1);
-    data += "\",\"9\":\"";
+    data += ",";
     data += String(setup_motor.value_current[MOTOR_9], 1);
-    data += "\"}";
+    data += "]}";
+    for(int i = 0; i<data.length(); i++){
+        SerialBT.write(data[i]);
+    }
+}
+
+void sendDataMinMaxCurrenttoApp()
+{
+    // return;
+    // Min Current
+    // String data = "{\"data\":\"\",\"11\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_1]);
+    // data += "\",\"12\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_2]);
+    // data += "\",\"13\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_3]);
+    // data += "\",\"14\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_4]);
+    // data += "\",\"15\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_5]);
+    // data += "\",\"16\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_6]);
+    // data += "\",\"17\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_7]);
+    // data += "\",\"18\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_8]);
+    // data += "\",\"19\":\"";
+    // data += String(setup_motor.define_min_current[MOTOR_9]);
+    
+    // Min Current
+    String data = "{\"2\":[";
+    data += String(setup_motor.define_min_current[MOTOR_1]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_2]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_3]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_4]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_5]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_6]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_7]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_8]);
+    data += ",";
+    data += String(setup_motor.define_min_current[MOTOR_9]);
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(10);
+
+    //Max Current
+    // data = "";
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_1]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_2]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_3]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_4]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_5]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_6]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_7]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_8]*VALUE_CONVERT);
+    data += ",";
+    data += String(setup_motor.define_max_current[MOTOR_9]*VALUE_CONVERT);
+    data += "]}";
+    for(int i = 0; i<data.length(); i++){
+        SerialBT.write(data[i]);
+    }
+    delay(10);
+}
+
+void sendDataSteptoApp()
+{
+    // return;
+    //Open Step
+    String data = "{\"3\":[";
+    for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
+    {
+        data += setup_motor.open_step_1[j];
+        data += ",";
+    }
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(50);
+    // data = "";
+    for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
+    {
+        data += setup_motor.open_step_2[j];
+        data += ",";
+    }
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(50);
+    // data = "";
+    for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
+    {
+        data += setup_motor.open_step_3[j];
+        data += ",";
+    }
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(50);
+    // data = "";
+    //Close Step
+    for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
+    {
+        data += setup_motor.close_step_1[j];
+        data += ",";
+    }
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(50);
+    // data = "";
+    for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
+    {
+        data += setup_motor.close_step_2[j];
+        data += ",";
+    }
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(50);
+    // data = "";
+    for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
+    {
+        data += setup_motor.close_step_3[j];
+        if(j == (MAX_NUMBER_MOTOR - 1))
+        {
+            break;
+        }
+        data += ",";
+    }
+    // for(int i = 0; i<data.length(); i++){
+    //     SerialBT.write(data[i]);
+    // }
+    // delay(50);
+    // data = "";
+    data += "]}";
     for(int i = 0; i<data.length(); i++){
         SerialBT.write(data[i]);
     }
@@ -190,6 +365,84 @@ void loadDataBegin()
             ECHOLN("FALSE");
         }
     }
+    //Check Open Step 1
+    ECHO("OPEN STEP 1: ");
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.open_step_1[i] = EEPROM.read(EEPROM_OPEN_STEP_1_MTOR_1 + i);
+        if(setup_motor.open_step_1[i] != MOTOR_OPEN && setup_motor.open_step_1[i] != MOTOR_CLOSE && setup_motor.open_step_1[i] != MOTOR_STOP)
+        {
+            setup_motor.open_step_1[i] = MOTOR_STOP;
+        }
+        ECHO(setup_motor.open_step_1[i]);
+        ECHO(" - ");
+    }
+    //Check Open Step 2
+    ECHOLN("");
+    ECHO("OPEN STEP 2: ");
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.open_step_2[i] = EEPROM.read(EEPROM_OPEN_STEP_2_MTOR_1 + i);
+        if(setup_motor.open_step_2[i] != MOTOR_OPEN && setup_motor.open_step_2[i] != MOTOR_CLOSE && setup_motor.open_step_2[i] != MOTOR_STOP)
+        {
+            setup_motor.open_step_2[i] = MOTOR_STOP;
+        }
+        ECHO(setup_motor.open_step_2[i]);
+        ECHO(" - ");
+    }
+    //Check Open Step 3
+    ECHOLN("");
+    ECHO("OPEN STEP 3: ");
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.open_step_3[i] = EEPROM.read(EEPROM_OPEN_STEP_3_MTOR_1 + i);
+        if(setup_motor.open_step_3[i] != MOTOR_OPEN && setup_motor.open_step_3[i] != MOTOR_CLOSE && setup_motor.open_step_3[i] != MOTOR_STOP)
+        {
+            setup_motor.open_step_3[i] = MOTOR_STOP;
+        }
+        ECHO(setup_motor.open_step_3[i]);
+        ECHO(" - ");
+    }
+    //Check Close Step 1
+    ECHOLN("");
+    ECHO("CLOSE STEP 1: ");
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.close_step_1[i] = EEPROM.read(EEPROM_CLOSE_STEP_1_MTOR_1 + i);
+        if(setup_motor.close_step_1[i] != MOTOR_OPEN && setup_motor.close_step_1[i] != MOTOR_CLOSE && setup_motor.close_step_1[i] != MOTOR_STOP)
+        {
+            setup_motor.close_step_1[i] = MOTOR_STOP;
+        }
+        ECHO(setup_motor.close_step_1[i]);
+        ECHO(" - ");
+    }
+    //Check Close Step 2
+    ECHOLN("");
+    ECHO("CLOSE STEP 2: ");
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.close_step_2[i] = EEPROM.read(EEPROM_CLOSE_STEP_2_MTOR_1 + i);
+        if(setup_motor.close_step_2[i] != MOTOR_OPEN && setup_motor.close_step_2[i] != MOTOR_CLOSE && setup_motor.close_step_2[i] != MOTOR_STOP)
+        {
+            setup_motor.close_step_2[i] = MOTOR_STOP;
+        }
+        ECHO(setup_motor.close_step_2[i]);
+        ECHO(" - ");
+    }
+    //Check Close Step 3
+    ECHOLN("");
+    ECHO("CLOSE STEP 3: ");
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.close_step_3[i] = EEPROM.read(EEPROM_CLOSE_STEP_3_MTOR_1 + i);
+        if(setup_motor.close_step_3[i] != MOTOR_OPEN && setup_motor.close_step_3[i] != MOTOR_CLOSE && setup_motor.close_step_3[i] != MOTOR_STOP)
+        {
+            setup_motor.close_step_3[i] = MOTOR_STOP;
+        }
+        ECHO(setup_motor.close_step_3[i]);
+        ECHO(" - ");
+    }
+    ECHOLN("");
 }
 
 void bluetoothInit()
@@ -239,6 +492,10 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
 	{
 	case ESP_SPP_SRV_OPEN_EVT:
 		ECHOLN("Client Connected");
+        // sendDataMinMaxCurrenttoApp();
+        // delay(1);
+        // sendDataSteptoApp();
+        APP_FLAG_SET(SEND_CURRENT_AND_STEP);
         sendDatatoAppTicker.start();
 		break;
     case ESP_SPP_CLOSE_EVT:
@@ -355,11 +612,69 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                        EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,1);
                                     }
                                 }
+                                
                                 EEPROM.commit();
+                                sendDataMinMaxCurrenttoApp();
+                                
                                 break;
                             }
                         }
                         
+                        
+                    }
+                    else if(type == "step")
+                    {
+                        //open step 1;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            setup_motor.open_step_1[i] = rootData["1"][i];
+                            // setup_motor.open_step_1[i] = data.toInt();
+                            // ECHOLN(setup_motor.open_step_1[i]);
+                            EEPROM.write(EEPROM_OPEN_STEP_1_MTOR_1 + i,setup_motor.open_step_1[i]);
+                        }
+                        // EEPROM.commit();
+                        //open step 2;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            setup_motor.open_step_2[i] = rootData["1"][MAX_NUMBER_MOTOR+i];
+                            // setup_motor.open_step_2[i] = data.toInt();
+                            // ECHOLN(setup_motor.open_step_1[i]);
+                            EEPROM.write(EEPROM_OPEN_STEP_2_MTOR_1 + i,setup_motor.open_step_2[i]);
+                        }
+                        // EEPROM.commit();
+                        //open step 3;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            String data = rootData["1"][2*MAX_NUMBER_MOTOR+i];
+                            setup_motor.open_step_3[i] = data.toInt();
+                            EEPROM.write(EEPROM_OPEN_STEP_3_MTOR_1 + i,setup_motor.open_step_3[i]);
+                        }
+                        // EEPROM.commit();
+                        //close step 1;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            String data = rootData["1"][3*MAX_NUMBER_MOTOR+i];
+                            setup_motor.close_step_1[i] = data.toInt();
+                            EEPROM.write(EEPROM_CLOSE_STEP_1_MTOR_1 + i,setup_motor.close_step_1[i]);
+                        }
+                        // EEPROM.commit();
+                        //close step 2;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            String data = rootData["1"][4*MAX_NUMBER_MOTOR+i];
+                            setup_motor.close_step_2[i] = data.toInt();
+                            EEPROM.write(EEPROM_CLOSE_STEP_2_MTOR_1 + i,setup_motor.close_step_2[i]);
+                        }
+                        // EEPROM.commit();
+                        //close step 3;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            String data = rootData["1"][5*MAX_NUMBER_MOTOR+i];
+                            setup_motor.close_step_3[i] = data.toInt();
+                            EEPROM.write(EEPROM_CLOSE_STEP_3_MTOR_1 + i,setup_motor.close_step_3[i]);
+                        }
+                        EEPROM.commit();
+                        sendDataSteptoApp();
                     }
                 }
             }
@@ -916,6 +1231,7 @@ void checkButtonConfigModeRun()
         
         if(APP_FLAG(MODE_CONFIG))
         {
+            ECHOLN("MODE_RUNNING");
             APP_FLAG_CLEAR(MODE_CONFIG);
             APP_FLAG_SET(MODE_RUNNING);
             set_led_G(ON_LED);
@@ -924,6 +1240,7 @@ void checkButtonConfigModeRun()
         }
         else
         {
+            ECHOLN("MODE_CONFIG");
             APP_FLAG_CLEAR(MODE_RUNNING);
             APP_FLAG_SET(MODE_CONFIG);
             set_led_R(ON_LED);
@@ -1041,13 +1358,19 @@ void CheckMotorInit()
         ECHO(i);
         ECHO(": ");
         ECHOLN(setup_motor.value_current[i]);
+        
+        stop_motor(i);
+
         if(setup_motor.value_current[i] > MIN_CURRENT_MOTOR_CHECK_START)
         {
             setup_motor.isMotorOn[i] = true;
+            open_led(i);
         }
-        stop_motor(i);
+        else{
+            close_led(i);
+        }
     }
-    blinkMotorOnStart.start();
+    // blinkMotorOnStart.start();
     
 }
 
@@ -1078,6 +1401,19 @@ void loop()
     checkStartCalCurrent();
     checkButtonConfigModeRun();
     checkPwmRxControlLed();
+
+    if(APP_FLAG(SEND_CURRENT_AND_STEP))
+    {
+        sendDataMinMaxCurrenttoApp();
+        APP_FLAG_CLEAR(SEND_CURRENT_AND_STEP);
+        run_motor.time_delay_send_step_after_send_current = millis();
+    }
+    if(millis() == (run_motor.time_delay_send_step_after_send_current + 1000))
+    {
+        sendDataSteptoApp();
+    }
+
+
     if(!APP_FLAG(MODE_CONFIG))
     {
         checkPwmRxControlRun();
@@ -1092,12 +1428,23 @@ void loop()
                     ECHOLN("START MODE RUN OPEN STEP 1");
                     APP_FLAG_SET(MODE_RUNNING);
                     run_motor.beginChangeStep = false;
-                    open_motor(MOTOR_1);
-                    open_motor(MOTOR_2);
-                    open_motor(MOTOR_3);
-                    stop_motor(MOTOR_4);
-                    stop_motor(MOTOR_5);
-                    stop_motor(MOTOR_6);
+                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    {
+                        switch (setup_motor.open_step_1[i])
+                        {
+                        case MOTOR_STOP:
+                            stop_motor(i);
+                            break;
+                        case MOTOR_OPEN:
+                            open_motor(i);
+                            break;
+                        case MOTOR_CLOSE:
+                            close_motor(i);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 break;
             case OPEN_STEP_2:
@@ -1105,12 +1452,23 @@ void loop()
                 {
                     ECHOLN("START MODE RUN OPEN STEP 2");
                     run_motor.beginChangeStep = false;
-                    stop_motor(MOTOR_1);
-                    stop_motor(MOTOR_2);
-                    stop_motor(MOTOR_3);
-                    open_motor(MOTOR_4);
-                    open_motor(MOTOR_5);
-                    open_motor(MOTOR_6);
+                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    {
+                        switch (setup_motor.open_step_2[i])
+                        {
+                        case MOTOR_STOP:
+                            stop_motor(i);
+                            break;
+                        case MOTOR_OPEN:
+                            open_motor(i);
+                            break;
+                        case MOTOR_CLOSE:
+                            close_motor(i);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 break;
             case OPEN_STEP_3:
@@ -1118,12 +1476,23 @@ void loop()
                 {
                     ECHOLN("START MODE RUN OPEN STEP 3");
                     run_motor.beginChangeStep = false;
-                    close_motor(MOTOR_1);
-                    close_motor(MOTOR_2);
-                    stop_motor(MOTOR_3);
-                    stop_motor(MOTOR_4);
-                    stop_motor(MOTOR_5);
-                    stop_motor(MOTOR_6);
+                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    {
+                        switch (setup_motor.open_step_3[i])
+                        {
+                        case MOTOR_STOP:
+                            stop_motor(i);
+                            break;
+                        case MOTOR_OPEN:
+                            open_motor(i);
+                            break;
+                        case MOTOR_CLOSE:
+                            close_motor(i);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 break;
             case DONE_MODE_OPEN:
@@ -1148,12 +1517,23 @@ void loop()
                     APP_FLAG_SET(MODE_RUNNING);
                     ECHOLN("START MODE RUN CLOSE STEP 1");
                     run_motor.beginChangeStep = false;
-                    open_motor(MOTOR_1);
-                    open_motor(MOTOR_2);
-                    stop_motor(MOTOR_3);
-                    stop_motor(MOTOR_4);
-                    stop_motor(MOTOR_5);
-                    stop_motor(MOTOR_6);
+                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    {
+                        switch (setup_motor.close_step_1[i])
+                        {
+                        case MOTOR_STOP:
+                            stop_motor(i);
+                            break;
+                        case MOTOR_OPEN:
+                            open_motor(i);
+                            break;
+                        case MOTOR_CLOSE:
+                            close_motor(i);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 break;
             case CLOSE_STEP_2:
@@ -1161,12 +1541,23 @@ void loop()
                 {
                     ECHOLN("START MODE RUN CLOSE STEP 2");
                     run_motor.beginChangeStep = false;
-                    stop_motor(MOTOR_1);
-                    stop_motor(MOTOR_2);
-                    stop_motor(MOTOR_3);
-                    close_motor(MOTOR_4);
-                    close_motor(MOTOR_5);
-                    close_motor(MOTOR_6);
+                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    {
+                        switch (setup_motor.close_step_2[i])
+                        {
+                        case MOTOR_STOP:
+                            stop_motor(i);
+                            break;
+                        case MOTOR_OPEN:
+                            open_motor(i);
+                            break;
+                        case MOTOR_CLOSE:
+                            close_motor(i);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 break;
             case CLOSE_STEP_3:
@@ -1174,12 +1565,23 @@ void loop()
                 {
                     ECHOLN("START MODE RUN CLOSE STEP 3");
                     run_motor.beginChangeStep = false;
-                    close_motor(MOTOR_1);
-                    close_motor(MOTOR_2);
-                    close_motor(MOTOR_3);
-                    stop_motor(MOTOR_4);
-                    stop_motor(MOTOR_5);
-                    stop_motor(MOTOR_6);
+                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    {
+                        switch (setup_motor.close_step_3[i])
+                        {
+                        case MOTOR_STOP:
+                            stop_motor(i);
+                            break;
+                        case MOTOR_OPEN:
+                            open_motor(i);
+                            break;
+                        case MOTOR_CLOSE:
+                            close_motor(i);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 break;
             case DONE_MODE_CLOSE:

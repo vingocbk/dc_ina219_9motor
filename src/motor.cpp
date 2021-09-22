@@ -132,7 +132,7 @@ void stop_motor(int number){
 
     motor_is_stop[number] = true;
     statusCurrentMotor[number] = MOTOR_STOP;
-
+    start_check_motor_stop[number] = false;
 
     if(btn_in_control_motor[number] == 1)     //motor stop, press button on board next to close or open
     {
