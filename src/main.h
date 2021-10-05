@@ -56,6 +56,9 @@ struct RUNMOTOR
     volatile int pwm_value_led2 = 0;
     volatile int prev_time_led2 = 0;
     uint32_t time_delay_send_step_after_send_current;
+    bool start_run_step_open = false;
+    bool start_run_step_close = false;
+    bool is_rx_position_open;
 };
 
 

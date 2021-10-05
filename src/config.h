@@ -17,10 +17,12 @@
 #define BTN_IN_M9           0
 #define BTN_IN_M10          2
 #define BTN_IN_LED_1        12
-#define BTN_IN_LED_2        27
+// #define BTN_IN_LED_2        25  //27
+#define BTN_IN_LED_2        27  //design
 
 #define BTN_MODE_SETUP      23
-#define BTN_MODE_RUN        25
+// #define BTN_MODE_RUN        27  //25
+#define BTN_MODE_RUN        25  //design
 
 #define DATA_PIN_LED        16
 #define LATCH_PIN_LED       13  
@@ -64,8 +66,8 @@
 #define VALUE_CONVERT           10
 #define MIN_CURRENT_MOTOR_CHECK_START       200          //mA
 
-#define MIN_VALUE_READ_RX       1000
-#define MAX_VALUE_READ_RX       2000
+#define MIN_VALUE_READ_RX       500
+#define MAX_VALUE_READ_RX       2500
 #define ON_LED      true
 #define OFF_LED     false
 

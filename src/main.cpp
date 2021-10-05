@@ -246,6 +246,7 @@ void IRAM_ATTR readRxModeRunFalling()
 {
     attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
     run_motor.pwm_value_mode_run = micros()-run_motor.prev_time_mode_run;
+    // ECHOLN(run_motor.pwm_value_mode_run);
 }
 void IRAM_ATTR readRxLed1Rising()
 {
@@ -292,7 +293,7 @@ void setupPinMode()
     pinMode(CLOCK_PIN_MOTOR, OUTPUT);
     initMotor();
 
-    attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
+    // attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
     attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Rising, RISING);
     attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_2), readRxLed2Rising, RISING);
 }
@@ -449,7 +450,7 @@ void bluetoothInit()
 {
     SerialBT.flush();
     SerialBT.end(); 
-    if(!SerialBT.begin("Test Motor")){
+    if(!SerialBT.begin("Landing Gear")){
         ECHOLN("An error occurred initializing Bluetooth");
     }else{
         ECHOLN("Bluetooth initialized");
@@ -1231,17 +1232,17 @@ void checkButtonConfigModeRun()
         
         if(APP_FLAG(MODE_CONFIG))
         {
-            ECHOLN("MODE_RUNNING");
+            ECHOLN("MODE_WAIT_RUNNING");
             APP_FLAG_CLEAR(MODE_CONFIG);
-            APP_FLAG_SET(MODE_RUNNING);
-            set_led_G(ON_LED);
-            set_led_B(OFF_LED);
+            APP_FLAG_SET(MODE_WAIT_RUNNING);
+            set_led_B(ON_LED);
+            set_led_G(OFF_LED);
             set_led_R(OFF_LED);
         }
         else
         {
             ECHOLN("MODE_CONFIG");
-            APP_FLAG_CLEAR(MODE_RUNNING);
+            APP_FLAG_CLEAR(MODE_WAIT_RUNNING);
             APP_FLAG_SET(MODE_CONFIG);
             set_led_R(ON_LED);
             set_led_B(OFF_LED);
@@ -1304,13 +1305,19 @@ void checkPwmRxControlRun()
     if(abs(millis() - time_check) >= 100)
     {
         time_check = millis();
-        if(run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
+        // ECHOLN(run_motor.pwm_value_mode_run);
+        // < 1500: CLOSE
+        // > 1500: OPEN
+        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH);
+        if(run_motor.pwm_value_mode_run > 1550 && !run_motor.is_rx_position_open)
         {
-
+            run_motor.is_rx_position_open = true;
+            run_motor.start_run_step_open = true; 
         }
-        else if(run_motor.pwm_value_mode_run < 1300 && run_motor.pwm_value_mode_run > MIN_VALUE_READ_RX)
+        else if(run_motor.pwm_value_mode_run < 1450 && run_motor.is_rx_position_open)
         {
-
+            run_motor.is_rx_position_open = false;
+            run_motor.start_run_step_close = true;
         }
 
     }
@@ -1390,6 +1397,15 @@ void setup()
 
     set_led_B(ON_LED);
     APP_FLAG_SET(MODE_WAIT_RUNNING);
+    run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH);
+    if(run_motor.pwm_value_mode_run > 1500)
+    {
+        run_motor.is_rx_position_open = true; 
+    }
+    else
+    {
+        run_motor.is_rx_position_open = false; 
+    }
 }
 
 
@@ -1417,7 +1433,7 @@ void loop()
     if(!APP_FLAG(MODE_CONFIG))
     {
         checkPwmRxControlRun();
-        if(run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
+        if(run_motor.start_run_step_open && run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
         {
             run_motor.mode_run_close_step = CLOSE_STEP_1;
             switch (run_motor.mode_run_open_step)
@@ -1427,6 +1443,8 @@ void loop()
                 {
                     ECHOLN("START MODE RUN OPEN STEP 1");
                     APP_FLAG_SET(MODE_RUNNING);
+                    set_led_B(false);
+                    set_led_G(true);
                     run_motor.beginChangeStep = false;
                     for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                     {
@@ -1499,14 +1517,17 @@ void loop()
                 ECHOLN("DONE RUN OPEN MODE");
                 APP_FLAG_CLEAR(MODE_RUNNING);
                 APP_FLAG_SET(MODE_WAIT_RUNNING);
+                set_led_G(false);
+                set_led_B(true);
                 run_motor.mode_run_open_step++;
+                run_motor.start_run_step_open = false;
                 break;
             default:
                 break;
             }
         }
         //-----------------------------------------------
-        else if(run_motor.pwm_value_mode_run < 1300 && run_motor.pwm_value_mode_run > MIN_VALUE_READ_RX)
+        else if(run_motor.start_run_step_close && run_motor.pwm_value_mode_run < 1300 && run_motor.pwm_value_mode_run > MIN_VALUE_READ_RX)
         {
             run_motor.mode_run_open_step = OPEN_STEP_1;
             switch (run_motor.mode_run_close_step)
@@ -1516,6 +1537,8 @@ void loop()
                 {
                     APP_FLAG_SET(MODE_RUNNING);
                     ECHOLN("START MODE RUN CLOSE STEP 1");
+                    set_led_B(false);
+                    set_led_G(true);
                     run_motor.beginChangeStep = false;
                     for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                     {
@@ -1588,7 +1611,10 @@ void loop()
                 ECHOLN("DONE RUN CLOSE MODE");
                 APP_FLAG_CLEAR(MODE_RUNNING);
                 APP_FLAG_SET(MODE_WAIT_RUNNING);
+                set_led_G(false);
+                set_led_B(true);
                 run_motor.mode_run_close_step++;
+                run_motor.start_run_step_close = false;
                 break;
             default:
                 break;
