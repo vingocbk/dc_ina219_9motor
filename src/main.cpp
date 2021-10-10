@@ -60,8 +60,7 @@ void sendDatatoApp()
     // for(int i = 0; i<data.length(); i++){
     //     SerialBT.write(data[i]);
     // }
-
-
+    ECHOLN("sendDatatoApp");
     String data = "{\"1\":[";
     data += String(setup_motor.value_current[MOTOR_1], 1);
     data += ",";
@@ -153,6 +152,27 @@ void sendDataMinMaxCurrenttoApp()
     data += String(setup_motor.define_max_current[MOTOR_8]*VALUE_CONVERT);
     data += ",";
     data += String(setup_motor.define_max_current[MOTOR_9]*VALUE_CONVERT);
+
+
+    //Reverve
+    data += ",";
+    data += String(reverse_motor[MOTOR_1]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_2]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_3]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_4]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_5]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_6]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_7]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_8]);
+    data += ",";
+    data += String(reverse_motor[MOTOR_9]);
     data += "]}";
     for(int i = 0; i<data.length(); i++){
         SerialBT.write(data[i]);
@@ -358,11 +378,11 @@ void loadDataBegin()
         ECHO("] : ");
         if(EEPROM.read(EEPROM_REVERSE_MOTOR_1 + i) == 1)
         {
-            reverse_motor[i] = true;
+            reverse_motor[i] = 1;
             ECHOLN("TRUE");
         }
         else{
-            reverse_motor[i] = false;
+            reverse_motor[i] = 0;
             ECHOLN("FALSE");
         }
     }
@@ -576,52 +596,92 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             }
                         }
                     }
-                    else if(type == "save_data")
-                    {
-                        String name = rootData["name"];
-                        String max_current = rootData["max_current"];
-                        String min_current = rootData["min_current"];
-                        String reverse = rootData["reverse"];
+                    // else if(type == "save_data")
+                    // {
+                    //     String name = rootData["name"];
+                    //     String max_current = rootData["max_current"];
+                    //     String min_current = rootData["min_current"];
+                    //     String reverse = rootData["reverse"];
 
+                    //     for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    //     {
+                    //         if(i == name.toInt())
+                    //         {
+                    //             if(max_current != "")
+                    //             {
+                    //                 setup_motor.define_max_current[i] = max_current.toInt()/VALUE_CONVERT;
+                    //                 ECHOLN(setup_motor.define_max_current[i]);
+                    //                 EEPROM.write(EEPROM_MAX_CURRENT_1 + i,setup_motor.define_max_current[i]);
+                    //             }
+                    //             if(min_current != "")
+                    //             {
+                    //                 setup_motor.define_min_current[i] = min_current.toInt();
+                    //                 ECHOLN(setup_motor.define_min_current[i]);
+                    //                 EEPROM.write(EEPROM_MIN_CURRENT_1 + i,setup_motor.define_min_current[i]);
+                    //             }
+                    //             if(reverse == "true")
+                    //             {
+                    //                 ECHOLN("TRUE");
+                    //                 reverse_motor[i] = 1; 
+                    //                 EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,1);
+                    //             }
+                    //             else
+                    //             {
+                    //                 ECHOLN("FALSE");
+                    //                 reverse_motor[i] = 0;
+                    //                 EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,0);
+                    //             }
+                                
+                    //             EEPROM.commit();
+                    //             sendDataMinMaxCurrenttoApp();
+                    //             break;
+                    //         }
+                    //     }
+                    // }
+                    else if(type == "data")
+                    {
+                        //Min Current;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            if(i == name.toInt())
+                            if(rootData["1"][i] != 0)
                             {
-                                if(max_current != "")
-                                {
-                                    setup_motor.define_max_current[i] = max_current.toInt()/VALUE_CONVERT;
-                                    ECHOLN(setup_motor.define_max_current[i]);
-                                    EEPROM.write(EEPROM_MAX_CURRENT_1 + i,setup_motor.define_max_current[i]);
-                                }
-                                if(min_current != "")
-                                {
-                                    setup_motor.define_min_current[i] = min_current.toInt();
-                                    ECHOLN(setup_motor.define_min_current[i]);
-                                    EEPROM.write(EEPROM_MIN_CURRENT_1 + i,setup_motor.define_min_current[i]);
-                                }
-                                if(reverse == "true")
-                                {
-                                    ECHOLN("TRUE");
-                                    if(reverse_motor[i])
-                                    {
-                                        reverse_motor[i] = false;
-                                        EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,0);
-                                    }
-                                    else
-                                    {
-                                       reverse_motor[i] = true; 
-                                       EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,1);
-                                    }
-                                }
-                                
-                                EEPROM.commit();
-                                sendDataMinMaxCurrenttoApp();
-                                
-                                break;
+                                setup_motor.define_min_current[i] = rootData["1"][i];
+                                // ECHO("define_min_current ");
+                                // ECHO(i);
+                                // ECHO(": ");
+                                // ECHOLN(setup_motor.define_min_current[i]);
+                                EEPROM.write(EEPROM_MIN_CURRENT_1 + i,setup_motor.define_min_current[i]);
                             }
+                            
                         }
-                        
-                        
+                        //Max Current;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            if(rootData["1"][MAX_NUMBER_MOTOR+i] != 0)
+                            {
+                                int max = rootData["1"][MAX_NUMBER_MOTOR+i];
+                                setup_motor.define_max_current[i] = max/VALUE_CONVERT;
+                                // setup_motor.define_max_current[i] = setup_motor.define_max_current[i]/VALUE_CONVERT;
+                                ECHO("define_max_current ");
+                                ECHO(i);
+                                ECHO(": ");
+                                ECHOLN(setup_motor.define_max_current[i]);
+                                EEPROM.write(EEPROM_MAX_CURRENT_1 + i,setup_motor.define_max_current[i]);
+                            }
+                            
+                        }
+                        //reverse;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            reverse_motor[i] = rootData["1"][2*MAX_NUMBER_MOTOR+i];
+                            // ECHO("reverse_motor ");
+                            // ECHO(i);
+                            // ECHO(": ");
+                            // ECHOLN(setup_motor.reverse_motor[i]);
+                            EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,reverse_motor[i]);
+                        }
+                        EEPROM.commit();
+                        sendDataMinMaxCurrenttoApp();
                     }
                     else if(type == "step")
                     {
@@ -675,6 +735,14 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             EEPROM.write(EEPROM_CLOSE_STEP_3_MTOR_1 + i,setup_motor.close_step_3[i]);
                         }
                         EEPROM.commit();
+                        sendDataSteptoApp();
+                    }
+                    else if(type == "request_data")
+                    {
+                        sendDataMinMaxCurrenttoApp();
+                    }
+                    else if(type == "request_step")
+                    {
                         sendDataSteptoApp();
                     }
                 }
@@ -1397,6 +1465,7 @@ void setup()
 
     set_led_B(ON_LED);
     APP_FLAG_SET(MODE_WAIT_RUNNING);
+    // APP_FLAG_SET(MODE_CONFIG);
     run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH);
     if(run_motor.pwm_value_mode_run > 1500)
     {
@@ -1424,7 +1493,11 @@ void loop()
         APP_FLAG_CLEAR(SEND_CURRENT_AND_STEP);
         run_motor.time_delay_send_step_after_send_current = millis();
     }
-    if(millis() == (run_motor.time_delay_send_step_after_send_current + 1000))
+    if(millis() == (run_motor.time_delay_send_step_after_send_current + 300))
+    {
+        sendDataMinMaxCurrenttoApp();
+    }
+    if(millis() == (run_motor.time_delay_send_step_after_send_current + 700))
     {
         sendDataSteptoApp();
     }
