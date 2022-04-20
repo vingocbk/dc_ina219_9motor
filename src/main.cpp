@@ -314,8 +314,8 @@ void setupPinMode()
     initMotor();
 
     // attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
-    attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Rising, RISING);
-    attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_2), readRxLed2Rising, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Rising, RISING);
+    // attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_2), readRxLed2Rising, RISING);
 }
 
 void setupI2c()
@@ -1343,9 +1343,11 @@ void checkButtonConfigModeRun()
 void checkPwmRxControlLed()
 {
     static uint32_t time_check = 0;
-    if(abs(millis() - time_check) >= 100)
+    if(millis() - time_check >= 100)
     {
         time_check = millis();
+        run_motor.pwm_value_led1 = pulseIn(BTN_IN_LED_1, HIGH, 500);
+        run_motor.pwm_value_led2 = pulseIn(BTN_IN_LED_2, HIGH, 500);
         if(run_motor.pwm_value_led1 > 1700 && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
         {
             on_led_mosfet(LED_MOSFET_1);
@@ -1370,13 +1372,13 @@ void checkPwmRxControlLed()
 void checkPwmRxControlRun()
 {
     static uint32_t time_check = 0;
-    if(abs(millis() - time_check) >= 100)
+    if(millis() - time_check >= 100)
     {
         time_check = millis();
         // ECHOLN(run_motor.pwm_value_mode_run);
         // < 1500: CLOSE
         // > 1500: OPEN
-        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH);
+        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, 500);
         if(run_motor.pwm_value_mode_run > 1550 && !run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = true;
