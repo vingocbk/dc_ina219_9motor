@@ -475,7 +475,7 @@ void bluetoothInit()
     }else{
         ECHOLN("Bluetooth initialized");
     }
-	SerialBT.register_callback(callbackBluetooth);
+  SerialBT.register_callback(callbackBluetooth);
 }
 
 void scannerI2cAddress()
@@ -510,21 +510,21 @@ void scannerI2cAddress()
 void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
 {
     switch (event)
-	{
-	case ESP_SPP_SRV_OPEN_EVT:
-		ECHOLN("Client Connected");
+  {
+  case ESP_SPP_SRV_OPEN_EVT:
+    ECHOLN("Client Connected");
         // sendDataMinMaxCurrenttoApp();
         // delay(1);
         // sendDataSteptoApp();
         APP_FLAG_SET(SEND_CURRENT_AND_STEP);
         sendDatatoAppTicker.start();
-		break;
+    break;
     case ESP_SPP_CLOSE_EVT:
         ECHOLN("Client Disconnected");
         sendDatatoAppTicker.stop();
-		break;
-	case ESP_SPP_DATA_IND_EVT:	
-		if (param->data_ind.len < MAX_RESPONSE_LENGTH) 
+    break;
+  case ESP_SPP_DATA_IND_EVT:  
+    if (param->data_ind.len < MAX_RESPONSE_LENGTH) 
         {
             String data;
             for(int i = 0; i < param->data_ind.len; i++)
@@ -537,9 +537,9 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
             JsonObject& rootData = jsonBuffer.parseObject(data);
             if(APP_FLAG(MODE_CONFIG))
             {
-				if (rootData.success())
+        if (rootData.success())
                 {
-					String type = rootData["type"];
+          String type = rootData["type"];
                     if(type == "run_no_step")
                     {
                         String name = rootData["name"];
@@ -1346,8 +1346,12 @@ void checkPwmRxControlLed()
     if(millis() - time_check >= 100)
     {
         time_check = millis();
-        run_motor.pwm_value_led1 = pulseIn(BTN_IN_LED_1, HIGH, 500);
-        run_motor.pwm_value_led2 = pulseIn(BTN_IN_LED_2, HIGH, 500);
+        // ECHO(run_motor.pwm_value_led1);
+        // ECHO(run_motor.pwm_value_led1);
+        // ECHOLN(run_motor.pwm_value_led2);
+        run_motor.pwm_value_led1 = pulseIn(BTN_IN_LED_1, HIGH, 50000);
+        run_motor.pwm_value_led2 = pulseIn(BTN_IN_LED_2, HIGH, 50000);
+        
         if(run_motor.pwm_value_led1 > 1700 && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
         {
             on_led_mosfet(LED_MOSFET_1);
@@ -1356,11 +1360,11 @@ void checkPwmRxControlLed()
         {
             off_led_mosfet(LED_MOSFET_1);
         }
-        if(run_motor.pwm_value_led2 > 1700  && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
+        if(run_motor.pwm_value_led2 > 1700  && run_motor.pwm_value_led2 < MAX_VALUE_READ_RX)
         {
             on_led_mosfet(LED_MOSFET_2);
         }
-        else if(run_motor.pwm_value_led2 < 1300  && run_motor.pwm_value_led1 > MIN_VALUE_READ_RX)
+        else if(run_motor.pwm_value_led2 < 1300  && run_motor.pwm_value_led2 > MIN_VALUE_READ_RX)
         {
             off_led_mosfet(LED_MOSFET_2);
         }
@@ -1376,9 +1380,10 @@ void checkPwmRxControlRun()
     {
         time_check = millis();
         // ECHOLN(run_motor.pwm_value_mode_run);
+        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, 50000);
         // < 1500: CLOSE
         // > 1500: OPEN
-        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, 500);
+        
         if(run_motor.pwm_value_mode_run > 1550 && !run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = true;
