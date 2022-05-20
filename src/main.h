@@ -25,6 +25,7 @@ struct SETUPMOTOR
 {
     float value_bus_voltage[MAX_NUMBER_MOTOR];
     float value_current[MAX_NUMBER_MOTOR];    //gia tri hien tai 
+    int total_power;        //mAh
     uint8_t define_max_current[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
     uint8_t define_min_current[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
     bool isMotorOn[MAX_NUMBER_MOTOR];

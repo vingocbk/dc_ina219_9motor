@@ -3,6 +3,36 @@
 
 #define SERIAL_BAUDRATE     115200
 
+// #define SCL_PIN             22
+// #define SDA_PIN             21
+
+// #define BTN_IN_M1           4
+// #define BTN_IN_M2           5
+// #define BTN_IN_M3           34
+// #define BTN_IN_M4           15
+// #define BTN_IN_M5           35
+// #define BTN_IN_M6           32
+// #define BTN_IN_M7           33
+// #define BTN_IN_M8           26
+// #define BTN_IN_M9           0
+// #define BTN_IN_M10          2
+// #define BTN_IN_LED_1        12
+// // #define BTN_IN_LED_2        25  //27
+// #define BTN_IN_LED_2        27  //design
+
+// #define BTN_MODE_SETUP      23
+// // #define BTN_MODE_RUN        27  //25
+// #define BTN_MODE_RUN        25  //design
+
+// #define DATA_PIN_LED        16
+// #define LATCH_PIN_LED       13  
+// #define CLOCK_PIN_LED       14
+
+// #define DATA_PIN_MOTOR      19
+// #define LATCH_PIN_MOTOR     18      //17
+// #define CLOCK_PIN_MOTOR     17      //18
+
+//new version
 #define SCL_PIN             22
 #define SDA_PIN             21
 
@@ -61,6 +91,8 @@
 #define EEPROM_CLOSE_STEP_1_MTOR_1  61
 #define EEPROM_CLOSE_STEP_2_MTOR_1  71
 #define EEPROM_CLOSE_STEP_3_MTOR_1  81
+#define EEPROM_DISABLE_MOTOR_1      91
+#define EEPROM_SET_VOLTAGE_MOTOR_1  101
 
 
 #define VALUE_CONVERT           10
@@ -87,25 +119,25 @@ enum
 };
 
 
-// #define 
-enum
-{
-    LED_R = 0,
-    LED_G,
-    LED_B,
-    LED_1,
-    LED_2,
-    LED_3,
-    LED_4,
-    LED_5,
-    LED_6,
-    LED_7,
-    LED_8,
-    LED_9,
-    LED_10,
-    LED_11,
-    LED_12
-};
+// // #define 
+// enum
+// {
+//     LED_R = 0,
+//     LED_G,
+//     LED_B,
+//     LED_1,
+//     LED_2,
+//     LED_3,
+//     LED_4,
+//     LED_5,
+//     LED_6,
+//     LED_7,
+//     LED_8,
+//     LED_9,
+//     LED_10,
+//     LED_11,
+//     LED_12
+// };
 
 enum
 {

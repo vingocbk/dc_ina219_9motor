@@ -1,4 +1,12 @@
 #include "motor.h"
+#include "LP50XX.h"
+
+#define ENABLE_PIN 2
+#define LP5012_ADDRESS_1 0x14
+#define LP5012_ADDRESS_2 0x15
+#define MAX_VALUE_PWM   255
+#define STOP_VALUE_PWM   0
+LP50XX LP5012_Device_1, LP5012_Device_2;
 
 
 struct motor Set_Motor;
@@ -8,6 +16,9 @@ uint8_t btn_in_control_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 int count_to_start_check_current[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 bool start_check_motor_stop[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
 uint8_t reverse_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
+uint8_t disable_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
+uint8_t set_voltage_motor[MAX_NUMBER_MOTOR] = {MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM
+                                                ,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM};
 bool is_done_step()
 {
     if(
@@ -123,6 +134,8 @@ void initMotor()
     Set_Motor.on_led_b              = 0b11111111111111111111110111111111;
 
     Set_Motor.convert_data_led      = 0b11111111111111111111111111111111;
+    LP5012_Device_1.Begin(LP5012_ADDRESS_1);
+    LP5012_Device_1.Begin(LP5012_ADDRESS_1);
 }
 
 
@@ -151,8 +164,20 @@ void stop_motor(int number){
         shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
+    
+    if(number < 6){
+        LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
+        LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+    }
+    else{
+        LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+        LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+    }
 
     stop_led(number);
+
+
+    
 }
 
 //----------------------------------------------------------------------------------------
@@ -177,6 +202,14 @@ void open_motor(int number)
         shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
+    if(number < 6){
+        LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
+        LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+    }
+    else{
+        LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+        LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+    }
 
     //Open
     if(reverse_motor[number])
@@ -189,6 +222,14 @@ void open_motor(int number)
             shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
             digitalWrite(LATCH_PIN_MOTOR, HIGH);
         }
+        if(number < 6){
+            LP5012_Device_1.SetOutputColor(2*number, set_voltage_motor[number]);
+            LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+        }
+        else{
+            LP5012_Device_2.SetOutputColor(2*(number-6), set_voltage_motor[number]);
+            LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+        }
     }
     else
     {
@@ -199,6 +240,14 @@ void open_motor(int number)
             digitalWrite(LATCH_PIN_MOTOR, LOW);
             shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
             digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        }
+        if(number < 6){
+            LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
+            LP5012_Device_1.SetOutputColor(2*number+1, set_voltage_motor[number]);
+        }
+        else{
+            LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+            LP5012_Device_2.SetOutputColor(2*(number-6)+1, set_voltage_motor[number]);
         }
     }
 
@@ -229,6 +278,14 @@ void close_motor(int number)
         shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
+    if(number < 6){
+        LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
+        LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+    }
+    else{
+        LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+        LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+    }
 
     //close
     if(reverse_motor[number])
@@ -241,6 +298,14 @@ void close_motor(int number)
             shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
             digitalWrite(LATCH_PIN_MOTOR, HIGH);
         }
+        if(number < 6){
+            LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
+            LP5012_Device_1.SetOutputColor(2*number+1, set_voltage_motor[number]);
+        }
+        else{
+            LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+            LP5012_Device_2.SetOutputColor(2*(number-6)+1, set_voltage_motor[number]);
+        }
     }
     else
     {
@@ -251,6 +316,14 @@ void close_motor(int number)
             digitalWrite(LATCH_PIN_MOTOR, LOW);
             shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
             digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        }
+        if(number < 6){
+            LP5012_Device_1.SetOutputColor(2*number, set_voltage_motor[number]);
+            LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+        }
+        else{
+            LP5012_Device_2.SetOutputColor(2*(number-6), set_voltage_motor[number]);
+            LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
         }
     }
 

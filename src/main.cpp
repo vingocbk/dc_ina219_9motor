@@ -5,7 +5,6 @@ struct INA219INFO ina219_info;
 struct SETUPMOTOR setup_motor;
 struct RUNMOTOR run_motor;
 Adafruit_INA219 ina219[MAX_NUMBER_MOTOR];
-extern int ngoc;
 extern int count_to_start_check_current[MAX_NUMBER_MOTOR];
 
 void readValueIna219()
@@ -79,6 +78,8 @@ void sendDatatoApp()
     data += String(setup_motor.value_current[MOTOR_8], 1);
     data += ",";
     data += String(setup_motor.value_current[MOTOR_9], 1);
+    data += ",";
+    data += String(setup_motor.total_power);
     data += "]}";
     for(int i = 0; i<data.length(); i++){
         SerialBT.write(data[i]);
@@ -385,6 +386,29 @@ void loadDataBegin()
             reverse_motor[i] = 0;
             ECHOLN("FALSE");
         }
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        ECHO("disable_motor[");
+        ECHO(i+1);
+        ECHO("] : ");
+        if(EEPROM.read(EEPROM_DISABLE_MOTOR_1 + i) == 1)
+        {
+            disable_motor[i] = 1;
+            ECHOLN("TRUE");
+        }
+        else{
+            disable_motor[i] = 0;
+            ECHOLN("FALSE");
+        }
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        set_voltage_motor[i] = EEPROM.read(EEPROM_SET_VOLTAGE_MOTOR_1 + i);
+        ECHO("set_voltage_motor[");
+        ECHO(i+1);
+        ECHO("] : ");
+        ECHOLN(set_voltage_motor[i]);
     }
     //Check Open Step 1
     ECHO("OPEN STEP 1: ");
@@ -744,6 +768,14 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                     else if(type == "request_step")
                     {
                         sendDataSteptoApp();
+                    }
+                    else if(type == "request_voltage")
+                    {
+                        
+                    }
+                    else if(type == "reset_power")
+                    {
+
                     }
                 }
             }
@@ -1473,7 +1505,7 @@ void setup()
     set_led_B(ON_LED);
     APP_FLAG_SET(MODE_WAIT_RUNNING);
     // APP_FLAG_SET(MODE_CONFIG);
-    run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH);
+    run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, 50000);
     if(run_motor.pwm_value_mode_run > 1500)
     {
         run_motor.is_rx_position_open = true; 
