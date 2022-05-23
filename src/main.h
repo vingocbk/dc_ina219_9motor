@@ -25,7 +25,8 @@ struct SETUPMOTOR
 {
     float value_bus_voltage[MAX_NUMBER_MOTOR];
     float value_current[MAX_NUMBER_MOTOR];    //gia tri hien tai 
-    int total_power;        //mAh
+    float value_voltage_battery;
+    float total_power;        //mAh
     uint8_t define_max_current[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
     uint8_t define_min_current[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
     bool isMotorOn[MAX_NUMBER_MOTOR];
@@ -67,6 +68,7 @@ void readValueIna219();
 void sendDatatoApp();
 void sendDataMinMaxCurrenttoApp();
 void sendDataSteptoApp();
+void sendDataVoltagetoApp();
 void setupPinMode();
 void bluetoothInit();
 void setupI2c();
@@ -89,7 +91,7 @@ void checkButtonConfigModeRun();
 void checkPwmRxControlRun();
 void checkPwmRxControlLed();
 void CheckMotorInit();
-void checkMotorIsOnStart();
+// void checkMotorIsOnStart();
 
 void IRAM_ATTR readRxModeRunRising();
 void IRAM_ATTR readRxModeRunFalling();
@@ -108,7 +110,7 @@ Ticker checkCurrentMotor7(check_current_motor_7, 100);   //every 100ms
 Ticker checkCurrentMotor8(check_current_motor_8, 100);   //every 100ms
 Ticker checkCurrentMotor9(check_current_motor_9, 100);   //every 100ms
 Ticker sendDatatoAppTicker(sendDatatoApp, 1000);   //every 500ms
-Ticker blinkMotorOnStart(checkMotorIsOnStart, 200);   //every 200ms
+// Ticker blinkMotorOnStart(checkMotorIsOnStart, 200);   //every 200ms
 
 
 #endif

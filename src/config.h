@@ -115,7 +115,8 @@ enum
     MOTOR_6,
     MOTOR_7,
     MOTOR_8,
-    MOTOR_9
+    MOTOR_9,
+    MOTOR_10
 };
 
 
