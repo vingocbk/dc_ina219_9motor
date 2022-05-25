@@ -98,12 +98,22 @@
 #define VALUE_CONVERT           10
 #define MIN_CURRENT_MOTOR_CHECK_START       200          //mA
 
+#define PWM_VOLATGE_MOTOR_12V       255
+#define PWM_VOLATGE_MOTOR_11V       235
+#define PWM_VOLATGE_MOTOR_10V       215
+#define PWM_VOLATGE_MOTOR_9V        195
+#define PWM_VOLATGE_MOTOR_8V        175
+#define PWM_VOLATGE_MOTOR_7V        155
+#define PWM_VOLATGE_MOTOR_6V        55
+
 #define MIN_VALUE_READ_RX       500
 #define MAX_VALUE_READ_RX       2500
 #define ON_LED      true
 #define OFF_LED     false
 
 #define CONFIG_HOLD_TIME        3000
+// #define TIME_OUT_PULSEIN        50000
+#define TIME_OUT_PULSEIN        5
 
 enum
 {
@@ -117,6 +127,17 @@ enum
     MOTOR_8,
     MOTOR_9,
     MOTOR_10
+};
+
+enum
+{
+    PWM_MOTOR_12V = 0,
+    PWM_MOTOR_11V,
+    PWM_MOTOR_10V,
+    PWM_MOTOR_9V,
+    PWM_MOTOR_8V,
+    PWM_MOTOR_7V,
+    PWM_MOTOR_6V
 };
 
 

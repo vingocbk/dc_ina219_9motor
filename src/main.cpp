@@ -328,6 +328,10 @@ void sendDataVoltagetoApp()
     for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
     {
         data += set_voltage_motor[j];
+        if(j == (MAX_NUMBER_MOTOR - 1))
+        {
+            break;
+        }
         data += ",";
     }
 	data += "]}";
@@ -370,17 +374,17 @@ void IRAM_ATTR readRxLed2Falling()
 }
 void setupPinMode()
 {
-    pinMode(BTN_IN_M1, INPUT);
-    pinMode(BTN_IN_M2, INPUT);
-    pinMode(BTN_IN_M3, INPUT);
-    pinMode(BTN_IN_M4, INPUT);
-    pinMode(BTN_IN_M5, INPUT);
-    pinMode(BTN_IN_M6, INPUT);
-    pinMode(BTN_IN_M7, INPUT);
-    pinMode(BTN_IN_M8, INPUT);
-    pinMode(BTN_IN_M9, INPUT);
-    pinMode(BTN_IN_M10, INPUT);
-    pinMode(BTN_MODE_SETUP, INPUT);
+    pinMode(BTN_IN_M1, INPUT_PULLUP);
+    pinMode(BTN_IN_M2, INPUT_PULLUP);
+    pinMode(BTN_IN_M3, INPUT_PULLUP);
+    pinMode(BTN_IN_M4, INPUT_PULLUP);
+    pinMode(BTN_IN_M5, INPUT_PULLUP);
+    pinMode(BTN_IN_M6, INPUT_PULLUP);
+    pinMode(BTN_IN_M7, INPUT_PULLUP);
+    pinMode(BTN_IN_M8, INPUT_PULLUP);
+    pinMode(BTN_IN_M9, INPUT_PULLUP);
+    pinMode(BTN_IN_M10, INPUT_PULLUP);
+    pinMode(BTN_MODE_SETUP, INPUT_PULLUP);
     pinMode(BTN_MODE_RUN, INPUT);
     pinMode(BTN_IN_LED_1, INPUT);
     pinMode(BTN_IN_LED_2, INPUT);
@@ -489,7 +493,34 @@ void loadDataBegin()
         ECHO("set_voltage_motor[");
         ECHO(i+1);
         ECHO("] : ");
-        ECHOLN(set_voltage_motor[i]);
+		switch (set_voltage_motor[i])
+		{
+		case PWM_MOTOR_12V:
+			ECHOLN(PWM_VOLATGE_MOTOR_12V);
+			break;
+		case PWM_MOTOR_11V:
+			ECHOLN(PWM_VOLATGE_MOTOR_11V);
+			break;
+		case PWM_MOTOR_10V:
+			ECHOLN(PWM_VOLATGE_MOTOR_10V);
+			break;
+		case PWM_MOTOR_9V:
+			ECHOLN(PWM_VOLATGE_MOTOR_9V);
+			break;
+		case PWM_MOTOR_8V:
+			ECHOLN(PWM_VOLATGE_MOTOR_8V);
+			break;
+		case PWM_MOTOR_7V:
+			ECHOLN(PWM_VOLATGE_MOTOR_7V);
+			break;
+		case PWM_MOTOR_6V:
+			ECHOLN(PWM_VOLATGE_MOTOR_6V);
+			break;
+		default:
+			ECHOLN(PWM_VOLATGE_MOTOR_12V);
+			set_voltage_motor[i] = PWM_MOTOR_12V;
+			break;
+		}
     }
     //Check Open Step 1
     ECHO("OPEN STEP 1: ");
@@ -640,11 +671,11 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
             ECHOLN(data);
             StaticJsonBuffer<MAX_RESPONSE_LENGTH> jsonBuffer;
             JsonObject& rootData = jsonBuffer.parseObject(data);
-            if(APP_FLAG(MODE_CONFIG))
+            if(rootData.success())
             {
-        if (rootData.success())
+				String type = rootData["type"];
+        		if (APP_FLAG(MODE_CONFIG))
                 {
-          String type = rootData["type"];
                     if(type == "run_no_step")
                     {
                         String name = rootData["name"];
@@ -743,6 +774,16 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             // ECHOLN(setup_motor.reverse_motor[i]);
                             EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,reverse_motor[i]);
                         }
+                        //disable;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            disable_motor[i] = rootData["1"][3*MAX_NUMBER_MOTOR+i];
+                            // ECHO("disable_motor ");
+                            // ECHO(i);
+                            // ECHO(": ");
+                            // ECHOLN(disable_motor[i]);
+                            EEPROM.write(EEPROM_DISABLE_MOTOR_1 + i,disable_motor[i]);
+                        }
                         EEPROM.commit();
                         sendDataMinMaxCurrenttoApp();
                     }
@@ -808,26 +849,27 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             // ECHOLN(set_voltage_motor[i]);
                             EEPROM.write(EEPROM_SET_VOLTAGE_MOTOR_1 + i, set_voltage_motor[i]);
                         }
+                        EEPROM.commit();
 					}
-                    else if(type == "request_data")
-                    {
-                        sendDataMinMaxCurrenttoApp();
-                    }
-                    else if(type == "request_step")
-                    {
-                        sendDataSteptoApp();
-                    }
-                    else if(type == "request_voltage")
-                    {
-                        // ECHOLN("request_voltage");
-						sendDataVoltagetoApp();
-                    }
-                    else if(type == "reset_power")
-                    {
-                        // ECHOLN("reset_power");
-						setup_motor.total_power = 0;
-                    }
                 }
+                if(type == "request_data")
+                {
+                    sendDataMinMaxCurrenttoApp();
+                }
+                else if(type == "request_step")
+                {
+                    sendDataSteptoApp();
+                }
+                else if(type == "request_voltage")
+                {
+                    // ECHOLN("request_voltage");
+                    sendDataVoltagetoApp();
+                }
+				else if(type == "reset_power")
+				{
+					// ECHOLN("reset_power");
+					setup_motor.total_power = 0;
+				}
             }
         }
         break;
@@ -1430,8 +1472,8 @@ void checkPwmRxControlLed()
         // ECHO(run_motor.pwm_value_led1);
         // ECHO(run_motor.pwm_value_led1);
         // ECHOLN(run_motor.pwm_value_led2);
-        run_motor.pwm_value_led1 = pulseIn(BTN_IN_LED_1, HIGH, 50000);
-        run_motor.pwm_value_led2 = pulseIn(BTN_IN_LED_2, HIGH, 50000);
+        run_motor.pwm_value_led1 = pulseIn(BTN_IN_LED_1, HIGH, TIME_OUT_PULSEIN);
+        run_motor.pwm_value_led2 = pulseIn(BTN_IN_LED_2, HIGH, TIME_OUT_PULSEIN);
         
         if(run_motor.pwm_value_led1 > 1700 && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
         {
@@ -1461,7 +1503,7 @@ void checkPwmRxControlRun()
     {
         time_check = millis();
         // ECHOLN(run_motor.pwm_value_mode_run);
-        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, 50000);
+        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
         // < 1500: CLOSE
         // > 1500: OPEN
         
@@ -1558,7 +1600,7 @@ void setup()
     set_led_B(ON_LED);
     APP_FLAG_SET(MODE_WAIT_RUNNING);
     // APP_FLAG_SET(MODE_CONFIG);
-    run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, 50000);
+    run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
     if(run_motor.pwm_value_mode_run > 1500)
     {
         run_motor.is_rx_position_open = true; 
@@ -1567,6 +1609,53 @@ void setup()
     {
         run_motor.is_rx_position_open = false; 
     }
+    // open_motor(1);
+	// open_motor(2);
+	// while(1){
+	// 	setup_motor.value_current[MOTOR_1] = abs(ina219[MOTOR_1].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_2] = abs(ina219[MOTOR_2].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_3] = abs(ina219[MOTOR_3].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_4] = abs(ina219[MOTOR_4].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_5] = abs(ina219[MOTOR_5].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_6] = abs(ina219[MOTOR_6].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_7] = abs(ina219[MOTOR_7].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_8] = abs(ina219[MOTOR_8].getCurrent_mA());
+    //     setup_motor.value_current[MOTOR_9] = abs(ina219[MOTOR_9].getCurrent_mA());
+    //     setup_motor.value_voltage_battery = abs(ina219_bat.getBusVoltage_V());
+
+	// 	ECHO("motor: ");
+	// 	ECHO(setup_motor.value_current[MOTOR_1]);
+	// 	ECHO(" - ");
+	// 	ECHO(setup_motor.value_current[MOTOR_2]);
+	// 	ECHO(" - ");
+	// 	ECHO(setup_motor.value_current[MOTOR_3]);
+	// 	ECHO(" - ");
+	// 	ECHO(setup_motor.value_current[MOTOR_4]);
+	// 	ECHO(" - ");
+	// 	ECHOLN(setup_motor.value_voltage_battery);
+    //     delay(100);
+	// 	set_voltage_motor[1] = PWM_MOTOR_12V;
+	// 	open_motor(1);
+	// 	delay(2000);
+	// 	// set_voltage_motor[1] = PWM_MOTOR_11V;
+	// 	// open_motor(1);
+	// 	// delay(1000);
+	// 	// set_voltage_motor[1] = PWM_MOTOR_10V;
+	// 	// open_motor(1);
+	// 	// delay(1000);
+	// 	// set_voltage_motor[1] = PWM_MOTOR_9V;
+	// 	// open_motor(1);
+	// 	// delay(1000);
+	// 	// set_voltage_motor[1] = PWM_MOTOR_8V;
+	// 	// open_motor(1);
+	// 	// delay(1000);
+	// 	// set_voltage_motor[1] = PWM_MOTOR_7V;
+	// 	// open_motor(1);
+	// 	// delay(1000);
+	// 	set_voltage_motor[1] = PWM_MOTOR_6V;
+	// 	open_motor(1);
+	// 	delay(2000);
+	// }
 }
 
 
@@ -1585,6 +1674,7 @@ void loop()
 		APP_FLAG_SET(SEND_DATA_VOLTAGE);
 		APP_FLAG_SET(SEND_DATA_STEP);
         sendDataMinMaxCurrenttoApp();
+        sendDatatoAppTicker.start();
         run_motor.time_delay_send_step_after_send_current = millis();
     }
     if(millis() == (run_motor.time_delay_send_step_after_send_current + 500))
@@ -1798,6 +1888,4 @@ void loop()
         checkButtonControl();
     }
     
-
-
 }

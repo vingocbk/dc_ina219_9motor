@@ -17,8 +17,8 @@ int count_to_start_check_current[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 bool start_check_motor_stop[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
 uint8_t reverse_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 uint8_t disable_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
-uint8_t set_voltage_motor[MAX_NUMBER_MOTOR] = {MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM
-                                                ,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM,MAX_VALUE_PWM};
+uint8_t set_voltage_motor[MAX_NUMBER_MOTOR] = {PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V
+                                                ,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V};
 bool is_done_step()
 {
     if(
@@ -86,7 +86,8 @@ void initMotor()
     Set_Motor.on_out_led_mosfet[LED_MOSFET_2]   = 0b00000000000000000000010000000000;
     Set_Motor.off_out_led_mosfet[LED_MOSFET_2]  = 0b11111111111111111111101111111111;
     
-    Set_Motor.convert_data_motor    = 0;
+    // Set_Motor.convert_data_motor    = 0;
+    Set_Motor.convert_data_motor    = 0b11111111111100000000000000000000;
 
     //-------------------------------------------------
     Set_Motor.close_led[MOTOR_1]    = 0b01111111111111111111111111111111;
@@ -134,8 +135,12 @@ void initMotor()
     Set_Motor.on_led_b              = 0b11111111111111111111110111111111;
 
     Set_Motor.convert_data_led      = 0b11111111111111111111111111111111;
+    Wire.begin();
+
+    // Support for 400kHz available
+    Wire.setClock(400000UL);
     LP5012_Device_1.Begin(LP5012_ADDRESS_1);
-    LP5012_Device_1.Begin(LP5012_ADDRESS_1);
+    LP5012_Device_2.Begin(LP5012_ADDRESS_2);
 }
 
 
@@ -156,26 +161,33 @@ void stop_motor(int number){
         btn_in_control_motor[number] = 0;
     }
     
-    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-    for(int i = 0; i < 4; i++)
-    {
-        digitalWrite(LATCH_PIN_MOTOR, LOW);
-        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        digitalWrite(LATCH_PIN_MOTOR, HIGH);
-    }
+    // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+    // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    // for(int i = 0; i < 4; i++)
+    // {
+    //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+    //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+    //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+    // }
     
     if(number < 6){
         LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
         LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
     }
     else{
-        LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-        LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+        // LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+        // LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        for(int i = 0; i < 4; i++)
+        {
+            digitalWrite(LATCH_PIN_MOTOR, LOW);
+            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+            digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        }
     }
 
     stop_led(number);
-
 
     
 }
@@ -194,64 +206,192 @@ void open_motor(int number)
     btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
 
     //stop first
-    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-    for(int i = 0; i < 4; i++)
-    {
-        digitalWrite(LATCH_PIN_MOTOR, LOW);
-        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        digitalWrite(LATCH_PIN_MOTOR, HIGH);
-    }
-    if(number < 6){
-        LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-        LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
-    }
-    else{
-        LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-        LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
-    }
+    // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+    // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    // for(int i = 0; i < 4; i++)
+    // {
+    //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+    //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+    //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+    // }
 
     //Open
     if(reverse_motor[number])
     {
-        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
-        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        for(int i = 0; i < 4; i++)
-        {
-            digitalWrite(LATCH_PIN_MOTOR, LOW);
-            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-            digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        }
+        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
+        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        // for(int i = 0; i < 4; i++)
+        // {
+        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        // }
         if(number < 6){
-            LP5012_Device_1.SetOutputColor(2*number, set_voltage_motor[number]);
+            switch (set_voltage_motor[number])
+            {
+            case PWM_MOTOR_12V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
+                break;
+            case PWM_MOTOR_11V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_11V);
+                break;
+            case PWM_MOTOR_10V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_10V);
+                break;
+            case PWM_MOTOR_9V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_9V);
+                break;
+            case PWM_MOTOR_8V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_8V);
+                break;
+            case PWM_MOTOR_7V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_7V);
+                break;
+            case PWM_MOTOR_6V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_6V);
+                break;
+            default:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
+                break;
+            }
             LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
         }
         else{
-            LP5012_Device_2.SetOutputColor(2*(number-6), set_voltage_motor[number]);
-            LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+            // switch (set_voltage_motor[number])
+            // {
+            // case PWM_MOTOR_12V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // case PWM_MOTOR_11V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_11V);
+            //     break;
+            // case PWM_MOTOR_10V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_10V);
+            //     break;
+            // case PWM_MOTOR_9V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_9V);
+            //     break;
+            // case PWM_MOTOR_8V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_8V);
+            //     break;
+            // case PWM_MOTOR_7V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_7V);
+            //     break;
+            // case PWM_MOTOR_6V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_6V);
+            //     break;
+            // default:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // }
+            // LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+            //stop first
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
         }
     }
     else
     {
-        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
-        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        for(int i = 0; i < 4; i++)
-        {
-            digitalWrite(LATCH_PIN_MOTOR, LOW);
-            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-            digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        }
+        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
+        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        // for(int i = 0; i < 4; i++)
+        // {
+        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        // }
         if(number < 6){
             LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-            LP5012_Device_1.SetOutputColor(2*number+1, set_voltage_motor[number]);
+            switch (set_voltage_motor[number])
+            {
+            case PWM_MOTOR_12V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
+                break;
+            case PWM_MOTOR_11V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_11V);
+                break;
+            case PWM_MOTOR_10V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_10V);
+                break;
+            case PWM_MOTOR_9V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_9V);
+                break;
+            case PWM_MOTOR_8V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_8V);
+                break;
+            case PWM_MOTOR_7V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_7V);
+                break;
+            case PWM_MOTOR_6V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_6V);
+                break;
+            default:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
+                break;
+            }
         }
         else{
-            LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-            LP5012_Device_2.SetOutputColor(2*(number-6)+1, set_voltage_motor[number]);
+            // LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+            // switch (set_voltage_motor[number])
+            // {
+            // case PWM_MOTOR_12V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // case PWM_MOTOR_11V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_11V);
+            //     break;
+            // case PWM_MOTOR_10V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_10V);
+            //     break;
+            // case PWM_MOTOR_9V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_9V);
+            //     break;
+            // case PWM_MOTOR_8V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_8V);
+            //     break;
+            // case PWM_MOTOR_7V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_7V);
+            //     break;
+            // case PWM_MOTOR_6V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_6V);
+            //     break;
+            // default:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // }
+            //stop first
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
         }
     }
-
-    
     stop_led(number);
     open_led(number);
 }
@@ -270,60 +410,199 @@ void close_motor(int number)
     btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
 
     //stop first
-    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-    for(int i = 0; i < 4; i++)
-    {
-        digitalWrite(LATCH_PIN_MOTOR, LOW);
-        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        digitalWrite(LATCH_PIN_MOTOR, HIGH);
-    }
-    if(number < 6){
-        LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-        LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
-    }
-    else{
-        LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-        LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
-    }
+    // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+    // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    // for(int i = 0; i < 4; i++)
+    // {
+    //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+    //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+    //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+    // }
+    // if(number < 6){
+    //     LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
+    //     LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+    // }
+    // else{
+    //     LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+    //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+    // }
 
     //close
     if(reverse_motor[number])
     {
-        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
-        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        for(int i = 0; i < 4; i++)
-        {
-            digitalWrite(LATCH_PIN_MOTOR, LOW);
-            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-            digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        }
+        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
+        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        // for(int i = 0; i < 4; i++)
+        // {
+        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        // }
         if(number < 6){
             LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-            LP5012_Device_1.SetOutputColor(2*number+1, set_voltage_motor[number]);
+            switch (set_voltage_motor[number])
+            {
+            case PWM_MOTOR_12V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
+                break;
+            case PWM_MOTOR_11V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_11V);
+                break;
+            case PWM_MOTOR_10V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_10V);
+                break;
+            case PWM_MOTOR_9V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_9V);
+                break;
+            case PWM_MOTOR_8V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_8V);
+                break;
+            case PWM_MOTOR_7V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_7V);
+                break;
+            case PWM_MOTOR_6V:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_6V);
+                break;
+            default:
+                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
+                break;
+            }
         }
         else{
-            LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-            LP5012_Device_2.SetOutputColor(2*(number-6)+1, set_voltage_motor[number]);
+            // LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
+            // switch (set_voltage_motor[number])
+            // {
+            // case PWM_MOTOR_12V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // case PWM_MOTOR_11V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_11V);
+            //     break;
+            // case PWM_MOTOR_10V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_10V);
+            //     break;
+            // case PWM_MOTOR_9V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_9V);
+            //     break;
+            // case PWM_MOTOR_8V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_8V);
+            //     break;
+            // case PWM_MOTOR_7V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_7V);
+            //     break;
+            // case PWM_MOTOR_6V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_6V);
+            //     break;
+            // default:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // }
+            //stop first
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
+
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
         }
     }
     else
     {
-        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
-        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        for(int i = 0; i < 4; i++)
-        {
-            digitalWrite(LATCH_PIN_MOTOR, LOW);
-            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-            digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        }
+        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
+        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        // for(int i = 0; i < 4; i++)
+        // {
+        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
+        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
+        // }
         if(number < 6){
-            LP5012_Device_1.SetOutputColor(2*number, set_voltage_motor[number]);
+            switch (set_voltage_motor[number])
+            {
+            case PWM_MOTOR_12V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
+                break;
+            case PWM_MOTOR_11V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_11V);
+                break;
+            case PWM_MOTOR_10V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_10V);
+                break;
+            case PWM_MOTOR_9V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_9V);
+                break;
+            case PWM_MOTOR_8V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_8V);
+                break;
+            case PWM_MOTOR_7V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_7V);
+                break;
+            case PWM_MOTOR_6V:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_6V);
+                break;
+            default:
+                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
+                break;
+            }
             LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
         }
         else{
-            LP5012_Device_2.SetOutputColor(2*(number-6), set_voltage_motor[number]);
-            LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+            // switch (set_voltage_motor[number])
+            // {
+            // case PWM_MOTOR_12V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // case PWM_MOTOR_11V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_11V);
+            //     break;
+            // case PWM_MOTOR_10V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_10V);
+            //     break;
+            // case PWM_MOTOR_9V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_9V);
+            //     break;
+            // case PWM_MOTOR_8V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_8V);
+            //     break;
+            // case PWM_MOTOR_7V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_7V);
+            //     break;
+            // case PWM_MOTOR_6V:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_6V);
+            //     break;
+            // default:
+            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
+            //     break;
+            // }
+            // LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
+            //stop first
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
+            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
+            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+            for(int i = 0; i < 4; i++)
+            {
+                digitalWrite(LATCH_PIN_MOTOR, LOW);
+                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+                digitalWrite(LATCH_PIN_MOTOR, HIGH);
+            }
         }
     }
 
