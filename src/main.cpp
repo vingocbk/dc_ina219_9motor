@@ -10,60 +10,54 @@ extern int count_to_start_check_current[MAX_NUMBER_MOTOR];
 
 void readValueIna219()
 {
-    static uint32_t time_read_value = 0;
-    if(millis() >= time_read_value + 100)
-    {
-        time_read_value = millis();
-        setup_motor.value_current[MOTOR_1] = abs(ina219[MOTOR_1].getCurrent_mA());
-        setup_motor.value_current[MOTOR_2] = abs(ina219[MOTOR_2].getCurrent_mA());
-        setup_motor.value_current[MOTOR_3] = abs(ina219[MOTOR_3].getCurrent_mA());
-        setup_motor.value_current[MOTOR_4] = abs(ina219[MOTOR_4].getCurrent_mA());
-        setup_motor.value_current[MOTOR_5] = abs(ina219[MOTOR_5].getCurrent_mA());
-        setup_motor.value_current[MOTOR_6] = abs(ina219[MOTOR_6].getCurrent_mA());
-        setup_motor.value_current[MOTOR_7] = abs(ina219[MOTOR_7].getCurrent_mA());
-        setup_motor.value_current[MOTOR_8] = abs(ina219[MOTOR_8].getCurrent_mA());
-        setup_motor.value_current[MOTOR_9] = abs(ina219[MOTOR_9].getCurrent_mA());
-        setup_motor.value_voltage_battery = abs(ina219_bat.getBusVoltage_V());
-        // setup_motor.value_voltage_battery = random(9, 12);
-        setup_motor.total_power += setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0
-                                + setup_motor.value_current[MOTOR_1]*0.1/3600.0;   //mAh
-        // setup_motor.total_power = setup_motor.total_power/3600.0;             //mAh
-        // ECHO("motor: ");
-        // ECHO(setup_motor.value_current[MOTOR_1]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_2]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_3]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_4]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_5]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_6]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_7]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_8]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_current[MOTOR_9]);
-        // ECHO(" - ");
-        // ECHO(setup_motor.value_voltage_battery);
-		// ECHO(" - ");
-        // ECHOLN(setup_motor.total_power);
-        // setup_motor.value_bus_voltage[MOTOR_1] = abs(ina219[MOTOR_1].getBusVoltage_V());
-        // setup_motor.value_bus_voltage[MOTOR_2] = abs(ina219[MOTOR_2].getBusVoltage_V());
-        // setup_motor.value_bus_voltage[MOTOR_3] = abs(ina219[MOTOR_3].getBusVoltage_V());
-        // setup_motor.value_bus_voltage[MOTOR_4] = abs(ina219[MOTOR_4].getBusVoltage_V());
-        // setup_motor.value_bus_voltage[MOTOR_5] = abs(ina219[MOTOR_5].getBusVoltage_V());
-        // setup_motor.value_bus_voltage[MOTOR_6] = abs(ina219[MOTOR_6].getBusVoltage_V());
-    }
+    static uint8_t count = 0;
+	count ++;
+	static float current[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};    //gia tri hien tai 
+    static float voltage = 0;
+    current[MOTOR_1] += abs(ina219[MOTOR_1].getCurrent_mA());
+	current[MOTOR_2] += abs(ina219[MOTOR_2].getCurrent_mA());
+	current[MOTOR_3] += abs(ina219[MOTOR_3].getCurrent_mA());
+	current[MOTOR_4] += abs(ina219[MOTOR_4].getCurrent_mA());
+	current[MOTOR_5] += abs(ina219[MOTOR_5].getCurrent_mA());
+	current[MOTOR_6] += abs(ina219[MOTOR_6].getCurrent_mA());
+	current[MOTOR_7] += abs(ina219[MOTOR_7].getCurrent_mA());
+	current[MOTOR_8] += abs(ina219[MOTOR_8].getCurrent_mA());
+	current[MOTOR_9] += abs(ina219[MOTOR_9].getCurrent_mA());
+    voltage += abs(ina219_bat.getBusVoltage_V());
+	if(count >= 10){
+		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+			setup_motor.value_current[i] = current[i]/count;
+            setup_motor.total_power += setup_motor.value_current[i]*0.1/3600.0;
+            setup_motor.value_voltage_battery = voltage/count;
+		}
+		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+			current[i] = 0;
+		}
+        voltage = 0;
+		count = 0;
+		ECHO("motor: ");
+		ECHO(setup_motor.value_current[MOTOR_1]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_2]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_3]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_4]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_5]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_6]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_7]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_8]);
+		ECHO(" - ");
+		ECHO(setup_motor.value_current[MOTOR_9]);
+        ECHO(" - ");
+		ECHO(setup_motor.value_voltage_battery);
+        ECHO(" - ");
+		ECHOLN(setup_motor.total_power);
+	}
 }
 
 
@@ -1401,7 +1395,7 @@ void tickerUpdate()
     checkCurrentMotor7.update();
     checkCurrentMotor8.update();
     checkCurrentMotor9.update();
-    // blinkMotorOnStart.update();
+    timer5.update();
 }
 
 void checkButtonConfigModeRun()
@@ -1584,6 +1578,46 @@ void CheckMotorInit()
 }
 
 
+void ReadIna219Data(void *pvParameters){
+	for( ;; )
+	{
+        // ECHOLN(millis());
+		readValueIna219();
+		vTaskDelay(1/portTICK_PERIOD_MS);
+	}
+	
+}
+
+void ReadPulseIn(void *pvParameters){
+	for( ;; )
+	{
+		checkPwmRxControlLed();
+        if(!APP_FLAG(MODE_CONFIG)){
+            checkPwmRxControlRun();
+        }
+		vTaskDelay(100/portTICK_RATE_MS);
+	}
+	
+}
+
+void testControlMotor() {
+	static long counterUS = 0;  
+	counterUS ++;
+	if (counterUS == 100) {
+		counterUS = 0;
+	}
+	if(counterUS == 1){
+		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+			stop_motor(i);
+		}
+	}
+	if(counterUS == 95){
+		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+			open_motor(i);
+		}
+	}
+}
+
 void setup()
 {
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);  //Brownout detector was triggered
@@ -1599,7 +1633,22 @@ void setup()
 
     set_led_B(ON_LED);
     APP_FLAG_SET(MODE_WAIT_RUNNING);
-    // APP_FLAG_SET(MODE_CONFIG);
+    xTaskCreatePinnedToCore(
+		ReadIna219Data,    /* Function to implement the task */
+		"ReadIna219Data",  /* Name of the task */
+		4096,             /* Stack size in words */
+		NULL,             /* Task input parameter */
+		1,                /* Priority of the task */
+		NULL,             /* Task handle. */
+		0);               /* Core where the task should run */
+    xTaskCreatePinnedToCore(
+		ReadPulseIn,    /* Function to implement the task */
+		"ReadPulseIn",  /* Name of the task */
+		4096,             /* Stack size in words */
+		NULL,             /* Task input parameter */
+		0,                /* Priority of the task */
+		NULL,             /* Task handle. */
+		0);               /* Core where the task should run */
     run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
     if(run_motor.pwm_value_mode_run > 1500)
     {
@@ -1609,64 +1658,16 @@ void setup()
     {
         run_motor.is_rx_position_open = false; 
     }
-    // open_motor(1);
-	// open_motor(2);
-	// while(1){
-	// 	setup_motor.value_current[MOTOR_1] = abs(ina219[MOTOR_1].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_2] = abs(ina219[MOTOR_2].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_3] = abs(ina219[MOTOR_3].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_4] = abs(ina219[MOTOR_4].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_5] = abs(ina219[MOTOR_5].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_6] = abs(ina219[MOTOR_6].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_7] = abs(ina219[MOTOR_7].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_8] = abs(ina219[MOTOR_8].getCurrent_mA());
-    //     setup_motor.value_current[MOTOR_9] = abs(ina219[MOTOR_9].getCurrent_mA());
-    //     setup_motor.value_voltage_battery = abs(ina219_bat.getBusVoltage_V());
-
-	// 	ECHO("motor: ");
-	// 	ECHO(setup_motor.value_current[MOTOR_1]);
-	// 	ECHO(" - ");
-	// 	ECHO(setup_motor.value_current[MOTOR_2]);
-	// 	ECHO(" - ");
-	// 	ECHO(setup_motor.value_current[MOTOR_3]);
-	// 	ECHO(" - ");
-	// 	ECHO(setup_motor.value_current[MOTOR_4]);
-	// 	ECHO(" - ");
-	// 	ECHOLN(setup_motor.value_voltage_battery);
-    //     delay(100);
-	// 	set_voltage_motor[1] = PWM_MOTOR_12V;
-	// 	open_motor(1);
-	// 	delay(2000);
-	// 	// set_voltage_motor[1] = PWM_MOTOR_11V;
-	// 	// open_motor(1);
-	// 	// delay(1000);
-	// 	// set_voltage_motor[1] = PWM_MOTOR_10V;
-	// 	// open_motor(1);
-	// 	// delay(1000);
-	// 	// set_voltage_motor[1] = PWM_MOTOR_9V;
-	// 	// open_motor(1);
-	// 	// delay(1000);
-	// 	// set_voltage_motor[1] = PWM_MOTOR_8V;
-	// 	// open_motor(1);
-	// 	// delay(1000);
-	// 	// set_voltage_motor[1] = PWM_MOTOR_7V;
-	// 	// open_motor(1);
-	// 	// delay(1000);
-	// 	set_voltage_motor[1] = PWM_MOTOR_6V;
-	// 	open_motor(1);
-	// 	delay(2000);
-	// }
+    timer5.start();
 }
-
 
 
 void loop()
 {
-    readValueIna219();
     tickerUpdate();
     checkStartCalCurrent();
     checkButtonConfigModeRun();
-    checkPwmRxControlLed();
+    // checkPwmRxControlLed();
 
     if(APP_FLAG(SEND_CURRENT_MIN_MAX))
     {
@@ -1695,7 +1696,7 @@ void loop()
 
     if(!APP_FLAG(MODE_CONFIG))
     {
-        checkPwmRxControlRun();
+        // checkPwmRxControlRun();
         if(run_motor.start_run_step_open && run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
         {
             run_motor.mode_run_close_step = CLOSE_STEP_1;

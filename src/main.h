@@ -91,6 +91,9 @@ void checkButtonConfigModeRun();
 void checkPwmRxControlRun();
 void checkPwmRxControlLed();
 void CheckMotorInit();
+void ReadIna219Data(void *pvParameters);
+void ReadPulseIn(void *pvParameters);
+void testControlMotor();
 // void checkMotorIsOnStart();
 
 void IRAM_ATTR readRxModeRunRising();
@@ -110,7 +113,7 @@ Ticker checkCurrentMotor7(check_current_motor_7, 100);   //every 100ms
 Ticker checkCurrentMotor8(check_current_motor_8, 100);   //every 100ms
 Ticker checkCurrentMotor9(check_current_motor_9, 100);   //every 100ms
 Ticker sendDatatoAppTicker(sendDatatoApp, 1000);   //every 500ms
-// Ticker blinkMotorOnStart(checkMotorIsOnStart, 200);   //every 200ms
+Ticker timer5(testControlMotor, 10, 0, MICROS_MICROS);
 
 
 #endif

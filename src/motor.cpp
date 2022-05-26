@@ -86,8 +86,8 @@ void initMotor()
     Set_Motor.on_out_led_mosfet[LED_MOSFET_2]   = 0b00000000000000000000010000000000;
     Set_Motor.off_out_led_mosfet[LED_MOSFET_2]  = 0b11111111111111111111101111111111;
     
-    // Set_Motor.convert_data_motor    = 0;
-    Set_Motor.convert_data_motor    = 0b11111111111100000000000000000000;
+    Set_Motor.convert_data_motor    = 0;
+    // Set_Motor.convert_data_motor    = 0b11111111111100000000000000000000;
 
     //-------------------------------------------------
     Set_Motor.close_led[MOTOR_1]    = 0b01111111111111111111111111111111;
@@ -135,18 +135,12 @@ void initMotor()
     Set_Motor.on_led_b              = 0b11111111111111111111110111111111;
 
     Set_Motor.convert_data_led      = 0b11111111111111111111111111111111;
-    Wire.begin();
-
-    // Support for 400kHz available
-    Wire.setClock(400000UL);
-    LP5012_Device_1.Begin(LP5012_ADDRESS_1);
-    LP5012_Device_2.Begin(LP5012_ADDRESS_2);
 }
 
 
 void stop_motor(int number){
-    ECHO("Stop Motor ");
-    ECHOLN(number + 1);
+    // ECHO("Stop Motor ");
+    // ECHOLN(number + 1);
 
     motor_is_stop[number] = true;
     statusCurrentMotor[number] = MOTOR_STOP;
@@ -161,32 +155,14 @@ void stop_motor(int number){
         btn_in_control_motor[number] = 0;
     }
     
-    // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-    // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-    // for(int i = 0; i < 4; i++)
-    // {
-    //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-    //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-    //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-    // }
-    
-    if(number < 6){
-        LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-        LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    digitalWrite(LATCH_PIN_MOTOR, LOW);
+    for(int i = 0; i < 4; i++)
+    {
+        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
     }
-    else{
-        // LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-        // LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
-        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        for(int i = 0; i < 4; i++)
-        {
-            digitalWrite(LATCH_PIN_MOTOR, LOW);
-            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-            digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        }
-    }
-
+    digitalWrite(LATCH_PIN_MOTOR, HIGH);
     stop_led(number);
 
     
@@ -196,8 +172,8 @@ void stop_motor(int number){
 void open_motor(int number)
 {
     // stop_motor(number);
-    ECHO("Open Motor ");
-    ECHOLN(number + 1);
+    // ECHO("Open Motor ");
+    // ECHOLN(number + 1);
 
     count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
     start_check_motor_stop[number] = true;
@@ -206,191 +182,37 @@ void open_motor(int number)
     btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
 
     //stop first
-    // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-    // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-    // for(int i = 0; i < 4; i++)
-    // {
-    //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-    //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-    //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-    // }
+    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    digitalWrite(LATCH_PIN_MOTOR, LOW);
+    for(int i = 0; i < 4; i++)
+    {
+        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+    }
+    digitalWrite(LATCH_PIN_MOTOR, HIGH);
 
     //Open
     if(reverse_motor[number])
     {
-        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
-        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        // for(int i = 0; i < 4; i++)
-        // {
-        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        // }
-        if(number < 6){
-            switch (set_voltage_motor[number])
-            {
-            case PWM_MOTOR_12V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
-                break;
-            case PWM_MOTOR_11V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_11V);
-                break;
-            case PWM_MOTOR_10V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_10V);
-                break;
-            case PWM_MOTOR_9V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_9V);
-                break;
-            case PWM_MOTOR_8V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_8V);
-                break;
-            case PWM_MOTOR_7V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_7V);
-                break;
-            case PWM_MOTOR_6V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_6V);
-                break;
-            default:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
-                break;
-            }
-            LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
+        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        digitalWrite(LATCH_PIN_MOTOR, LOW);
+        for(int i = 0; i < 4; i++)
+        {
+            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         }
-        else{
-            // switch (set_voltage_motor[number])
-            // {
-            // case PWM_MOTOR_12V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // case PWM_MOTOR_11V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_11V);
-            //     break;
-            // case PWM_MOTOR_10V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_10V);
-            //     break;
-            // case PWM_MOTOR_9V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_9V);
-            //     break;
-            // case PWM_MOTOR_8V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_8V);
-            //     break;
-            // case PWM_MOTOR_7V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_7V);
-            //     break;
-            // case PWM_MOTOR_6V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_6V);
-            //     break;
-            // default:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // }
-            // LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
-            //stop first
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-        }
+        digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
     else
     {
-        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
-        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        // for(int i = 0; i < 4; i++)
-        // {
-        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        // }
-        if(number < 6){
-            LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-            switch (set_voltage_motor[number])
-            {
-            case PWM_MOTOR_12V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
-                break;
-            case PWM_MOTOR_11V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_11V);
-                break;
-            case PWM_MOTOR_10V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_10V);
-                break;
-            case PWM_MOTOR_9V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_9V);
-                break;
-            case PWM_MOTOR_8V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_8V);
-                break;
-            case PWM_MOTOR_7V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_7V);
-                break;
-            case PWM_MOTOR_6V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_6V);
-                break;
-            default:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
-                break;
-            }
+        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
+        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        digitalWrite(LATCH_PIN_MOTOR, LOW);
+        for(int i = 0; i < 4; i++)
+        {
+            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         }
-        else{
-            // LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-            // switch (set_voltage_motor[number])
-            // {
-            // case PWM_MOTOR_12V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // case PWM_MOTOR_11V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_11V);
-            //     break;
-            // case PWM_MOTOR_10V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_10V);
-            //     break;
-            // case PWM_MOTOR_9V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_9V);
-            //     break;
-            // case PWM_MOTOR_8V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_8V);
-            //     break;
-            // case PWM_MOTOR_7V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_7V);
-            //     break;
-            // case PWM_MOTOR_6V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_6V);
-            //     break;
-            // default:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // }
-            //stop first
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-        }
+        digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
     stop_led(number);
     open_led(number);
@@ -400,8 +222,8 @@ void open_motor(int number)
 void close_motor(int number)
 {
     // stop_motor(number);
-    ECHO("Close Motor ");
-    ECHOLN(number + 1);
+    // ECHO("Close Motor ");
+    // ECHOLN(number + 1);
 
     count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
     start_check_motor_stop[number] = true;
@@ -410,200 +232,37 @@ void close_motor(int number)
     btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
 
     //stop first
-    // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-    // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-    // for(int i = 0; i < 4; i++)
-    // {
-    //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-    //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-    //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-    // }
-    // if(number < 6){
-    //     LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-    //     LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
-    // }
-    // else{
-    //     LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-    //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
-    // }
+    Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
+    Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    digitalWrite(LATCH_PIN_MOTOR, LOW);
+    for(int i = 0; i < 4; i++)
+    {
+        shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
+    }
+    digitalWrite(LATCH_PIN_MOTOR, HIGH);
 
     //close
     if(reverse_motor[number])
     {
-        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
-        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        // for(int i = 0; i < 4; i++)
-        // {
-        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        // }
-        if(number < 6){
-            LP5012_Device_1.SetOutputColor(2*number, STOP_VALUE_PWM);
-            switch (set_voltage_motor[number])
-            {
-            case PWM_MOTOR_12V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
-                break;
-            case PWM_MOTOR_11V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_11V);
-                break;
-            case PWM_MOTOR_10V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_10V);
-                break;
-            case PWM_MOTOR_9V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_9V);
-                break;
-            case PWM_MOTOR_8V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_8V);
-                break;
-            case PWM_MOTOR_7V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_7V);
-                break;
-            case PWM_MOTOR_6V:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_6V);
-                break;
-            default:
-                LP5012_Device_1.SetOutputColor(2*number+1, PWM_VOLATGE_MOTOR_12V);
-                break;
-            }
+        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
+        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        digitalWrite(LATCH_PIN_MOTOR, LOW);
+        for(int i = 0; i < 4; i++)
+        {
+            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         }
-        else{
-            // LP5012_Device_2.SetOutputColor(2*(number-6), STOP_VALUE_PWM);
-            // switch (set_voltage_motor[number])
-            // {
-            // case PWM_MOTOR_12V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // case PWM_MOTOR_11V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_11V);
-            //     break;
-            // case PWM_MOTOR_10V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_10V);
-            //     break;
-            // case PWM_MOTOR_9V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_9V);
-            //     break;
-            // case PWM_MOTOR_8V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_8V);
-            //     break;
-            // case PWM_MOTOR_7V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_7V);
-            //     break;
-            // case PWM_MOTOR_6V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_6V);
-            //     break;
-            // default:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6)+1, PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // }
-            //stop first
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.close_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-        }
+        digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
     else
     {
-        // Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
-        // Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-        // for(int i = 0; i < 4; i++)
-        // {
-        //     digitalWrite(LATCH_PIN_MOTOR, LOW);
-        //     shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        //     digitalWrite(LATCH_PIN_MOTOR, HIGH);
-        // }
-        if(number < 6){
-            switch (set_voltage_motor[number])
-            {
-            case PWM_MOTOR_12V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
-                break;
-            case PWM_MOTOR_11V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_11V);
-                break;
-            case PWM_MOTOR_10V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_10V);
-                break;
-            case PWM_MOTOR_9V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_9V);
-                break;
-            case PWM_MOTOR_8V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_8V);
-                break;
-            case PWM_MOTOR_7V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_7V);
-                break;
-            case PWM_MOTOR_6V:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_6V);
-                break;
-            default:
-                LP5012_Device_1.SetOutputColor(2*number, PWM_VOLATGE_MOTOR_12V);
-                break;
-            }
-            LP5012_Device_1.SetOutputColor(2*number+1, STOP_VALUE_PWM);
+        Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
+        Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+        digitalWrite(LATCH_PIN_MOTOR, LOW);
+        for(int i = 0; i < 4; i++)
+        {
+            shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
         }
-        else{
-            // switch (set_voltage_motor[number])
-            // {
-            // case PWM_MOTOR_12V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // case PWM_MOTOR_11V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_11V);
-            //     break;
-            // case PWM_MOTOR_10V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_10V);
-            //     break;
-            // case PWM_MOTOR_9V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_9V);
-            //     break;
-            // case PWM_MOTOR_8V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_8V);
-            //     break;
-            // case PWM_MOTOR_7V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_7V);
-            //     break;
-            // case PWM_MOTOR_6V:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_6V);
-            //     break;
-            // default:
-            //     LP5012_Device_2.SetOutputColor(2*(number-6), PWM_VOLATGE_MOTOR_12V);
-            //     break;
-            // }
-            // LP5012_Device_2.SetOutputColor(2*(number-6)+1, STOP_VALUE_PWM);
-            //stop first
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-            Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.open_motor[number];
-            Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
-            for(int i = 0; i < 4; i++)
-            {
-                digitalWrite(LATCH_PIN_MOTOR, LOW);
-                shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-                digitalWrite(LATCH_PIN_MOTOR, HIGH);
-            }
-        }
+        digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
 
     stop_led(number);
@@ -616,12 +275,12 @@ void on_led_mosfet(int number)
 {
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor | Set_Motor.on_out_led_mosfet[number];
     Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    digitalWrite(LATCH_PIN_MOTOR, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_MOTOR, LOW);
         shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
+    digitalWrite(LATCH_PIN_MOTOR, HIGH);
 }
 
 //----------------------------------------------------------------------------------------
@@ -629,12 +288,12 @@ void off_led_mosfet(int number)
 {
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.off_out_led_mosfet[number];
     Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
+    digitalWrite(LATCH_PIN_MOTOR, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_MOTOR, LOW);
         shiftOut(DATA_PIN_MOTOR, CLOCK_PIN_MOTOR, LSBFIRST, *(Set_Motor.data_send_motor + i));
-        digitalWrite(LATCH_PIN_MOTOR, HIGH);
     }
+    digitalWrite(LATCH_PIN_MOTOR, HIGH);
 }
 
 //----------------------------------------------------------------------------------------
@@ -644,13 +303,12 @@ void open_led(int number)
     // ECHOLN(number);
     Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.open_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_LED, LOW);
         shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
-        digitalWrite(LATCH_PIN_LED, HIGH);
     }
-
+    digitalWrite(LATCH_PIN_LED, HIGH);
     
 }
 
@@ -661,12 +319,12 @@ void close_led(int number)
     // ECHOLN(number);
     Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.close_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_LED, LOW);
         shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
-        digitalWrite(LATCH_PIN_LED, HIGH);
     }
+    digitalWrite(LATCH_PIN_LED, HIGH);
 }
 //----------------------------------------------------------------------------------------
 void stop_led(int number)
@@ -675,12 +333,12 @@ void stop_led(int number)
     // ECHOLN(number);
     Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.stop_led[number];
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_LED, LOW);
         shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
-        digitalWrite(LATCH_PIN_LED, HIGH);
     }
+    digitalWrite(LATCH_PIN_LED, HIGH);
 }
 //----------------------------------------------------------------------------------------
 void set_led_R(bool status)
@@ -695,12 +353,12 @@ void set_led_R(bool status)
         Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.off_led_r;
         Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
     }
+    digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_LED, LOW);
         shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
-        digitalWrite(LATCH_PIN_LED, HIGH);
     }
+    digitalWrite(LATCH_PIN_LED, HIGH);
 }
 //----------------------------------------------------------------------------------------
 void set_led_G(bool status)
@@ -715,12 +373,12 @@ void set_led_G(bool status)
         Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.off_led_g;
         Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
     }
+    digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_LED, LOW);
         shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
-        digitalWrite(LATCH_PIN_LED, HIGH);
     }
+    digitalWrite(LATCH_PIN_LED, HIGH);
 }
 //----------------------------------------------------------------------------------------
 void set_led_B(bool status)
@@ -735,10 +393,10 @@ void set_led_B(bool status)
         Set_Motor.convert_data_led = Set_Motor.convert_data_led | Set_Motor.off_led_b;
         Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
     }
+    digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)
     {
-        digitalWrite(LATCH_PIN_LED, LOW);
         shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
-        digitalWrite(LATCH_PIN_LED, HIGH);
     }
+    digitalWrite(LATCH_PIN_LED, HIGH);
 }
