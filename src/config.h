@@ -98,13 +98,13 @@
 #define VALUE_CONVERT           10
 #define MIN_CURRENT_MOTOR_CHECK_START       200          //mA
 
-#define PWM_VOLATGE_MOTOR_12V       255
-#define PWM_VOLATGE_MOTOR_11V       235
-#define PWM_VOLATGE_MOTOR_10V       215
-#define PWM_VOLATGE_MOTOR_9V        195
-#define PWM_VOLATGE_MOTOR_8V        175
-#define PWM_VOLATGE_MOTOR_7V        155
-#define PWM_VOLATGE_MOTOR_6V        55
+#define PWM_VOLATGE_MOTOR_12V       100
+#define PWM_VOLATGE_MOTOR_11V       70
+#define PWM_VOLATGE_MOTOR_10V       30
+#define PWM_VOLATGE_MOTOR_9V        15
+#define PWM_VOLATGE_MOTOR_8V        3
+#define PWM_VOLATGE_MOTOR_7V        2
+#define PWM_VOLATGE_MOTOR_6V        1
 
 #define MIN_VALUE_READ_RX       500
 #define MAX_VALUE_READ_RX       2500

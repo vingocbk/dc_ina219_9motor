@@ -137,11 +137,7 @@ void initMotor()
     Set_Motor.convert_data_led      = 0b11111111111111111111111111111111;
 }
 
-
-void stop_motor(int number){
-    // ECHO("Stop Motor ");
-    // ECHOLN(number + 1);
-
+void set_stop_motor(int number){
     motor_is_stop[number] = true;
     statusCurrentMotor[number] = MOTOR_STOP;
     start_check_motor_stop[number] = false;
@@ -154,6 +150,39 @@ void stop_motor(int number){
     {
         btn_in_control_motor[number] = 0;
     }
+}
+void set_open_motor(int number){
+    count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
+    start_check_motor_stop[number] = true;
+    motor_is_stop[number] = false;
+    statusCurrentMotor[number] = MOTOR_OPEN;
+    btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
+}
+
+void set_close_motor(int number){
+    count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
+    start_check_motor_stop[number] = true;
+    motor_is_stop[number] = false;
+    statusCurrentMotor[number] = MOTOR_CLOSE;
+    btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
+}
+
+void stop_motor(int number){
+    // ECHO("Stop Motor ");
+    // ECHOLN(number + 1);
+
+    // motor_is_stop[number] = true;
+    // statusCurrentMotor[number] = MOTOR_STOP;
+    // start_check_motor_stop[number] = false;
+
+    // if(btn_in_control_motor[number] == 1)     //motor stop, press button on board next to close or open
+    // {
+    //     btn_in_control_motor[number] = 2;
+    // }
+    // else if(btn_in_control_motor[number] == 3)     //motor stop, press button on board next to close or open
+    // {
+    //     btn_in_control_motor[number] = 0;
+    // }
     
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
     Set_Motor.data_send_motor = (char*) &Set_Motor.convert_data_motor;
@@ -164,8 +193,6 @@ void stop_motor(int number){
     }
     digitalWrite(LATCH_PIN_MOTOR, HIGH);
     stop_led(number);
-
-    
 }
 
 //----------------------------------------------------------------------------------------
@@ -175,11 +202,11 @@ void open_motor(int number)
     // ECHO("Open Motor ");
     // ECHOLN(number + 1);
 
-    count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
-    start_check_motor_stop[number] = true;
-    motor_is_stop[number] = false;
-    statusCurrentMotor[number] = MOTOR_OPEN;
-    btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
+    // count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
+    // start_check_motor_stop[number] = true;
+    // motor_is_stop[number] = false;
+    // statusCurrentMotor[number] = MOTOR_OPEN;
+    // btn_in_control_motor[number] = 1;     //motor open, press button on board next to stop
 
     //stop first
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];
@@ -225,11 +252,11 @@ void close_motor(int number)
     // ECHO("Close Motor ");
     // ECHOLN(number + 1);
 
-    count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
-    start_check_motor_stop[number] = true;
-    motor_is_stop[number] = false;
-    statusCurrentMotor[number] = MOTOR_CLOSE;
-    btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
+    // count_to_start_check_current[number] = 0;       //restart variable to check current, after 500ms then begin
+    // start_check_motor_stop[number] = true;
+    // motor_is_stop[number] = false;
+    // statusCurrentMotor[number] = MOTOR_CLOSE;
+    // btn_in_control_motor[number] = 3;     //motor close, press button on board next to stop
 
     //stop first
     Set_Motor.convert_data_motor = Set_Motor.convert_data_motor & Set_Motor.stop_motor[number];

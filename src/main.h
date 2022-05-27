@@ -112,8 +112,8 @@ Ticker checkCurrentMotor6(check_current_motor_6, 100);   //every 100ms
 Ticker checkCurrentMotor7(check_current_motor_7, 100);   //every 100ms
 Ticker checkCurrentMotor8(check_current_motor_8, 100);   //every 100ms
 Ticker checkCurrentMotor9(check_current_motor_9, 100);   //every 100ms
-Ticker sendDatatoAppTicker(sendDatatoApp, 1000);   //every 500ms
-Ticker timer5(testControlMotor, 10, 0, MICROS_MICROS);
+Ticker sendDatatoAppTicker(sendDatatoApp, 1000);   //every 1000ms
+Ticker TickerControlMotor(testControlMotor, 10, 0, MICROS_MICROS);  //every 10us
 
 
 #endif

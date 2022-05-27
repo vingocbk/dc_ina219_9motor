@@ -35,28 +35,28 @@ void readValueIna219()
 		}
         voltage = 0;
 		count = 0;
-		ECHO("motor: ");
-		ECHO(setup_motor.value_current[MOTOR_1]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_2]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_3]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_4]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_5]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_6]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_7]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_8]);
-		ECHO(" - ");
-		ECHO(setup_motor.value_current[MOTOR_9]);
-        ECHO(" - ");
-		ECHO(setup_motor.value_voltage_battery);
-        ECHO(" - ");
-		ECHOLN(setup_motor.total_power);
+		// ECHO("motor: ");
+		// ECHO(setup_motor.value_current[MOTOR_1]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_2]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_3]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_4]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_5]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_6]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_7]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_8]);
+		// ECHO(" - ");
+		// ECHO(setup_motor.value_current[MOTOR_9]);
+        // ECHO(" - ");
+		// ECHO(setup_motor.value_voltage_battery);
+        // ECHO(" - ");
+		// ECHOLN(setup_motor.total_power);
 	}
 }
 
@@ -647,7 +647,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
         // delay(1);
         // sendDataSteptoApp();
         APP_FLAG_SET(SEND_CURRENT_MIN_MAX);
-        sendDatatoAppTicker.start();
+        // sendDatatoAppTicker.start();
     break;
     case ESP_SPP_CLOSE_EVT:
         ECHOLN("Client Disconnected");
@@ -681,10 +681,11 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                 
                                 if(data == "open")
                                 {
-                                    open_motor(i);
+                                    set_open_motor(i);
                                 }
                                 else if(data == "stop")
                                 {
+                                    set_stop_motor(i);
                                     stop_motor(i);
                                     switch (i)
                                     {
@@ -721,7 +722,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                 }
                                 else if(data == "close")
                                 {
-                                    close_motor(i);
+                                    set_close_motor(i);
                                 }
                             }
                         }
@@ -885,6 +886,7 @@ void check_current_motor_1()
         {   
             count_to_start_check_current[MOTOR_1] = 0;
             ECHOLN("Qua Tai Motor 1");
+            set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
             if(is_done_step())
             {
@@ -910,6 +912,7 @@ void check_current_motor_2()
         {   
             count_to_start_check_current[MOTOR_2] = 0;
             ECHOLN("Qua Tai Motor 2");
+            set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
             if(is_done_step())
             {
@@ -935,6 +938,7 @@ void check_current_motor_3()
         {   
             count_to_start_check_current[MOTOR_3] = 0;
             ECHOLN("Qua Tai Motor 3");
+            set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
             if(is_done_step())
             {
@@ -960,6 +964,7 @@ void check_current_motor_4()
         {   
             count_to_start_check_current[MOTOR_4] = 0;
             ECHOLN("Qua Tai Motor 4");
+            set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
             if(is_done_step())
             {
@@ -985,6 +990,7 @@ void check_current_motor_5()
         {   
             count_to_start_check_current[MOTOR_5] = 0;
             ECHOLN("Qua Tai Motor 5");
+            set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
             if(is_done_step())
             {
@@ -1010,6 +1016,7 @@ void check_current_motor_6()
         {   
             count_to_start_check_current[MOTOR_6] = 0;
             ECHOLN("Qua Tai Motor 6");
+            set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
             if(is_done_step())
             {
@@ -1035,6 +1042,7 @@ void check_current_motor_7()
         {   
             count_to_start_check_current[MOTOR_7] = 0;
             ECHOLN("Qua Tai Motor 7");
+            set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
             if(is_done_step())
             {
@@ -1060,6 +1068,7 @@ void check_current_motor_8()
         {   
             count_to_start_check_current[MOTOR_8] = 0;
             ECHOLN("Qua Tai Motor 8");
+            set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
             if(is_done_step())
             {
@@ -1085,6 +1094,7 @@ void check_current_motor_9()
         {   
             count_to_start_check_current[MOTOR_9] = 0;
             ECHOLN("Qua Tai Motor 9");
+            set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
             if(is_done_step())
             {
@@ -1109,20 +1119,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_1] ++;
         if(btn_in_control_motor[MOTOR_1] == 1)
         {
-            open_motor(MOTOR_1);
+            set_open_motor(MOTOR_1);
         }
         else if(btn_in_control_motor[MOTOR_1] == 2)
         {
+            set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
+            checkCurrentMotor1.stop();
         }
         else if(btn_in_control_motor[MOTOR_1] == 3)
         {
-            close_motor(MOTOR_1);
+            set_close_motor(MOTOR_1);
         }
         else if(btn_in_control_motor[MOTOR_1] == 4)
         {
             btn_in_control_motor[MOTOR_1] = 0;
+            set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
+            checkCurrentMotor1.stop();
         }
     }
 
@@ -1135,20 +1149,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_2] ++;
         if(btn_in_control_motor[MOTOR_2] == 1)
         {
-            open_motor(MOTOR_2);
+            set_open_motor(MOTOR_2);
         }
         else if(btn_in_control_motor[MOTOR_2] == 2)
         {
+            set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
+            checkCurrentMotor2.stop();
         }
         else if(btn_in_control_motor[MOTOR_2] == 3)
         {
-            close_motor(MOTOR_2);
+            set_close_motor(MOTOR_2);
         }
         else if(btn_in_control_motor[MOTOR_2] == 4)
         {
             btn_in_control_motor[MOTOR_2] = 0;
+            set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
+            checkCurrentMotor2.stop();
         }
     }
 
@@ -1161,20 +1179,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_3] ++;
         if(btn_in_control_motor[MOTOR_3] == 1)
         {
-            open_motor(MOTOR_3);
+            set_open_motor(MOTOR_3);
         }
         else if(btn_in_control_motor[MOTOR_3] == 2)
         {
+            set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
+            checkCurrentMotor3.stop();
         }
         else if(btn_in_control_motor[MOTOR_3] == 3)
         {
-            close_motor(MOTOR_3);
+            set_close_motor(MOTOR_3);
         }
         else if(btn_in_control_motor[MOTOR_3] == 4)
         {
             btn_in_control_motor[MOTOR_3] = 0;
+            set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
+            checkCurrentMotor3.stop();
         }
     }
 
@@ -1187,20 +1209,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_4] ++;
         if(btn_in_control_motor[MOTOR_4] == 1)
         {
-            open_motor(MOTOR_4);
+            set_open_motor(MOTOR_4);
         }
         else if(btn_in_control_motor[MOTOR_4] == 2)
         {
+            set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
+            checkCurrentMotor4.stop();
         }
         else if(btn_in_control_motor[MOTOR_4] == 3)
         {
-            close_motor(MOTOR_4);
+            set_close_motor(MOTOR_4);
         }
         else if(btn_in_control_motor[MOTOR_4] == 4)
         {
             btn_in_control_motor[MOTOR_4] = 0;
+            set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
+            checkCurrentMotor4.stop();
         }
     }
 
@@ -1213,20 +1239,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_5] ++;
         if(btn_in_control_motor[MOTOR_5] == 1)
         {
-            open_motor(MOTOR_5);
+            set_open_motor(MOTOR_5);
         }
         else if(btn_in_control_motor[MOTOR_5] == 2)
         {
+            set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
+            checkCurrentMotor5.stop();
         }
         else if(btn_in_control_motor[MOTOR_5] == 3)
         {
-            close_motor(MOTOR_5);
+            set_close_motor(MOTOR_5);
         }
         else if(btn_in_control_motor[MOTOR_5] == 4)
         {
             btn_in_control_motor[MOTOR_5] = 0;
+            set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
+            checkCurrentMotor5.stop();
         }
     }
 
@@ -1239,20 +1269,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_6] ++;
         if(btn_in_control_motor[MOTOR_6] == 1)
         {
-            open_motor(MOTOR_6);
+            set_open_motor(MOTOR_6);
         }
         else if(btn_in_control_motor[MOTOR_6] == 2)
         {
+            set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
+            checkCurrentMotor6.stop();
         }
         else if(btn_in_control_motor[MOTOR_6] == 3)
         {
-            close_motor(MOTOR_6);
+            set_close_motor(MOTOR_6);
         }
         else if(btn_in_control_motor[MOTOR_6] == 4)
         {
             btn_in_control_motor[MOTOR_6] = 0;
+            set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
+            checkCurrentMotor6.stop();
         }
     }
     if(!digitalRead(BTN_IN_M7))
@@ -1264,20 +1298,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_7] ++;
         if(btn_in_control_motor[MOTOR_7] == 1)
         {
-            open_motor(MOTOR_7);
+            set_open_motor(MOTOR_7);
         }
         else if(btn_in_control_motor[MOTOR_7] == 2)
         {
+            set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
+            checkCurrentMotor7.stop();
         }
         else if(btn_in_control_motor[MOTOR_7] == 3)
         {
-            close_motor(MOTOR_7);
+            set_close_motor(MOTOR_7);
         }
         else if(btn_in_control_motor[MOTOR_7] == 4)
         {
             btn_in_control_motor[MOTOR_7] = 0;
+            set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
+            checkCurrentMotor7.stop();
         }
     }
     if(!digitalRead(BTN_IN_M8))
@@ -1289,20 +1327,24 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_8] ++;
         if(btn_in_control_motor[MOTOR_8] == 1)
         {
-            open_motor(MOTOR_8);
+            set_open_motor(MOTOR_8);
         }
         else if(btn_in_control_motor[MOTOR_8] == 2)
         {
+            set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
+            checkCurrentMotor8.stop();
         }
         else if(btn_in_control_motor[MOTOR_8] == 3)
         {
-            close_motor(MOTOR_8);
+            set_close_motor(MOTOR_8);
         }
         else if(btn_in_control_motor[MOTOR_8] == 4)
         {
             btn_in_control_motor[MOTOR_8] = 0;
+            set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
+            checkCurrentMotor8.stop();
         }
     }
     if(!digitalRead(BTN_IN_M9))
@@ -1314,24 +1356,26 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_9] ++;
         if(btn_in_control_motor[MOTOR_9] == 1)
         {
-            open_motor(MOTOR_9);
+            set_open_motor(MOTOR_9);
         }
         else if(btn_in_control_motor[MOTOR_9] == 2)
         {
+            set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
+            checkCurrentMotor9.stop();
         }
         else if(btn_in_control_motor[MOTOR_9] == 3)
         {
-            close_motor(MOTOR_9);
+            set_close_motor(MOTOR_9);
         }
         else if(btn_in_control_motor[MOTOR_9] == 4)
         {
             btn_in_control_motor[MOTOR_9] = 0;
+            set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
+            checkCurrentMotor9.stop();
         }
     }
-    
-
 }
 
 void checkStartCalCurrent()
@@ -1395,7 +1439,7 @@ void tickerUpdate()
     checkCurrentMotor7.update();
     checkCurrentMotor8.update();
     checkCurrentMotor9.update();
-    timer5.update();
+    TickerControlMotor.update();
 }
 
 void checkButtonConfigModeRun()
@@ -1560,6 +1604,7 @@ void CheckMotorInit()
         ECHO(": ");
         ECHOLN(setup_motor.value_current[i]);
         
+        set_stop_motor(i);
         stop_motor(i);
 
 		if(!disable_motor[i]){
@@ -1606,16 +1651,61 @@ void testControlMotor() {
 	if (counterUS == 100) {
 		counterUS = 0;
 	}
-	if(counterUS == 1){
-		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
-			stop_motor(i);
-		}
-	}
-	if(counterUS == 95){
-		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
-			open_motor(i);
-		}
-	}
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+        if(statusCurrentMotor[i] == MOTOR_OPEN || statusCurrentMotor[i] == MOTOR_CLOSE){
+            if(statusCurrentMotor[i] == MOTOR_OPEN){
+                if(counterUS == 0){
+                    open_motor(i);
+                }
+            }
+            else if(statusCurrentMotor[i] == MOTOR_CLOSE){
+                if(counterUS == 0){
+                    close_motor(i);
+                }
+            }
+            switch (set_voltage_motor[i])
+            {
+            case PWM_MOTOR_11V:
+                if(counterUS == PWM_VOLATGE_MOTOR_11V){
+                    stop_motor(i);
+                }
+                break;
+            case PWM_MOTOR_10V:
+                if(counterUS == PWM_VOLATGE_MOTOR_10V){
+                    stop_motor(i);
+                }
+                break;
+            case PWM_MOTOR_9V:
+                if(counterUS == PWM_VOLATGE_MOTOR_9V){
+                    stop_motor(i);
+                }
+                break;
+            case PWM_MOTOR_8V:
+                if(counterUS == PWM_VOLATGE_MOTOR_8V){
+                    stop_motor(i);
+                }
+                break;
+            case PWM_MOTOR_7V:
+                if(counterUS == PWM_VOLATGE_MOTOR_7V){
+                    stop_motor(i);
+                }
+                break;
+            case PWM_MOTOR_6V:
+                if(counterUS == PWM_VOLATGE_MOTOR_6V){
+                    stop_motor(i);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        else if (statusCurrentMotor[i] == MOTOR_STOP)
+        {
+            /* code */
+        }
+        
+    }
+    
 }
 
 void setup()
@@ -1658,7 +1748,7 @@ void setup()
     {
         run_motor.is_rx_position_open = false; 
     }
-    timer5.start();
+    TickerControlMotor.start();
 }
 
 
