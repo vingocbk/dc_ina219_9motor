@@ -61,6 +61,7 @@ struct RUNMOTOR
     bool start_run_step_open = false;
     bool start_run_step_close = false;
     bool is_rx_position_open;
+    bool is_get_position_rx_begin = false;
 };
 
 
@@ -93,6 +94,7 @@ void checkPwmRxControlLed();
 void CheckMotorInit();
 void ReadIna219Data(void *pvParameters);
 void ReadPulseIn(void *pvParameters);
+void SetStepRunning(void *pvParameters);
 void testControlMotor();
 // void checkMotorIsOnStart();
 

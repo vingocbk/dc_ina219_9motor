@@ -112,8 +112,8 @@
 #define OFF_LED     false
 
 #define CONFIG_HOLD_TIME        3000
-// #define TIME_OUT_PULSEIN        50000
-#define TIME_OUT_PULSEIN        5
+#define TIME_OUT_PULSEIN        50000
+// #define TIME_OUT_PULSEIN        5
 
 enum
 {

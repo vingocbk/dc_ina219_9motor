@@ -734,7 +734,12 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         {
                             if(rootData["1"][i] != 0)
                             {
-                                setup_motor.define_min_current[i] = rootData["1"][i];
+                                if(rootData["1"][i] == 5){
+                                    setup_motor.define_min_current[i] = 0;
+                                }
+                                else{
+                                    setup_motor.define_min_current[i] = rootData["1"][i];
+                                }
                                 // ECHO("define_min_current ");
                                 // ECHO(i);
                                 // ECHO(": ");
@@ -1114,7 +1119,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M1))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_1] ++;
         if(btn_in_control_motor[MOTOR_1] == 1)
@@ -1144,7 +1149,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M2))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_2] ++;
         if(btn_in_control_motor[MOTOR_2] == 1)
@@ -1174,7 +1179,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M3))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_3] ++;
         if(btn_in_control_motor[MOTOR_3] == 1)
@@ -1204,7 +1209,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M4))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_4] ++;
         if(btn_in_control_motor[MOTOR_4] == 1)
@@ -1234,7 +1239,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M5))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_5] ++;
         if(btn_in_control_motor[MOTOR_5] == 1)
@@ -1264,7 +1269,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M6))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_6] ++;
         if(btn_in_control_motor[MOTOR_6] == 1)
@@ -1293,7 +1298,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M7))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_7] ++;
         if(btn_in_control_motor[MOTOR_7] == 1)
@@ -1322,7 +1327,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M8))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_8] ++;
         if(btn_in_control_motor[MOTOR_8] == 1)
@@ -1351,7 +1356,7 @@ void checkButtonControl()
     {
         while (!digitalRead(BTN_IN_M9))
         {
-            delay(10);
+            vTaskDelay(10/portTICK_RATE_MS);
         }
         btn_in_control_motor[MOTOR_9] ++;
         if(btn_in_control_motor[MOTOR_9] == 1)
@@ -1507,11 +1512,17 @@ void checkPwmRxControlLed()
     if(millis() - time_check >= 100)
     {
         time_check = millis();
+        run_motor.pwm_value_led1 = 0;
+        run_motor.pwm_value_led2 = 0;
+        for(int i = 0; i < 5; i++){
+            run_motor.pwm_value_led1 += pulseIn(BTN_IN_LED_1, HIGH, TIME_OUT_PULSEIN);
+            run_motor.pwm_value_led2 += pulseIn(BTN_IN_LED_2, HIGH, TIME_OUT_PULSEIN);
+        }
+        run_motor.pwm_value_led1 = run_motor.pwm_value_led1/5;
+        run_motor.pwm_value_led2 = run_motor.pwm_value_led2/5;
         // ECHO(run_motor.pwm_value_led1);
-        // ECHO(run_motor.pwm_value_led1);
+        // ECHO(" - ");
         // ECHOLN(run_motor.pwm_value_led2);
-        run_motor.pwm_value_led1 = pulseIn(BTN_IN_LED_1, HIGH, TIME_OUT_PULSEIN);
-        run_motor.pwm_value_led2 = pulseIn(BTN_IN_LED_2, HIGH, TIME_OUT_PULSEIN);
         
         if(run_motor.pwm_value_led1 > 1700 && run_motor.pwm_value_led1 < MAX_VALUE_READ_RX)
         {
@@ -1540,12 +1551,16 @@ void checkPwmRxControlRun()
     if(millis() - time_check >= 100)
     {
         time_check = millis();
-        // ECHOLN(run_motor.pwm_value_mode_run);
-        run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+        run_motor.pwm_value_mode_run = 0;
+        for(int i = 0; i < 5; i++){
+            run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+        }
+        run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
+        ECHOLN(run_motor.pwm_value_mode_run);
         // < 1500: CLOSE
         // > 1500: OPEN
         
-        if(run_motor.pwm_value_mode_run > 1550 && !run_motor.is_rx_position_open)
+        if(run_motor.pwm_value_mode_run > 1650 && !run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = true;
             run_motor.start_run_step_open = true; 
@@ -1638,11 +1653,236 @@ void ReadPulseIn(void *pvParameters){
 	{
 		checkPwmRxControlLed();
         if(!APP_FLAG(MODE_CONFIG)){
-            checkPwmRxControlRun();
+            if(!run_motor.is_get_position_rx_begin){
+                run_motor.pwm_value_mode_run = 0;
+                for(int i = 0; i < 5; i++){
+                    run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+                }
+                run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
+                ECHOLN(run_motor.pwm_value_mode_run);
+                if(run_motor.pwm_value_mode_run != 0){
+                    if(run_motor.pwm_value_mode_run > 1500)
+                    {
+                        run_motor.is_rx_position_open = true; 
+                    }
+                    else
+                    {
+                        run_motor.is_rx_position_open = false; 
+                    }
+                    run_motor.is_get_position_rx_begin = true;
+                }
+            }
+            else{
+                checkPwmRxControlRun();
+            }
         }
 		vTaskDelay(100/portTICK_RATE_MS);
 	}
 	
+}
+
+void SetStepRunning(void *pvParameters){
+    
+    for(;;){
+        if(!APP_FLAG(MODE_CONFIG))
+        {
+            // checkPwmRxControlRun();
+            if(run_motor.start_run_step_open)
+            {
+                run_motor.mode_run_close_step = CLOSE_STEP_1;
+                switch (run_motor.mode_run_open_step)
+                {
+                case OPEN_STEP_1:
+                    if(run_motor.beginChangeStep)
+                    {
+                        ECHOLN("START MODE RUN OPEN STEP 1");
+                        APP_FLAG_SET(MODE_RUNNING);
+                        set_led_B(false);
+                        set_led_G(true);
+                        run_motor.beginChangeStep = false;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            switch (setup_motor.open_step_1[i])
+                            {
+                            case MOTOR_STOP:
+                                set_stop_motor(i);
+                                stop_motor(i);
+                                break;
+                            case MOTOR_OPEN:
+                                set_open_motor(i);
+                                break;
+                            case MOTOR_CLOSE:
+                                set_close_motor(i);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case OPEN_STEP_2:
+                    if(run_motor.beginChangeStep)
+                    {
+                        ECHOLN("START MODE RUN OPEN STEP 2");
+                        run_motor.beginChangeStep = false;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            switch (setup_motor.open_step_2[i])
+                            {
+                            case MOTOR_STOP:
+                                set_stop_motor(i);
+                                stop_motor(i);
+                                break;
+                            case MOTOR_OPEN:
+                                set_open_motor(i);
+                                break;
+                            case MOTOR_CLOSE:
+                                set_close_motor(i);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case OPEN_STEP_3:
+                    if(run_motor.beginChangeStep)
+                    {
+                        ECHOLN("START MODE RUN OPEN STEP 3");
+                        run_motor.beginChangeStep = false;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            switch (setup_motor.open_step_3[i])
+                            {
+                            case MOTOR_STOP:
+                                set_stop_motor(i);
+                                stop_motor(i);
+                                break;
+                            case MOTOR_OPEN:
+                                set_open_motor(i);
+                                break;
+                            case MOTOR_CLOSE:
+                                set_close_motor(i);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case DONE_MODE_OPEN:
+                    ECHOLN("DONE RUN OPEN MODE");
+                    APP_FLAG_CLEAR(MODE_RUNNING);
+                    APP_FLAG_SET(MODE_WAIT_RUNNING);
+                    set_led_G(false);
+                    set_led_B(true);
+                    run_motor.mode_run_open_step++;
+                    run_motor.start_run_step_open = false;
+                    break;
+                default:
+                    break;
+                }
+            }
+            //-----------------------------------------------
+            else if(run_motor.start_run_step_close)
+            {
+                run_motor.mode_run_open_step = OPEN_STEP_1;
+                switch (run_motor.mode_run_close_step)
+                {
+                case CLOSE_STEP_1:
+                    if(run_motor.beginChangeStep)
+                    {
+                        APP_FLAG_SET(MODE_RUNNING);
+                        ECHOLN("START MODE RUN CLOSE STEP 1");
+                        set_led_B(false);
+                        set_led_G(true);
+                        run_motor.beginChangeStep = false;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            switch (setup_motor.close_step_1[i])
+                            {
+                            case MOTOR_STOP:
+                                set_stop_motor(i);
+                                stop_motor(i);
+                                break;
+                            case MOTOR_OPEN:
+                                set_open_motor(i);
+                                break;
+                            case MOTOR_CLOSE:
+                                set_close_motor(i);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case CLOSE_STEP_2:
+                    if(run_motor.beginChangeStep)
+                    {
+                        ECHOLN("START MODE RUN CLOSE STEP 2");
+                        run_motor.beginChangeStep = false;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            switch (setup_motor.close_step_2[i])
+                            {
+                            case MOTOR_STOP:
+                                set_stop_motor(i);
+                                stop_motor(i);
+                                break;
+                            case MOTOR_OPEN:
+                                set_open_motor(i);
+                                break;
+                            case MOTOR_CLOSE:
+                                set_close_motor(i);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case CLOSE_STEP_3:
+                    if(run_motor.beginChangeStep)
+                    {
+                        ECHOLN("START MODE RUN CLOSE STEP 3");
+                        run_motor.beginChangeStep = false;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            switch (setup_motor.close_step_3[i])
+                            {
+                            case MOTOR_STOP:
+                                set_stop_motor(i);
+                                stop_motor(i);
+                                break;
+                            case MOTOR_OPEN:
+                                set_open_motor(i);
+                                break;
+                            case MOTOR_CLOSE:
+                                set_close_motor(i);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case DONE_MODE_CLOSE:
+                    ECHOLN("DONE RUN CLOSE MODE");
+                    APP_FLAG_CLEAR(MODE_RUNNING);
+                    APP_FLAG_SET(MODE_WAIT_RUNNING);
+                    set_led_G(false);
+                    set_led_B(true);
+                    run_motor.mode_run_close_step++;
+                    run_motor.start_run_step_close = false;
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        vTaskDelay(100/portTICK_RATE_MS);
+    }
 }
 
 void testControlMotor() {
@@ -1739,15 +1979,15 @@ void setup()
 		0,                /* Priority of the task */
 		NULL,             /* Task handle. */
 		0);               /* Core where the task should run */
-    run_motor.pwm_value_mode_run = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
-    if(run_motor.pwm_value_mode_run > 1500)
-    {
-        run_motor.is_rx_position_open = true; 
-    }
-    else
-    {
-        run_motor.is_rx_position_open = false; 
-    }
+    xTaskCreatePinnedToCore(
+		SetStepRunning,    /* Function to implement the task */
+		"SetStepRunning",  /* Name of the task */
+		4096,             /* Stack size in words */
+		NULL,             /* Task input parameter */
+		0,                /* Priority of the task */
+		NULL,             /* Task handle. */
+		0);               /* Core where the task should run */
+    
     TickerControlMotor.start();
 }
 
@@ -1784,198 +2024,7 @@ void loop()
     }
 
 
-    if(!APP_FLAG(MODE_CONFIG))
-    {
-        // checkPwmRxControlRun();
-        if(run_motor.start_run_step_open && run_motor.pwm_value_mode_run > 1700 && run_motor.pwm_value_mode_run < MAX_VALUE_READ_RX)
-        {
-            run_motor.mode_run_close_step = CLOSE_STEP_1;
-            switch (run_motor.mode_run_open_step)
-            {
-            case OPEN_STEP_1:
-                if(run_motor.beginChangeStep)
-                {
-                    ECHOLN("START MODE RUN OPEN STEP 1");
-                    APP_FLAG_SET(MODE_RUNNING);
-                    set_led_B(false);
-                    set_led_G(true);
-                    run_motor.beginChangeStep = false;
-                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                    {
-                        switch (setup_motor.open_step_1[i])
-                        {
-                        case MOTOR_STOP:
-                            stop_motor(i);
-                            break;
-                        case MOTOR_OPEN:
-                            open_motor(i);
-                            break;
-                        case MOTOR_CLOSE:
-                            close_motor(i);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                break;
-            case OPEN_STEP_2:
-                if(run_motor.beginChangeStep)
-                {
-                    ECHOLN("START MODE RUN OPEN STEP 2");
-                    run_motor.beginChangeStep = false;
-                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                    {
-                        switch (setup_motor.open_step_2[i])
-                        {
-                        case MOTOR_STOP:
-                            stop_motor(i);
-                            break;
-                        case MOTOR_OPEN:
-                            open_motor(i);
-                            break;
-                        case MOTOR_CLOSE:
-                            close_motor(i);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                break;
-            case OPEN_STEP_3:
-                if(run_motor.beginChangeStep)
-                {
-                    ECHOLN("START MODE RUN OPEN STEP 3");
-                    run_motor.beginChangeStep = false;
-                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                    {
-                        switch (setup_motor.open_step_3[i])
-                        {
-                        case MOTOR_STOP:
-                            stop_motor(i);
-                            break;
-                        case MOTOR_OPEN:
-                            open_motor(i);
-                            break;
-                        case MOTOR_CLOSE:
-                            close_motor(i);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                break;
-            case DONE_MODE_OPEN:
-                ECHOLN("DONE RUN OPEN MODE");
-                APP_FLAG_CLEAR(MODE_RUNNING);
-                APP_FLAG_SET(MODE_WAIT_RUNNING);
-                set_led_G(false);
-                set_led_B(true);
-                run_motor.mode_run_open_step++;
-                run_motor.start_run_step_open = false;
-                break;
-            default:
-                break;
-            }
-        }
-        //-----------------------------------------------
-        else if(run_motor.start_run_step_close && run_motor.pwm_value_mode_run < 1300 && run_motor.pwm_value_mode_run > MIN_VALUE_READ_RX)
-        {
-            run_motor.mode_run_open_step = OPEN_STEP_1;
-            switch (run_motor.mode_run_close_step)
-            {
-            case CLOSE_STEP_1:
-                if(run_motor.beginChangeStep)
-                {
-                    APP_FLAG_SET(MODE_RUNNING);
-                    ECHOLN("START MODE RUN CLOSE STEP 1");
-                    set_led_B(false);
-                    set_led_G(true);
-                    run_motor.beginChangeStep = false;
-                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                    {
-                        switch (setup_motor.close_step_1[i])
-                        {
-                        case MOTOR_STOP:
-                            stop_motor(i);
-                            break;
-                        case MOTOR_OPEN:
-                            open_motor(i);
-                            break;
-                        case MOTOR_CLOSE:
-                            close_motor(i);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                break;
-            case CLOSE_STEP_2:
-                if(run_motor.beginChangeStep)
-                {
-                    ECHOLN("START MODE RUN CLOSE STEP 2");
-                    run_motor.beginChangeStep = false;
-                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                    {
-                        switch (setup_motor.close_step_2[i])
-                        {
-                        case MOTOR_STOP:
-                            stop_motor(i);
-                            break;
-                        case MOTOR_OPEN:
-                            open_motor(i);
-                            break;
-                        case MOTOR_CLOSE:
-                            close_motor(i);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                break;
-            case CLOSE_STEP_3:
-                if(run_motor.beginChangeStep)
-                {
-                    ECHOLN("START MODE RUN CLOSE STEP 3");
-                    run_motor.beginChangeStep = false;
-                    for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                    {
-                        switch (setup_motor.close_step_3[i])
-                        {
-                        case MOTOR_STOP:
-                            stop_motor(i);
-                            break;
-                        case MOTOR_OPEN:
-                            open_motor(i);
-                            break;
-                        case MOTOR_CLOSE:
-                            close_motor(i);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                break;
-            case DONE_MODE_CLOSE:
-                ECHOLN("DONE RUN CLOSE MODE");
-                APP_FLAG_CLEAR(MODE_RUNNING);
-                APP_FLAG_SET(MODE_WAIT_RUNNING);
-                set_led_G(false);
-                set_led_B(true);
-                run_motor.mode_run_close_step++;
-                run_motor.start_run_step_close = false;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-    else{
+    if(APP_FLAG(MODE_CONFIG)){
         checkButtonControl();
     }
     
