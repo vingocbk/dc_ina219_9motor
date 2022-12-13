@@ -11,8 +11,11 @@ extern bool motor_is_stop[MAX_NUMBER_MOTOR];
 extern uint8_t statusCurrentMotor[MAX_NUMBER_MOTOR];
 extern uint8_t btn_in_control_motor[MAX_NUMBER_MOTOR];
 extern bool start_check_motor_stop[MAX_NUMBER_MOTOR];
+extern uint8_t select_motor[MAX_NUMBER_MOTOR];
+extern uint8_t select_servo[MAX_NUMBER_MOTOR];
 extern uint8_t reverse_motor[MAX_NUMBER_MOTOR];
 extern uint8_t disable_motor[MAX_NUMBER_MOTOR];
+extern uint16_t time_run_servo[MAX_NUMBER_MOTOR];
 extern uint8_t set_voltage_motor[MAX_NUMBER_MOTOR];
 //----mode run for each motor in each step
 // enum

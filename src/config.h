@@ -82,7 +82,6 @@
 #define MAX_RESPONSE_LENGTH     2048
 
 #define MAX_SIZE_EEPROM_BUFFER      512
-#define EEPROM_MAX_CURRENT_1        1
 #define EEPROM_MIN_CURRENT_1        11
 #define EEPROM_REVERSE_MOTOR_1      21
 #define EEPROM_OPEN_STEP_1_MTOR_1   31
@@ -91,8 +90,13 @@
 #define EEPROM_CLOSE_STEP_1_MTOR_1  61
 #define EEPROM_CLOSE_STEP_2_MTOR_1  71
 #define EEPROM_CLOSE_STEP_3_MTOR_1  81
-#define EEPROM_DISABLE_MOTOR_1      91
+#define EEPROM_SELECT_MOTOR_1       91
 #define EEPROM_SET_VOLTAGE_MOTOR_1  101
+#define EEPROM_SELECT_SERVO_1       111
+#define EEPROM_MIN_ANGLE_SERVO_1    121         //2 byte for each variable
+#define EEPROM_MAX_ANGLE_SERVO_1    141         //2 byte for each variable
+#define EEPROM_TIME_SERVO_1         161         //2 byte for each variable
+#define EEPROM_MAX_CURRENT_1        181         //2 byte for each variable
 
 
 #define VALUE_CONVERT           10

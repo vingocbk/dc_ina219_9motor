@@ -212,26 +212,6 @@ void sendDataMinMaxCurrenttoApp()
     data += String(reverse_motor[MOTOR_8]);
     data += ",";
     data += String(reverse_motor[MOTOR_9]);
-
-	//Disable
-    data += ",";
-    data += String(disable_motor[MOTOR_1]);
-    data += ",";
-    data += String(disable_motor[MOTOR_2]);
-    data += ",";
-    data += String(disable_motor[MOTOR_3]);
-    data += ",";
-    data += String(disable_motor[MOTOR_4]);
-    data += ",";
-    data += String(disable_motor[MOTOR_5]);
-    data += ",";
-    data += String(disable_motor[MOTOR_6]);
-    data += ",";
-    data += String(disable_motor[MOTOR_7]);
-    data += ",";
-    data += String(disable_motor[MOTOR_8]);
-    data += ",";
-    data += String(disable_motor[MOTOR_9]);
     data += "]}";
     for(int i = 0; i<data.length(); i++){
         SerialBT.write(data[i]);
@@ -434,15 +414,6 @@ void loadDataBegin()
         setup_motor.value_current[i] = 0;
         setup_motor.isMotorOn[i] = false;
     }
-
-    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
-    {
-        setup_motor.define_max_current[i] = EEPROM.read(EEPROM_MAX_CURRENT_1 + i);
-        ECHO("define_max_current[");
-        ECHO(i+1);
-        ECHO("] : ");
-        ECHOLN(setup_motor.define_max_current[i]*VALUE_CONVERT);
-    }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
         setup_motor.define_min_current[i] = EEPROM.read(EEPROM_MIN_CURRENT_1 + i);
@@ -450,6 +421,44 @@ void loadDataBegin()
         ECHO(i+1);
         ECHO("] : ");
         ECHOLN(setup_motor.define_min_current[i]);
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.define_max_current[i] = (EEPROM.read(EEPROM_MAX_CURRENT_1 + 2*i) << 8) | EEPROM.read(EEPROM_MAX_CURRENT_1 + 2*i +1);
+        ECHO("define_max_current[");
+        ECHO(i+1);
+        ECHO("] : ");
+        ECHOLN(setup_motor.define_max_current[i]);
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        ECHO("select_motor[");
+        ECHO(i+1);
+        ECHO("] : ");
+        if(EEPROM.read(EEPROM_SELECT_MOTOR_1 + i) == 1)
+        {
+            select_motor[i] = 1;
+            ECHOLN("TRUE");
+        }
+        else{
+            select_motor[i] = 0;
+            ECHOLN("FALSE");
+        }
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        ECHO("select_servo[");
+        ECHO(i+1);
+        ECHO("] : ");
+        if(EEPROM.read(EEPROM_SELECT_SERVO_1 + i) == 1)
+        {
+            select_servo[i] = 1;
+            ECHOLN("TRUE");
+        }
+        else{
+            select_servo[i] = 0;
+            ECHOLN("FALSE");
+        }
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
@@ -468,18 +477,27 @@ void loadDataBegin()
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
-        ECHO("disable_motor[");
+        setup_motor.define_min_angle[i] = (EEPROM.read(EEPROM_MIN_ANGLE_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_MIN_ANGLE_SERVO_1 + 2*i +1);
+        ECHO("define_min_angle[");
         ECHO(i+1);
         ECHO("] : ");
-        if(EEPROM.read(EEPROM_DISABLE_MOTOR_1 + i) == 1)
-        {
-            disable_motor[i] = 1;
-            ECHOLN("TRUE");
-        }
-        else{
-            disable_motor[i] = 0;
-            ECHOLN("FALSE");
-        }
+        ECHOLN(setup_motor.define_min_angle[i]);
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        setup_motor.define_max_angle[i] = (EEPROM.read(EEPROM_MAX_ANGLE_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_MAX_ANGLE_SERVO_1 + 2*i +1);
+        ECHO("define_max_angle[");
+        ECHO(i+1);
+        ECHO("] : ");
+        ECHOLN(setup_motor.define_max_angle[i]);
+    }
+    for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
+    {
+        time_run_servo[i] = (EEPROM.read(EEPROM_TIME_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_TIME_SERVO_1 + 2*i +1);
+        ECHO("time_run_servo[");
+        ECHO(i+1);
+        ECHO("] : ");
+        ECHOLN(time_run_servo[i]);
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
@@ -740,13 +758,8 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                 else{
                                     setup_motor.define_min_current[i] = rootData["1"][i];
                                 }
-                                // ECHO("define_min_current ");
-                                // ECHO(i);
-                                // ECHO(": ");
-                                // ECHOLN(setup_motor.define_min_current[i]);
                                 EEPROM.write(EEPROM_MIN_CURRENT_1 + i,setup_motor.define_min_current[i]);
                             }
-                            
                         }
                         //Max Current;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
@@ -754,35 +767,62 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             if(rootData["1"][MAX_NUMBER_MOTOR+i] != 0)
                             {
                                 int max = rootData["1"][MAX_NUMBER_MOTOR+i];
-                                setup_motor.define_max_current[i] = max/VALUE_CONVERT;
-                                // setup_motor.define_max_current[i] = setup_motor.define_max_current[i]/VALUE_CONVERT;
-                                ECHO("define_max_current ");
-                                ECHO(i);
-                                ECHO(": ");
-                                ECHOLN(setup_motor.define_max_current[i]);
-                                EEPROM.write(EEPROM_MAX_CURRENT_1 + i,setup_motor.define_max_current[i]);
+                                setup_motor.define_max_current[i] = max;
+                                EEPROM.write(EEPROM_MAX_CURRENT_1 + 2*i,setup_motor.define_max_current[i] >> 8);
+                                EEPROM.write(EEPROM_MAX_CURRENT_1 + 2*i + 1,setup_motor.define_max_current[i]);
                             }
                             
+                        }
+                        //select motor;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            select_motor[i] = rootData["1"][2*MAX_NUMBER_MOTOR+i];
+                            EEPROM.write(EEPROM_SELECT_MOTOR_1 + i,select_motor[i]);
+                        }
+                        //select servo;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            select_servo[i] = rootData["1"][3*MAX_NUMBER_MOTOR+i];
+                            EEPROM.write(EEPROM_SELECT_SERVO_1 + i,select_servo[i]);
                         }
                         //reverse;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            reverse_motor[i] = rootData["1"][2*MAX_NUMBER_MOTOR+i];
-                            // ECHO("reverse_motor ");
-                            // ECHO(i);
-                            // ECHO(": ");
-                            // ECHOLN(setup_motor.reverse_motor[i]);
+                            reverse_motor[i] = rootData["1"][4*MAX_NUMBER_MOTOR+i];
                             EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,reverse_motor[i]);
                         }
-                        //disable;
+                        //Min Angle;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            disable_motor[i] = rootData["1"][3*MAX_NUMBER_MOTOR+i];
-                            // ECHO("disable_motor ");
-                            // ECHO(i);
-                            // ECHO(": ");
-                            // ECHOLN(disable_motor[i]);
-                            EEPROM.write(EEPROM_DISABLE_MOTOR_1 + i,disable_motor[i]);
+                            if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != 0)
+                            {
+                                int min = rootData["1"][5*MAX_NUMBER_MOTOR+i];
+                                setup_motor.define_min_angle[i] = min;
+                                EEPROM.write(EEPROM_MIN_ANGLE_SERVO_1 + 2*i,setup_motor.define_min_angle[i] >> 8);
+                                EEPROM.write(EEPROM_MIN_ANGLE_SERVO_1 + 2*i + 1,setup_motor.define_min_angle[i]);
+                            }
+                        }
+                        //Max Angle;
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != 0)
+                            {
+                                int max = rootData["1"][6*MAX_NUMBER_MOTOR+i];
+                                setup_motor.define_max_angle[i] = max;
+                                EEPROM.write(EEPROM_MAX_ANGLE_SERVO_1 + 2*i,setup_motor.define_max_angle[i] >> 8);
+                                EEPROM.write(EEPROM_MAX_ANGLE_SERVO_1 + 2*i + 1,setup_motor.define_max_angle[i]);
+                            }
+                        }
+                        //Time Servo
+                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                        {
+                            if(rootData["1"][7*MAX_NUMBER_MOTOR+i] != 0)
+                            {
+                                int time = rootData["1"][6*MAX_NUMBER_MOTOR+i];
+                                time_run_servo[i] = time;
+                                EEPROM.write(EEPROM_TIME_SERVO_1 + 2*i,time_run_servo[i] >> 8);
+                                EEPROM.write(EEPROM_TIME_SERVO_1 + 2*i + 1,time_run_servo[i]);
+                            }
                         }
                         EEPROM.commit();
                         sendDataMinMaxCurrenttoApp();
@@ -1605,11 +1645,18 @@ void CheckMotorInit()
 {
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
-		if(!disable_motor[i]){
+		if(!select_motor[i]){
 			open_motor(i);
 		}
     }
     delay(20);
+    for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
+    {
+		if(!select_servo[i]){
+			open_led(i);
+            close_led(i);
+		}
+    }
 
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
@@ -1622,7 +1669,7 @@ void CheckMotorInit()
         set_stop_motor(i);
         stop_motor(i);
 
-		if(!disable_motor[i]){
+		if(!select_motor[i]){
 			if(setup_motor.value_current[i] > MIN_CURRENT_MOTOR_CHECK_START)
 			{
 				setup_motor.isMotorOn[i] = true;

@@ -15,8 +15,10 @@ uint8_t statusCurrentMotor[MAX_NUMBER_MOTOR] = {MOTOR_STOP,MOTOR_STOP,MOTOR_STOP
 uint8_t btn_in_control_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 int count_to_start_check_current[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 bool start_check_motor_stop[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
+uint8_t select_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
+uint8_t select_servo[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 uint8_t reverse_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
-uint8_t disable_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
+uint16_t time_run_servo[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 uint8_t set_voltage_motor[MAX_NUMBER_MOTOR] = {PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V
                                                 ,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V};
 bool is_done_step()
