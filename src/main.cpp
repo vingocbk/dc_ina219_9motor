@@ -126,27 +126,6 @@ void sendDatatoApp()
 void sendDataMinMaxCurrenttoApp()
 {
 	ECHOLN("sendDataMinMaxCurrenttoApp");
-    // return;
-    // Min Current
-    // String data = "{\"data\":\"\",\"11\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_1]);
-    // data += "\",\"12\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_2]);
-    // data += "\",\"13\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_3]);
-    // data += "\",\"14\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_4]);
-    // data += "\",\"15\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_5]);
-    // data += "\",\"16\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_6]);
-    // data += "\",\"17\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_7]);
-    // data += "\",\"18\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_8]);
-    // data += "\",\"19\":\"";
-    // data += String(setup_motor.define_min_current[MOTOR_9]);
-    
     // Min Current
     String data = "{\"2\":[";
     data += String(setup_motor.define_min_current[MOTOR_1]);
@@ -166,32 +145,66 @@ void sendDataMinMaxCurrenttoApp()
     data += String(setup_motor.define_min_current[MOTOR_8]);
     data += ",";
     data += String(setup_motor.define_min_current[MOTOR_9]);
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(10);
 
     //Max Current
-    // data = "";
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_1]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_1]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_2]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_2]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_3]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_3]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_4]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_4]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_5]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_5]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_6]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_6]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_7]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_7]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_8]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_8]);
     data += ",";
-    data += String(setup_motor.define_max_current[MOTOR_9]*VALUE_CONVERT);
+    data += String(setup_motor.define_max_current[MOTOR_9]);
 
+    //Select Motor
+    data += ",";
+    data += String(select_motor[MOTOR_1]);
+    data += ",";
+    data += String(select_motor[MOTOR_2]);
+    data += ",";
+    data += String(select_motor[MOTOR_3]);
+    data += ",";
+    data += String(select_motor[MOTOR_4]);
+    data += ",";
+    data += String(select_motor[MOTOR_5]);
+    data += ",";
+    data += String(select_motor[MOTOR_6]);
+    data += ",";
+    data += String(select_motor[MOTOR_7]);
+    data += ",";
+    data += String(select_motor[MOTOR_8]);
+    data += ",";
+    data += String(select_motor[MOTOR_9]);
+
+    //Select Servo
+    data += ",";
+    data += String(select_servo[MOTOR_1]);
+    data += ",";
+    data += String(select_servo[MOTOR_2]);
+    data += ",";
+    data += String(select_servo[MOTOR_3]);
+    data += ",";
+    data += String(select_servo[MOTOR_4]);
+    data += ",";
+    data += String(select_servo[MOTOR_5]);
+    data += ",";
+    data += String(select_servo[MOTOR_6]);
+    data += ",";
+    data += String(select_servo[MOTOR_7]);
+    data += ",";
+    data += String(select_servo[MOTOR_8]);
+    data += ",";
+    data += String(select_servo[MOTOR_9]);
 
     //Reverve
     data += ",";
@@ -212,6 +225,66 @@ void sendDataMinMaxCurrenttoApp()
     data += String(reverse_motor[MOTOR_8]);
     data += ",";
     data += String(reverse_motor[MOTOR_9]);
+
+    //Min Angle
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_1]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_2]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_3]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_4]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_5]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_6]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_7]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_8]);
+    data += ",";
+    data += String(setup_motor.define_min_angle[MOTOR_9]);
+
+    //Max Current
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_1]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_2]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_3]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_4]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_5]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_6]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_7]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_8]);
+    data += ",";
+    data += String(setup_motor.define_max_angle[MOTOR_9]);
+
+    //Time Servo
+    data += ",";
+    data += String(time_run_servo[MOTOR_1]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_2]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_3]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_4]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_5]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_6]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_7]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_8]);
+    data += ",";
+    data += String(time_run_servo[MOTOR_9]);
     data += "]}";
     for(int i = 0; i<data.length(); i++){
         SerialBT.write(data[i]);
@@ -750,21 +823,16 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         //Min Current;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            if(rootData["1"][i] != 0)
+                            if(rootData["1"][i] != -1)
                             {
-                                if(rootData["1"][i] == 5){
-                                    setup_motor.define_min_current[i] = 0;
-                                }
-                                else{
-                                    setup_motor.define_min_current[i] = rootData["1"][i];
-                                }
+                                setup_motor.define_min_current[i] = rootData["1"][i];
                                 EEPROM.write(EEPROM_MIN_CURRENT_1 + i,setup_motor.define_min_current[i]);
                             }
                         }
                         //Max Current;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            if(rootData["1"][MAX_NUMBER_MOTOR+i] != 0)
+                            if(rootData["1"][MAX_NUMBER_MOTOR+i] != -1)
                             {
                                 int max = rootData["1"][MAX_NUMBER_MOTOR+i];
                                 setup_motor.define_max_current[i] = max;
@@ -794,7 +862,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         //Min Angle;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != 0)
+                            if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != -1)
                             {
                                 int min = rootData["1"][5*MAX_NUMBER_MOTOR+i];
                                 setup_motor.define_min_angle[i] = min;
@@ -805,7 +873,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         //Max Angle;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != 0)
+                            if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != -1)
                             {
                                 int max = rootData["1"][6*MAX_NUMBER_MOTOR+i];
                                 setup_motor.define_max_angle[i] = max;
@@ -816,9 +884,9 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         //Time Servo
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
-                            if(rootData["1"][7*MAX_NUMBER_MOTOR+i] != 0)
+                            if(rootData["1"][7*MAX_NUMBER_MOTOR+i] != -1)
                             {
-                                int time = rootData["1"][6*MAX_NUMBER_MOTOR+i];
+                                int time = rootData["1"][7*MAX_NUMBER_MOTOR+i];
                                 time_run_servo[i] = time;
                                 EEPROM.write(EEPROM_TIME_SERVO_1 + 2*i,time_run_servo[i] >> 8);
                                 EEPROM.write(EEPROM_TIME_SERVO_1 + 2*i + 1,time_run_servo[i]);
@@ -1524,25 +1592,6 @@ void checkButtonConfigModeRun()
         }
 
     }
-
-
-
-    // if(!digitalRead(BTN_MODE_SETUP) && check_mode_setup)
-    // {
-    //     delay(100);
-    //     ECHOLN("MODE SETUP");
-    //     check_mode_setup = false;
-    //     APP_FLAG_CLEAR(MODE_CONFIG);
-    //     run_motor.isModeConfig = true;
-    // }
-    // else if(digitalRead(BTN_MODE_SETUP) && !check_mode_setup)
-    // {
-    //     delay(100);
-    //     ECHOLN("MODE RUN");
-    //     check_mode_setup = true;
-    //     APP_FLAG_SET(MODE_CONFIG);
-    //     run_motor.isModeConfig = false;
-    // }
 }
 
 
@@ -1613,33 +1662,6 @@ void checkPwmRxControlRun()
 
     }
 }
-
-// void checkMotorIsOnStart()
-// {
-//     static uint32_t count = 0;
-//     count ++;
-//     if(count % 2 == 0)
-//     {
-//         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-//         {
-//             if(setup_motor.isMotorOn[i])
-//             {
-//                 open_led(i);
-//             }
-//         }
-//     }
-//     else
-//     {
-//         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-//         {
-//             if(setup_motor.isMotorOn[i])
-//             {
-//                 stop_led(i);
-//             }
-//         }
-//     }
-// }
-
 
 void CheckMotorInit()
 {
@@ -1733,9 +1755,125 @@ void SetStepRunning(void *pvParameters){
     for(;;){
         if(!APP_FLAG(MODE_CONFIG))
         {
-            // checkPwmRxControlRun();
             if(run_motor.start_run_step_open)
             {
+                ECHOLN("START MODE RUN OPEN STEP 1");
+                APP_FLAG_SET(MODE_RUNNING);
+                set_led_B(false);
+                set_led_G(true);
+                uint16_t time_delay = 0;
+                for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                {
+                    switch (setup_motor.open_step_1[i])
+                    {
+                    case MOTOR_STOP:
+                        set_stop_motor(i);
+                        stop_motor(i);
+                        break;
+                    case MOTOR_OPEN:
+                        if(select_motor[i]){
+                            set_open_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        
+                        break;
+                    case MOTOR_CLOSE:
+                        if(select_motor[i]){
+                            set_close_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                vTaskDelay(time_delay/portTICK_RATE_MS);
+
+                time_delay = 0;
+                ECHOLN("START MODE RUN OPEN STEP 2");
+                for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                {
+                    switch (setup_motor.open_step_2[i])
+                    {
+                    case MOTOR_STOP:
+                        set_stop_motor(i);
+                        stop_motor(i);
+                        break;
+                    case MOTOR_OPEN:
+                        if(select_motor[i]){
+                            set_open_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    case MOTOR_CLOSE:
+                        if(select_motor[i]){
+                            set_close_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                vTaskDelay(time_delay/portTICK_RATE_MS);
+
+                time_delay = 0;
+                ECHOLN("START MODE RUN OPEN STEP 3");
+                for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                {
+                    switch (setup_motor.open_step_3[i])
+                    {
+                    case MOTOR_STOP:
+                        set_stop_motor(i);
+                        stop_motor(i);
+                        break;
+                    case MOTOR_OPEN:
+                        if(select_motor[i]){
+                            set_open_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    case MOTOR_CLOSE:
+                        if(select_motor[i]){
+                            set_close_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                vTaskDelay(time_delay/portTICK_RATE_MS);
+
+
+
+
+
                 run_motor.mode_run_close_step = CLOSE_STEP_1;
                 switch (run_motor.mode_run_open_step)
                 {
