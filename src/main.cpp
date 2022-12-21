@@ -994,19 +994,19 @@ void check_current_motor_1()
     if(count_to_start_check_current[MOTOR_1] >= 5)
     {
          if(int(setup_motor.value_current[MOTOR_1]) < setup_motor.define_min_current[MOTOR_1] 
-         || int(setup_motor.value_current[MOTOR_1]) > (setup_motor.define_max_current[MOTOR_1]*VALUE_CONVERT))
-//        if(int(setup_motor.value_current[MOTOR_1]) > (setup_motor.define_max_current[MOTOR_1]*VALUE_CONVERT))
+         || int(setup_motor.value_current[MOTOR_1]) > (setup_motor.define_max_current[MOTOR_1]))
+//        if(int(setup_motor.value_current[MOTOR_1]) > (setup_motor.define_max_current[MOTOR_1]))
         {   
             count_to_start_check_current[MOTOR_1] = 0;
             ECHOLN("Qua Tai Motor 1");
             set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor1.stop();
         }
     }
@@ -1020,19 +1020,19 @@ void check_current_motor_2()
     if(count_to_start_check_current[MOTOR_2] >= 5)
     {
          if(int(setup_motor.value_current[MOTOR_2]) < setup_motor.define_min_current[MOTOR_2] 
-         || int(setup_motor.value_current[MOTOR_2]) > (setup_motor.define_max_current[MOTOR_2]*VALUE_CONVERT))
-//        if(int(setup_motor.value_current[MOTOR_2]) > (setup_motor.define_max_current[MOTOR_2]*VALUE_CONVERT))
+         || int(setup_motor.value_current[MOTOR_2]) > (setup_motor.define_max_current[MOTOR_2]))
+//        if(int(setup_motor.value_current[MOTOR_2]) > (setup_motor.define_max_current[MOTOR_2]))
         {   
             count_to_start_check_current[MOTOR_2] = 0;
             ECHOLN("Qua Tai Motor 2");
             set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor2.stop();
         }
     }
@@ -1046,19 +1046,19 @@ void check_current_motor_3()
     if(count_to_start_check_current[MOTOR_3] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_3]) < setup_motor.define_min_current[MOTOR_3] 
-        || int(setup_motor.value_current[MOTOR_3]) > (setup_motor.define_max_current[MOTOR_3]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_3]) > (setup_motor.define_max_current[MOTOR_3]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_3]) > (setup_motor.define_max_current[MOTOR_3]))
+        // if(int(setup_motor.value_current[MOTOR_3]) > (setup_motor.define_max_current[MOTOR_3]))
         {   
             count_to_start_check_current[MOTOR_3] = 0;
             ECHOLN("Qua Tai Motor 3");
             set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor3.stop();
         }
     }
@@ -1072,19 +1072,19 @@ void check_current_motor_4()
     if(count_to_start_check_current[MOTOR_4] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_4]) < setup_motor.define_min_current[MOTOR_4] 
-        || int(setup_motor.value_current[MOTOR_4]) > (setup_motor.define_max_current[MOTOR_4]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_4]) > (setup_motor.define_max_current[MOTOR_4]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_4]) > (setup_motor.define_max_current[MOTOR_4]))
+        // if(int(setup_motor.value_current[MOTOR_4]) > (setup_motor.define_max_current[MOTOR_4]))
         {   
             count_to_start_check_current[MOTOR_4] = 0;
             ECHOLN("Qua Tai Motor 4");
             set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor4.stop();
         }
     }
@@ -1098,19 +1098,19 @@ void check_current_motor_5()
     if(count_to_start_check_current[MOTOR_5] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_5]) < setup_motor.define_min_current[MOTOR_5] 
-        || int(setup_motor.value_current[MOTOR_5]) > (setup_motor.define_max_current[MOTOR_5]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_5]) > (setup_motor.define_max_current[MOTOR_5]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_5]) > (setup_motor.define_max_current[MOTOR_5]))
+        // if(int(setup_motor.value_current[MOTOR_5]) > (setup_motor.define_max_current[MOTOR_5]))
         {   
             count_to_start_check_current[MOTOR_5] = 0;
             ECHOLN("Qua Tai Motor 5");
             set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor5.stop();
         }
     }
@@ -1124,19 +1124,19 @@ void check_current_motor_6()
     if(count_to_start_check_current[MOTOR_6] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_6]) < setup_motor.define_min_current[MOTOR_6] 
-        || int(setup_motor.value_current[MOTOR_6]) > (setup_motor.define_max_current[MOTOR_6]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_6]) > (setup_motor.define_max_current[MOTOR_6]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_6]) > (setup_motor.define_max_current[MOTOR_6]))
+        // if(int(setup_motor.value_current[MOTOR_6]) > (setup_motor.define_max_current[MOTOR_6]))
         {   
             count_to_start_check_current[MOTOR_6] = 0;
             ECHOLN("Qua Tai Motor 6");
             set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor6.stop();
         }
     }
@@ -1150,19 +1150,19 @@ void check_current_motor_7()
     if(count_to_start_check_current[MOTOR_7] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_7]) < setup_motor.define_min_current[MOTOR_7] 
-        || int(setup_motor.value_current[MOTOR_7]) > (setup_motor.define_max_current[MOTOR_7]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_7]) > (setup_motor.define_max_current[MOTOR_7]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_7]) > (setup_motor.define_max_current[MOTOR_7]))
+        // if(int(setup_motor.value_current[MOTOR_7]) > (setup_motor.define_max_current[MOTOR_7]))
         {   
             count_to_start_check_current[MOTOR_7] = 0;
             ECHOLN("Qua Tai Motor 7");
             set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor7.stop();
         }
     }
@@ -1176,19 +1176,19 @@ void check_current_motor_8()
     if(count_to_start_check_current[MOTOR_8] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_8]) < setup_motor.define_min_current[MOTOR_8] 
-        || int(setup_motor.value_current[MOTOR_8]) > (setup_motor.define_max_current[MOTOR_8]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_8]) > (setup_motor.define_max_current[MOTOR_8]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_8]) > (setup_motor.define_max_current[MOTOR_8]))
+        // if(int(setup_motor.value_current[MOTOR_8]) > (setup_motor.define_max_current[MOTOR_8]))
         {   
             count_to_start_check_current[MOTOR_8] = 0;
             ECHOLN("Qua Tai Motor 8");
             set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor8.stop();
         }
     }
@@ -1202,19 +1202,19 @@ void check_current_motor_9()
     if(count_to_start_check_current[MOTOR_9] >= 5)
     {
         if(int(setup_motor.value_current[MOTOR_9]) < setup_motor.define_min_current[MOTOR_9] 
-        || int(setup_motor.value_current[MOTOR_9]) > (setup_motor.define_max_current[MOTOR_9]*VALUE_CONVERT))
-        // if(int(setup_motor.value_current[MOTOR_9]) > (setup_motor.define_max_current[MOTOR_9]*VALUE_CONVERT))
+        || int(setup_motor.value_current[MOTOR_9]) > (setup_motor.define_max_current[MOTOR_9]))
+        // if(int(setup_motor.value_current[MOTOR_9]) > (setup_motor.define_max_current[MOTOR_9]))
         {   
             count_to_start_check_current[MOTOR_9] = 0;
             ECHOLN("Qua Tai Motor 9");
             set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
-            if(is_done_step())
-            {
-                run_motor.mode_run_open_step++;
-                run_motor.mode_run_close_step++;
-                run_motor.beginChangeStep = true;
-            }
+            // if(is_done_step())
+            // {
+            //     run_motor.mode_run_open_step++;
+            //     run_motor.mode_run_close_step++;
+            //     run_motor.beginChangeStep = true;
+            // }
             checkCurrentMotor9.stop();
         }
     }
@@ -1797,6 +1797,11 @@ void SetStepRunning(void *pvParameters){
                     }
                 }
                 vTaskDelay(time_delay/portTICK_RATE_MS);
+                while (!is_done_step())
+                {
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
+                
 
                 time_delay = 0;
                 ECHOLN("START MODE RUN OPEN STEP 2");
@@ -1833,6 +1838,10 @@ void SetStepRunning(void *pvParameters){
                     }
                 }
                 vTaskDelay(time_delay/portTICK_RATE_MS);
+                while (!is_done_step())
+                {
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
 
                 time_delay = 0;
                 ECHOLN("START MODE RUN OPEN STEP 3");
@@ -1869,201 +1878,344 @@ void SetStepRunning(void *pvParameters){
                     }
                 }
                 vTaskDelay(time_delay/portTICK_RATE_MS);
-
-
-
-
-
-                run_motor.mode_run_close_step = CLOSE_STEP_1;
-                switch (run_motor.mode_run_open_step)
+                while (!is_done_step())
                 {
-                case OPEN_STEP_1:
-                    if(run_motor.beginChangeStep)
-                    {
-                        ECHOLN("START MODE RUN OPEN STEP 1");
-                        APP_FLAG_SET(MODE_RUNNING);
-                        set_led_B(false);
-                        set_led_G(true);
-                        run_motor.beginChangeStep = false;
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            switch (setup_motor.open_step_1[i])
-                            {
-                            case MOTOR_STOP:
-                                set_stop_motor(i);
-                                stop_motor(i);
-                                break;
-                            case MOTOR_OPEN:
-                                set_open_motor(i);
-                                break;
-                            case MOTOR_CLOSE:
-                                set_close_motor(i);
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                case OPEN_STEP_2:
-                    if(run_motor.beginChangeStep)
-                    {
-                        ECHOLN("START MODE RUN OPEN STEP 2");
-                        run_motor.beginChangeStep = false;
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            switch (setup_motor.open_step_2[i])
-                            {
-                            case MOTOR_STOP:
-                                set_stop_motor(i);
-                                stop_motor(i);
-                                break;
-                            case MOTOR_OPEN:
-                                set_open_motor(i);
-                                break;
-                            case MOTOR_CLOSE:
-                                set_close_motor(i);
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                case OPEN_STEP_3:
-                    if(run_motor.beginChangeStep)
-                    {
-                        ECHOLN("START MODE RUN OPEN STEP 3");
-                        run_motor.beginChangeStep = false;
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            switch (setup_motor.open_step_3[i])
-                            {
-                            case MOTOR_STOP:
-                                set_stop_motor(i);
-                                stop_motor(i);
-                                break;
-                            case MOTOR_OPEN:
-                                set_open_motor(i);
-                                break;
-                            case MOTOR_CLOSE:
-                                set_close_motor(i);
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                case DONE_MODE_OPEN:
-                    ECHOLN("DONE RUN OPEN MODE");
-                    APP_FLAG_CLEAR(MODE_RUNNING);
-                    APP_FLAG_SET(MODE_WAIT_RUNNING);
-                    set_led_G(false);
-                    set_led_B(true);
-                    run_motor.mode_run_open_step++;
-                    run_motor.start_run_step_open = false;
-                    break;
-                default:
-                    break;
+                    vTaskDelay(1/portTICK_RATE_MS);
                 }
+                ECHOLN("DONE RUN OPEN MODE");
+                APP_FLAG_CLEAR(MODE_RUNNING);
+                APP_FLAG_SET(MODE_WAIT_RUNNING);
+                set_led_G(false);
+                set_led_B(true);
+
+
+
+                // run_motor.mode_run_close_step = CLOSE_STEP_1;
+                // switch (run_motor.mode_run_open_step)
+                // {
+                // case OPEN_STEP_1:
+                //     if(run_motor.beginChangeStep)
+                //     {
+                //         ECHOLN("START MODE RUN OPEN STEP 1");
+                //         APP_FLAG_SET(MODE_RUNNING);
+                //         set_led_B(false);
+                //         set_led_G(true);
+                //         run_motor.beginChangeStep = false;
+                //         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                //         {
+                //             switch (setup_motor.open_step_1[i])
+                //             {
+                //             case MOTOR_STOP:
+                //                 set_stop_motor(i);
+                //                 stop_motor(i);
+                //                 break;
+                //             case MOTOR_OPEN:
+                //                 set_open_motor(i);
+                //                 break;
+                //             case MOTOR_CLOSE:
+                //                 set_close_motor(i);
+                //                 break;
+                //             default:
+                //                 break;
+                //             }
+                //         }
+                //     }
+                //     break;
+                // case OPEN_STEP_2:
+                //     if(run_motor.beginChangeStep)
+                //     {
+                //         ECHOLN("START MODE RUN OPEN STEP 2");
+                //         run_motor.beginChangeStep = false;
+                //         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                //         {
+                //             switch (setup_motor.open_step_2[i])
+                //             {
+                //             case MOTOR_STOP:
+                //                 set_stop_motor(i);
+                //                 stop_motor(i);
+                //                 break;
+                //             case MOTOR_OPEN:
+                //                 set_open_motor(i);
+                //                 break;
+                //             case MOTOR_CLOSE:
+                //                 set_close_motor(i);
+                //                 break;
+                //             default:
+                //                 break;
+                //             }
+                //         }
+                //     }
+                //     break;
+                // case OPEN_STEP_3:
+                //     if(run_motor.beginChangeStep)
+                //     {
+                //         ECHOLN("START MODE RUN OPEN STEP 3");
+                //         run_motor.beginChangeStep = false;
+                //         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                //         {
+                //             switch (setup_motor.open_step_3[i])
+                //             {
+                //             case MOTOR_STOP:
+                //                 set_stop_motor(i);
+                //                 stop_motor(i);
+                //                 break;
+                //             case MOTOR_OPEN:
+                //                 set_open_motor(i);
+                //                 break;
+                //             case MOTOR_CLOSE:
+                //                 set_close_motor(i);
+                //                 break;
+                //             default:
+                //                 break;
+                //             }
+                //         }
+                //     }
+                //     break;
+                // case DONE_MODE_OPEN:
+                //     ECHOLN("DONE RUN OPEN MODE");
+                //     APP_FLAG_CLEAR(MODE_RUNNING);
+                //     APP_FLAG_SET(MODE_WAIT_RUNNING);
+                //     set_led_G(false);
+                //     set_led_B(true);
+                //     run_motor.mode_run_open_step++;
+                //     run_motor.start_run_step_open = false;
+                //     break;
+                // default:
+                //     break;
+                // }
             }
             //-----------------------------------------------
             else if(run_motor.start_run_step_close)
             {
-                run_motor.mode_run_open_step = OPEN_STEP_1;
-                switch (run_motor.mode_run_close_step)
+                ECHOLN("START MODE RUN OPEN STEP 1");
+                APP_FLAG_SET(MODE_RUNNING);
+                set_led_B(false);
+                set_led_G(true);
+                uint16_t time_delay = 0;
+                for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                 {
-                case CLOSE_STEP_1:
-                    if(run_motor.beginChangeStep)
+                    switch (setup_motor.close_step_1[i])
                     {
-                        APP_FLAG_SET(MODE_RUNNING);
-                        ECHOLN("START MODE RUN CLOSE STEP 1");
-                        set_led_B(false);
-                        set_led_G(true);
-                        run_motor.beginChangeStep = false;
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            switch (setup_motor.close_step_1[i])
-                            {
-                            case MOTOR_STOP:
-                                set_stop_motor(i);
-                                stop_motor(i);
-                                break;
-                            case MOTOR_OPEN:
-                                set_open_motor(i);
-                                break;
-                            case MOTOR_CLOSE:
-                                set_close_motor(i);
-                                break;
-                            default:
-                                break;
+                    case MOTOR_STOP:
+                        set_stop_motor(i);
+                        stop_motor(i);
+                        break;
+                    case MOTOR_OPEN:
+                        if(select_motor[i]){
+                            set_open_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
                             }
                         }
-                    }
-                    break;
-                case CLOSE_STEP_2:
-                    if(run_motor.beginChangeStep)
-                    {
-                        ECHOLN("START MODE RUN CLOSE STEP 2");
-                        run_motor.beginChangeStep = false;
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            switch (setup_motor.close_step_2[i])
-                            {
-                            case MOTOR_STOP:
-                                set_stop_motor(i);
-                                stop_motor(i);
-                                break;
-                            case MOTOR_OPEN:
-                                set_open_motor(i);
-                                break;
-                            case MOTOR_CLOSE:
-                                set_close_motor(i);
-                                break;
-                            default:
-                                break;
+                        
+                        break;
+                    case MOTOR_CLOSE:
+                        if(select_motor[i]){
+                            set_close_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
                             }
                         }
+                        
+                        break;
+                    default:
+                        break;
                     }
-                    break;
-                case CLOSE_STEP_3:
-                    if(run_motor.beginChangeStep)
-                    {
-                        ECHOLN("START MODE RUN CLOSE STEP 3");
-                        run_motor.beginChangeStep = false;
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            switch (setup_motor.close_step_3[i])
-                            {
-                            case MOTOR_STOP:
-                                set_stop_motor(i);
-                                stop_motor(i);
-                                break;
-                            case MOTOR_OPEN:
-                                set_open_motor(i);
-                                break;
-                            case MOTOR_CLOSE:
-                                set_close_motor(i);
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                case DONE_MODE_CLOSE:
-                    ECHOLN("DONE RUN CLOSE MODE");
-                    APP_FLAG_CLEAR(MODE_RUNNING);
-                    APP_FLAG_SET(MODE_WAIT_RUNNING);
-                    set_led_G(false);
-                    set_led_B(true);
-                    run_motor.mode_run_close_step++;
-                    run_motor.start_run_step_close = false;
-                    break;
-                default:
-                    break;
                 }
+                vTaskDelay(time_delay/portTICK_RATE_MS);
+                while (!is_done_step())
+                {
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
+                
+
+                time_delay = 0;
+                ECHOLN("START MODE RUN OPEN STEP 2");
+                for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                {
+                    switch (setup_motor.close_step_2[i])
+                    {
+                    case MOTOR_STOP:
+                        set_stop_motor(i);
+                        stop_motor(i);
+                        break;
+                    case MOTOR_OPEN:
+                        if(select_motor[i]){
+                            set_open_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    case MOTOR_CLOSE:
+                        if(select_motor[i]){
+                            set_close_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                vTaskDelay(time_delay/portTICK_RATE_MS);
+                while (!is_done_step())
+                {
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
+
+                time_delay = 0;
+                ECHOLN("START MODE RUN OPEN STEP 3");
+                for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                {
+                    switch (setup_motor.close_step_3[i])
+                    {
+                    case MOTOR_STOP:
+                        set_stop_motor(i);
+                        stop_motor(i);
+                        break;
+                    case MOTOR_OPEN:
+                        if(select_motor[i]){
+                            set_open_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    case MOTOR_CLOSE:
+                        if(select_motor[i]){
+                            set_close_motor(i);
+                        }
+                        if(select_servo[i]){
+                            if(time_run_servo[i] > time_delay){
+                                time_delay = time_run_servo[i];
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                vTaskDelay(time_delay/portTICK_RATE_MS);
+                while (!is_done_step())
+                {
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
+                ECHOLN("DONE RUN OPEN MODE");
+                APP_FLAG_CLEAR(MODE_RUNNING);
+                APP_FLAG_SET(MODE_WAIT_RUNNING);
+                set_led_G(false);
+                set_led_B(true);
+
+
+
+
+
+
+            //     run_motor.mode_run_open_step = OPEN_STEP_1;
+            //     switch (run_motor.mode_run_close_step)
+            //     {
+            //     case CLOSE_STEP_1:
+            //         if(run_motor.beginChangeStep)
+            //         {
+            //             APP_FLAG_SET(MODE_RUNNING);
+            //             ECHOLN("START MODE RUN CLOSE STEP 1");
+            //             set_led_B(false);
+            //             set_led_G(true);
+            //             run_motor.beginChangeStep = false;
+            //             for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+            //             {
+            //                 switch (setup_motor.close_step_1[i])
+            //                 {
+            //                 case MOTOR_STOP:
+            //                     set_stop_motor(i);
+            //                     stop_motor(i);
+            //                     break;
+            //                 case MOTOR_OPEN:
+            //                     set_open_motor(i);
+            //                     break;
+            //                 case MOTOR_CLOSE:
+            //                     set_close_motor(i);
+            //                     break;
+            //                 default:
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //         break;
+            //     case CLOSE_STEP_2:
+            //         if(run_motor.beginChangeStep)
+            //         {
+            //             ECHOLN("START MODE RUN CLOSE STEP 2");
+            //             run_motor.beginChangeStep = false;
+            //             for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+            //             {
+            //                 switch (setup_motor.close_step_2[i])
+            //                 {
+            //                 case MOTOR_STOP:
+            //                     set_stop_motor(i);
+            //                     stop_motor(i);
+            //                     break;
+            //                 case MOTOR_OPEN:
+            //                     set_open_motor(i);
+            //                     break;
+            //                 case MOTOR_CLOSE:
+            //                     set_close_motor(i);
+            //                     break;
+            //                 default:
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //         break;
+            //     case CLOSE_STEP_3:
+            //         if(run_motor.beginChangeStep)
+            //         {
+            //             ECHOLN("START MODE RUN CLOSE STEP 3");
+            //             run_motor.beginChangeStep = false;
+            //             for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+            //             {
+            //                 switch (setup_motor.close_step_3[i])
+            //                 {
+            //                 case MOTOR_STOP:
+            //                     set_stop_motor(i);
+            //                     stop_motor(i);
+            //                     break;
+            //                 case MOTOR_OPEN:
+            //                     set_open_motor(i);
+            //                     break;
+            //                 case MOTOR_CLOSE:
+            //                     set_close_motor(i);
+            //                     break;
+            //                 default:
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //         break;
+            //     case DONE_MODE_CLOSE:
+            //         ECHOLN("DONE RUN CLOSE MODE");
+            //         APP_FLAG_CLEAR(MODE_RUNNING);
+            //         APP_FLAG_SET(MODE_WAIT_RUNNING);
+            //         set_led_G(false);
+            //         set_led_B(true);
+            //         run_motor.mode_run_close_step++;
+            //         run_motor.start_run_step_close = false;
+            //         break;
+            //     default:
+            //         break;
+            //     }
             }
         }
         vTaskDelay(100/portTICK_RATE_MS);
