@@ -5,7 +5,7 @@ struct INA219INFO ina219_info;
 struct SETUPMOTOR setup_motor;
 struct RUNMOTOR run_motor;
 Adafruit_INA219 ina219[MAX_NUMBER_MOTOR];
-Adafruit_INA219 ina219_bat;
+// Adafruit_INA219 ina219_bat;
 extern int count_to_start_check_current[MAX_NUMBER_MOTOR];
 
 void readValueIna219()
@@ -23,69 +23,23 @@ void readValueIna219()
 	current[MOTOR_7] += abs(ina219[MOTOR_7].getCurrent_mA());
 	current[MOTOR_8] += abs(ina219[MOTOR_8].getCurrent_mA());
 	current[MOTOR_9] += abs(ina219[MOTOR_9].getCurrent_mA());
-    voltage += abs(ina219_bat.getBusVoltage_V());
+    voltage += 11.0*analogRead(INPUT_VOLTAGE)*3.3/4096.0;
 	if(count >= 10){
 		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
 			setup_motor.value_current[i] = current[i]/count;
+            current[i] = 0;
             setup_motor.total_power += setup_motor.value_current[i]*0.1/3600.0;
-            setup_motor.value_voltage_battery = voltage/count;
 		}
-		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
-			current[i] = 0;
-		}
+        setup_motor.value_voltage_battery = voltage/(count);
         voltage = 0;
 		count = 0;
-		// ECHO("motor: ");
-		// ECHO(setup_motor.value_current[MOTOR_1]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_2]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_3]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_4]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_5]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_6]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_7]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_8]);
-		// ECHO(" - ");
-		// ECHO(setup_motor.value_current[MOTOR_9]);
-        // ECHO(" - ");
-		// ECHO(setup_motor.value_voltage_battery);
-        // ECHO(" - ");
-		// ECHOLN(setup_motor.total_power);
 	}
+    ECHOLN(analogRead(INPUT_VOLTAGE));
 }
 
 
 void sendDatatoApp()
 {
-    //{"1":[1,2,3,4,5,6,7,8,9]}
-    // String data = "{\"1\":\"";
-    // data += String(setup_motor.value_current[MOTOR_1], 1);
-    // data += "\",\"2\":\"";
-    // data += String(setup_motor.value_current[MOTOR_2], 1);
-    // data += "\",\"3\":\"";
-    // data += String(setup_motor.value_current[MOTOR_3], 1);
-    // data += "\",\"4\":\"";
-    // data += String(setup_motor.value_current[MOTOR_4], 1);
-    // data += "\",\"5\":\"";
-    // data += String(setup_motor.value_current[MOTOR_5], 1);
-    // data += "\",\"6\":\"";
-    // data += String(setup_motor.value_current[MOTOR_6], 1);
-    // data += "\",\"7\":\"";
-    // data += String(setup_motor.value_current[MOTOR_7], 1);
-    // data += "\",\"8\":\"";
-    // data += String(setup_motor.value_current[MOTOR_8], 1);
-    // data += "\",\"9\":\"";
-    // data += String(setup_motor.value_current[MOTOR_9], 1);
-    // data += "\"}";
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
     // ECHOLN("sendDatatoApp");
     String data = "{\"1\":[";
     data += String(setup_motor.value_current[MOTOR_1], 1);
@@ -228,43 +182,43 @@ void sendDataMinMaxCurrenttoApp()
 
     //Min Angle
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_1]);
+    data += String(setup_motor.define_start_angle[MOTOR_1]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_2]);
+    data += String(setup_motor.define_start_angle[MOTOR_2]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_3]);
+    data += String(setup_motor.define_start_angle[MOTOR_3]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_4]);
+    data += String(setup_motor.define_start_angle[MOTOR_4]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_5]);
+    data += String(setup_motor.define_start_angle[MOTOR_5]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_6]);
+    data += String(setup_motor.define_start_angle[MOTOR_6]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_7]);
+    data += String(setup_motor.define_start_angle[MOTOR_7]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_8]);
+    data += String(setup_motor.define_start_angle[MOTOR_8]);
     data += ",";
-    data += String(setup_motor.define_min_angle[MOTOR_9]);
+    data += String(setup_motor.define_start_angle[MOTOR_9]);
 
     //Max Current
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_1]);
+    data += String(setup_motor.define_end_angle[MOTOR_1]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_2]);
+    data += String(setup_motor.define_end_angle[MOTOR_2]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_3]);
+    data += String(setup_motor.define_end_angle[MOTOR_3]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_4]);
+    data += String(setup_motor.define_end_angle[MOTOR_4]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_5]);
+    data += String(setup_motor.define_end_angle[MOTOR_5]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_6]);
+    data += String(setup_motor.define_end_angle[MOTOR_6]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_7]);
+    data += String(setup_motor.define_end_angle[MOTOR_7]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_8]);
+    data += String(setup_motor.define_end_angle[MOTOR_8]);
     data += ",";
-    data += String(setup_motor.define_max_angle[MOTOR_9]);
+    data += String(setup_motor.define_end_angle[MOTOR_9]);
 
     //Time Servo
     data += ",";
@@ -302,52 +256,27 @@ void sendDataSteptoApp()
         data += setup_motor.open_step_1[j];
         data += ",";
     }
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(50);
-    // data = "";
     for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
     {
         data += setup_motor.open_step_2[j];
         data += ",";
     }
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(50);
-    // data = "";
     for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
     {
         data += setup_motor.open_step_3[j];
         data += ",";
     }
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(50);
-    // data = "";
     //Close Step
     for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
     {
         data += setup_motor.close_step_1[j];
         data += ",";
     }
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(50);
-    // data = "";
     for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
     {
         data += setup_motor.close_step_2[j];
         data += ",";
     }
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(50);
-    // data = "";
     for(int j = 0; j < MAX_NUMBER_MOTOR; j++)
     {
         data += setup_motor.close_step_3[j];
@@ -357,11 +286,6 @@ void sendDataSteptoApp()
         }
         data += ",";
     }
-    // for(int i = 0; i<data.length(); i++){
-    //     SerialBT.write(data[i]);
-    // }
-    // delay(50);
-    // data = "";
     data += "]}";
     for(int i = 0; i<data.length(); i++){
         SerialBT.write(data[i]);
@@ -430,7 +354,6 @@ void setupPinMode()
     pinMode(BTN_IN_M7, INPUT_PULLUP);
     pinMode(BTN_IN_M8, INPUT_PULLUP);
     pinMode(BTN_IN_M9, INPUT_PULLUP);
-    pinMode(BTN_IN_M10, INPUT_PULLUP);
     pinMode(BTN_MODE_SETUP, INPUT_PULLUP);
     pinMode(BTN_MODE_RUN, INPUT);
     pinMode(BTN_IN_LED_1, INPUT);
@@ -443,6 +366,9 @@ void setupPinMode()
     pinMode(LATCH_PIN_MOTOR, OUTPUT);
     pinMode(CLOCK_PIN_MOTOR, OUTPUT);
     initMotor();
+
+    analogReadResolution(12);
+    analogSetWidth(12);
 
     // attachInterrupt(digitalPinToInterrupt(BTN_MODE_RUN), readRxModeRunRising, RISING);    
     // attachInterrupt(digitalPinToInterrupt(BTN_IN_LED_1), readRxLed1Rising, RISING);
@@ -460,7 +386,7 @@ void setupI2c()
     ina219[MOTOR_7] = Adafruit_INA219(ADDRESS_INA_M7);
     ina219[MOTOR_8] = Adafruit_INA219(ADDRESS_INA_M8);
     ina219[MOTOR_9] = Adafruit_INA219(ADDRESS_INA_M9);
-    ina219_bat = Adafruit_INA219(ADDRESS_INA_M10);
+    // ina219_bat = Adafruit_INA219(ADDRESS_INA_M10);
     ina219[MOTOR_1].begin();
     ina219[MOTOR_2].begin();
     ina219[MOTOR_3].begin();
@@ -470,7 +396,7 @@ void setupI2c()
     ina219[MOTOR_7].begin();
     ina219[MOTOR_8].begin();
     ina219[MOTOR_9].begin();
-    ina219_bat.begin();
+    // ina219_bat.begin();
     delay(10);
 }
 
@@ -550,19 +476,19 @@ void loadDataBegin()
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
-        setup_motor.define_min_angle[i] = (EEPROM.read(EEPROM_MIN_ANGLE_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_MIN_ANGLE_SERVO_1 + 2*i +1);
-        ECHO("define_min_angle[");
+        setup_motor.define_start_angle[i] = (EEPROM.read(EEPROM_START_ANGLE_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_START_ANGLE_SERVO_1 + 2*i +1);
+        ECHO("define_start_angle[");
         ECHO(i+1);
         ECHO("] : ");
-        ECHOLN(setup_motor.define_min_angle[i]);
+        ECHOLN(setup_motor.define_start_angle[i]);
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
-        setup_motor.define_max_angle[i] = (EEPROM.read(EEPROM_MAX_ANGLE_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_MAX_ANGLE_SERVO_1 + 2*i +1);
-        ECHO("define_max_angle[");
+        setup_motor.define_end_angle[i] = (EEPROM.read(EEPROM_END_ANGLE_SERVO_1 + 2*i) << 8) | EEPROM.read(EEPROM_END_ANGLE_SERVO_1 + 2*i +1);
+        ECHO("define_end_angle[");
         ECHO(i+1);
         ECHO("] : ");
-        ECHOLN(setup_motor.define_max_angle[i]);
+        ECHOLN(setup_motor.define_end_angle[i]);
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
@@ -701,7 +627,7 @@ void bluetoothInit()
 
 void scannerI2cAddress()
 {
-    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
+    // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
     ECHOLN ();
     ECHOLN ("I2C scanner. Scanning ...");
 
@@ -716,7 +642,7 @@ void scannerI2cAddress()
         Serial.print (" (0x");
         Serial.print (i, HEX);     // PCF8574 7 bit address
         ECHOLN (")");
-        ina219_info.address_ina[ina219_info.count] = i;
+        // ina219_info.address_ina[ina219_info.count] = i;
         ina219_info.count++;
         }
     }
@@ -859,26 +785,26 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             reverse_motor[i] = rootData["1"][4*MAX_NUMBER_MOTOR+i];
                             EEPROM.write(EEPROM_REVERSE_MOTOR_1 + i,reverse_motor[i]);
                         }
-                        //Min Angle;
+                        //Start Angle;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
                             if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != -1)
                             {
                                 int min = rootData["1"][5*MAX_NUMBER_MOTOR+i];
-                                setup_motor.define_min_angle[i] = min;
-                                EEPROM.write(EEPROM_MIN_ANGLE_SERVO_1 + 2*i,setup_motor.define_min_angle[i] >> 8);
-                                EEPROM.write(EEPROM_MIN_ANGLE_SERVO_1 + 2*i + 1,setup_motor.define_min_angle[i]);
+                                setup_motor.define_start_angle[i] = min;
+                                EEPROM.write(EEPROM_START_ANGLE_SERVO_1 + 2*i,setup_motor.define_start_angle[i] >> 8);
+                                EEPROM.write(EEPROM_START_ANGLE_SERVO_1 + 2*i + 1,setup_motor.define_start_angle[i]);
                             }
                         }
-                        //Max Angle;
+                        //End Angle;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
                         {
                             if(rootData["1"][5*MAX_NUMBER_MOTOR+i] != -1)
                             {
                                 int max = rootData["1"][6*MAX_NUMBER_MOTOR+i];
-                                setup_motor.define_max_angle[i] = max;
-                                EEPROM.write(EEPROM_MAX_ANGLE_SERVO_1 + 2*i,setup_motor.define_max_angle[i] >> 8);
-                                EEPROM.write(EEPROM_MAX_ANGLE_SERVO_1 + 2*i + 1,setup_motor.define_max_angle[i]);
+                                setup_motor.define_end_angle[i] = max;
+                                EEPROM.write(EEPROM_END_ANGLE_SERVO_1 + 2*i,setup_motor.define_end_angle[i] >> 8);
+                                EEPROM.write(EEPROM_END_ANGLE_SERVO_1 + 2*i + 1,setup_motor.define_end_angle[i]);
                             }
                         }
                         //Time Servo

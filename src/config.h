@@ -45,10 +45,11 @@
 #define BTN_IN_M7           33
 #define BTN_IN_M8           26
 #define BTN_IN_M9           0
-#define BTN_IN_M10          2
 #define BTN_IN_LED_1        12
 // #define BTN_IN_LED_2        25  //27
 #define BTN_IN_LED_2        27  //design
+// #define INPUT_VOLTAGE       39  //SENSOR_VN
+#define INPUT_VOLTAGE       2
 
 #define BTN_MODE_SETUP      23
 // #define BTN_MODE_RUN        27  //25
@@ -93,13 +94,13 @@
 #define EEPROM_SELECT_MOTOR_1       91
 #define EEPROM_SET_VOLTAGE_MOTOR_1  101
 #define EEPROM_SELECT_SERVO_1       111
-#define EEPROM_MIN_ANGLE_SERVO_1    121         //2 byte for each variable
-#define EEPROM_MAX_ANGLE_SERVO_1    141         //2 byte for each variable
+#define EEPROM_START_ANGLE_SERVO_1  121         //2 byte for each variable
+#define EEPROM_END_ANGLE_SERVO_1    141         //2 byte for each variable
 #define EEPROM_TIME_SERVO_1         161         //2 byte for each variable
 #define EEPROM_MAX_CURRENT_1        181         //2 byte for each variable
 
 
-#define VALUE_CONVERT           10
+// #define VALUE_CONVERT           10
 #define MIN_CURRENT_MOTOR_CHECK_START       200          //mA
 
 #define PWM_VOLATGE_MOTOR_12V       100
