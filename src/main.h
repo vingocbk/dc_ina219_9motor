@@ -14,6 +14,7 @@
 #include "ArduinoJson.h"
 #include "BluetoothSerial.h"
 #include "Ticker.h"
+#include "PCA9685.h"
 
 struct INA219INFO
 {
@@ -29,8 +30,8 @@ struct SETUPMOTOR
     float total_power;        //mAh
     uint16_t define_max_current[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
     uint8_t define_min_current[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
-    uint16_t define_max_angle[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
-    uint16_t define_min_angle[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
+    uint16_t define_end_angle[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
+    uint16_t define_start_angle[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
     bool isMotorOn[MAX_NUMBER_MOTOR];
     uint8_t open_step_1[MAX_NUMBER_MOTOR];
     uint8_t open_step_2[MAX_NUMBER_MOTOR];

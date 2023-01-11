@@ -8,6 +8,11 @@ Adafruit_INA219 ina219[MAX_NUMBER_MOTOR];
 // Adafruit_INA219 ina219_bat;
 extern int count_to_start_check_current[MAX_NUMBER_MOTOR];
 
+PCA9685 pwmController(ADDRESS_PCA9685);           // Library using Wire1 @400kHz
+// Linearly interpolates between standard 2.5%/12.5% phase length (102/512) for -90°/+90°
+PCA9685_ServoEval pwmServo;
+SemaphoreHandle_t xMutexI2C;
+
 void readValueIna219()
 {
     static uint8_t count = 0;
@@ -34,7 +39,7 @@ void readValueIna219()
         voltage = 0;
 		count = 0;
 	}
-    ECHOLN(analogRead(INPUT_VOLTAGE));
+    // ECHOLN(analogRead(INPUT_VOLTAGE));
 }
 
 
@@ -377,6 +382,10 @@ void setupPinMode()
 
 void setupI2c()
 {
+    pwmController.resetDevices();       // Resets all PCA9685 devices on i2c line
+    pwmController.init();               // Initializes module using default totem-pole driver mode, and default disabled phase balancer
+    pwmController.setPWMFreqServo();    // 50Hz provides standard 20ms servo phase length
+    delay(10);
     ina219[MOTOR_1] = Adafruit_INA219(ADDRESS_INA_M1);
     ina219[MOTOR_2] = Adafruit_INA219(ADDRESS_INA_M2);
     ina219[MOTOR_3] = Adafruit_INA219(ADDRESS_INA_M3);
@@ -398,6 +407,9 @@ void setupI2c()
     ina219[MOTOR_9].begin();
     // ina219_bat.begin();
     delay(10);
+
+    
+    xMutexI2C = xSemaphoreCreateMutex();
 }
 
 
@@ -695,52 +707,66 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         {
                             if(i == name.toInt())
                             {
-                                
-                                if(data == "open")
-                                {
-                                    set_open_motor(i);
-                                }
-                                else if(data == "stop")
-                                {
-                                    set_stop_motor(i);
-                                    stop_motor(i);
-                                    switch (i)
+                                if(select_servo[i]){
+                                    xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                                    if(data == "open")
                                     {
-                                    case MOTOR_1:
-                                        checkCurrentMotor1.stop();
-                                        break;
-                                    case MOTOR_2:
-                                        checkCurrentMotor2.stop();
-                                        break;
-                                    case MOTOR_3:
-                                        checkCurrentMotor3.stop();
-                                        break;
-                                    case MOTOR_4:
-                                        checkCurrentMotor4.stop();
-                                        break;
-                                    case MOTOR_5:
-                                        checkCurrentMotor5.stop();
-                                        break;
-                                    case MOTOR_6:
-                                        checkCurrentMotor6.stop();
-                                        break;
-                                    case MOTOR_7:
-                                        checkCurrentMotor7.stop();
-                                        break;
-                                    case MOTOR_8:
-                                        checkCurrentMotor8.stop();
-                                        break;
-                                    case MOTOR_9:
-                                        checkCurrentMotor9.stop();
-                                        break;
-                                    default:
-                                        break;
+                                        pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
+                                    }
+                                    if(data == "close")
+                                    {
+                                        pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
+                                    }
+                                    xSemaphoreGive( xMutexI2C );
+                                }
+                                else{
+                                    if(data == "open")
+                                    {
+                                        set_open_motor(i);
+                                    }
+                                    else if(data == "stop")
+                                    {
+                                        set_stop_motor(i);
+                                        stop_motor(i);
+                                        switch (i)
+                                        {
+                                        case MOTOR_1:
+                                            checkCurrentMotor1.stop();
+                                            break;
+                                        case MOTOR_2:
+                                            checkCurrentMotor2.stop();
+                                            break;
+                                        case MOTOR_3:
+                                            checkCurrentMotor3.stop();
+                                            break;
+                                        case MOTOR_4:
+                                            checkCurrentMotor4.stop();
+                                            break;
+                                        case MOTOR_5:
+                                            checkCurrentMotor5.stop();
+                                            break;
+                                        case MOTOR_6:
+                                            checkCurrentMotor6.stop();
+                                            break;
+                                        case MOTOR_7:
+                                            checkCurrentMotor7.stop();
+                                            break;
+                                        case MOTOR_8:
+                                            checkCurrentMotor8.stop();
+                                            break;
+                                        case MOTOR_9:
+                                            checkCurrentMotor9.stop();
+                                            break;
+                                        default:
+                                            break;
+                                        }
+                                    }
+                                    else if(data == "close")
+                                    {
+                                        set_close_motor(i);
                                     }
                                 }
-                                else if(data == "close")
-                                {
-                                    set_close_motor(i);
-                                }
+                                
                             }
                         }
                     }
@@ -765,7 +791,6 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                 EEPROM.write(EEPROM_MAX_CURRENT_1 + 2*i,setup_motor.define_max_current[i] >> 8);
                                 EEPROM.write(EEPROM_MAX_CURRENT_1 + 2*i + 1,setup_motor.define_max_current[i]);
                             }
-                            
                         }
                         //select motor;
                         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
@@ -1158,7 +1183,14 @@ void checkButtonControl()
         btn_in_control_motor[MOTOR_1] ++;
         if(btn_in_control_motor[MOTOR_1] == 1)
         {
-            set_open_motor(MOTOR_1);
+            if(select_servo[MOTOR_1]){
+                xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                pwmController.setChannelPWM(MOTOR_1, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_1] - 90));
+                xSemaphoreGive( xMutexI2C );
+            }
+            else{
+                set_open_motor(MOTOR_1);
+            }
         }
         else if(btn_in_control_motor[MOTOR_1] == 2)
         {
@@ -1168,7 +1200,14 @@ void checkButtonControl()
         }
         else if(btn_in_control_motor[MOTOR_1] == 3)
         {
-            set_close_motor(MOTOR_1);
+            if(select_servo[MOTOR_1]){
+                xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                pwmController.setChannelPWM(MOTOR_1, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_1] - 90));
+                xSemaphoreGive( xMutexI2C );
+            }
+            else{
+                set_close_motor(MOTOR_1);
+            }
         }
         else if(btn_in_control_motor[MOTOR_1] == 4)
         {
@@ -1593,18 +1632,18 @@ void CheckMotorInit()
 {
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
-		if(!select_motor[i]){
+		if(select_motor[i]){
 			open_motor(i);
 		}
     }
-    delay(20);
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
-		if(!select_servo[i]){
+		if(select_servo[i]){
 			open_led(i);
-            close_led(i);
+            // close_led(i);
 		}
     }
+    delay(20);
 
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
@@ -1636,8 +1675,11 @@ void CheckMotorInit()
 void ReadIna219Data(void *pvParameters){
 	for( ;; )
 	{
-        // ECHOLN(millis());
-		readValueIna219();
+        // Serial.println("lowPriorityTask gains key");
+        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+        /* even low priority task delay high priority still in Block state */
+        readValueIna219();
+        xSemaphoreGive( xMutexI2C );
 		vTaskDelay(1/portTICK_PERIOD_MS);
 	}
 	
@@ -2231,7 +2273,7 @@ void setup()
 		"ReadIna219Data",  /* Name of the task */
 		4096,             /* Stack size in words */
 		NULL,             /* Task input parameter */
-		1,                /* Priority of the task */
+		0,                /* Priority of the task */
 		NULL,             /* Task handle. */
 		0);               /* Core where the task should run */
     xTaskCreatePinnedToCore(

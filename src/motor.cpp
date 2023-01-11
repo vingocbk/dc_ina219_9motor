@@ -1,12 +1,10 @@
 #include "motor.h"
-#include "LP50XX.h"
 
 #define ENABLE_PIN 2
 #define LP5012_ADDRESS_1 0x14
 #define LP5012_ADDRESS_2 0x15
 #define MAX_VALUE_PWM   255
 #define STOP_VALUE_PWM   0
-LP50XX LP5012_Device_1, LP5012_Device_2;
 
 
 struct motor Set_Motor;

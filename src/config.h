@@ -75,6 +75,7 @@
 #define ADDRESS_INA_M9          0x48
 #define ADDRESS_INA_M10         0x49
 #define ADDRESS_INA_M11         0x50
+#define ADDRESS_PCA9685         0x61    //97
 
 #define MAX_NUMBER_MOTOR        9
 #define MAX_NUMBER_LED_MOSFET   2
