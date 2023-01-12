@@ -664,8 +664,6 @@ void scannerI2cAddress()
 }
 
 
-
-
 void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
 {
     switch (event)
@@ -683,7 +681,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
         sendDatatoAppTicker.stop();
     break;
   case ESP_SPP_DATA_IND_EVT:  
-    if (param->data_ind.len < MAX_RESPONSE_LENGTH) 
+    if (param->data_ind.len < MAX_RESPONSE_LENGTH)
         {
             String data;
             for(int i = 0; i < param->data_ind.len; i++)
