@@ -109,7 +109,7 @@ void PCA9685::resetDevices() {
     Serial.println("PCA9685::resetDevices");
 #endif
 
-    i2cWire_begin();
+    // i2cWire_begin();
 
 #ifdef PCA9685_ENABLE_DEBUG_OUTPUT
     checkForErrors();
@@ -198,7 +198,7 @@ void PCA9685::init(PCA9685_OutputDriverMode driverMode,
     Serial.println("");
 #endif
 
-    i2cWire_begin();
+    // i2cWire_begin();
 
 #ifdef PCA9685_ENABLE_DEBUG_OUTPUT
     checkForErrors();
