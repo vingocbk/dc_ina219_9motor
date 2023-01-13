@@ -65,6 +65,9 @@ struct RUNMOTOR
     bool start_run_step_close = false;
     bool is_rx_position_open;
     bool is_get_position_rx_begin = false;
+    //when servo start -> off_led_servo = true. led will off after time_run_servor (ms)
+    bool off_led_servo[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
+
 };
 
 
@@ -90,6 +93,7 @@ void check_current_motor_8();
 void check_current_motor_9();
 void checkButtonControl();
 void checkStartCalCurrent();
+void offLedServo();
 void tickerUpdate();
 void checkButtonConfigModeRun();
 void checkPwmRxControlRun();
@@ -101,12 +105,12 @@ void SetStepRunning(void *pvParameters);
 void testControlMotor();
 // void checkMotorIsOnStart();
 
-void IRAM_ATTR readRxModeRunRising();
-void IRAM_ATTR readRxModeRunFalling();
-void IRAM_ATTR readRxLed1Rising();
-void IRAM_ATTR readRxLed1Falling();
-void IRAM_ATTR readRxLed2Rising();
-void IRAM_ATTR readRxLed2Falling();
+// void IRAM_ATTR readRxModeRunRising();
+// void IRAM_ATTR readRxModeRunFalling();
+// void IRAM_ATTR readRxLed1Rising();
+// void IRAM_ATTR readRxLed1Falling();
+// void IRAM_ATTR readRxLed2Rising();
+// void IRAM_ATTR readRxLed2Falling();
 
 Ticker checkCurrentMotor1(check_current_motor_1, 100);   //every 100ms
 Ticker checkCurrentMotor2(check_current_motor_2, 100);   //every 100ms
