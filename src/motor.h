@@ -61,6 +61,7 @@ struct motor
 
     //-------------------------------
     uint32_t open_led[MAX_NUMBER_LED];
+    uint32_t open_all_led[MAX_NUMBER_LED];
     uint32_t stop_led[MAX_NUMBER_LED];
     uint32_t close_led[MAX_NUMBER_LED];
     uint32_t convert_data_led;
@@ -87,6 +88,7 @@ void on_led_mosfet(int number);
 void off_led_mosfet(int number);
 
 void open_led(int number);
+void open_all_led(int number);
 void stop_led(int number);
 void close_led(int number);
 

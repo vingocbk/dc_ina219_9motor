@@ -92,37 +92,46 @@ void initMotor()
     //-------------------------------------------------
     Set_Motor.close_led[MOTOR_1]    = 0b01111111111111111111111111111111;
     Set_Motor.open_led[MOTOR_1]     = 0b10111111111111111111111111111111;
+    Set_Motor.open_all_led[MOTOR_1] = 0b00111111111111111111111111111111;
     Set_Motor.stop_led[MOTOR_1]     = 0b11000000000000000000000000000000;
 
     Set_Motor.close_led[MOTOR_2]    = 0b11011111111111111111111111111111;
     Set_Motor.open_led[MOTOR_2]     = 0b11101111111111111111111111111111;
+    Set_Motor.open_all_led[MOTOR_2] = 0b11001111111111111111111111111111;
     Set_Motor.stop_led[MOTOR_2]     = 0b00110000000000000000000000000000;
 
     Set_Motor.close_led[MOTOR_3]    = 0b11110111111111111111111111111111;
     Set_Motor.open_led[MOTOR_3]     = 0b11111011111111111111111111111111;
+    Set_Motor.open_all_led[MOTOR_3] = 0b11110011111111111111111111111111;
     Set_Motor.stop_led[MOTOR_3]     = 0b00001100000000000000000000000000;
 
     Set_Motor.close_led[MOTOR_4]    = 0b11111101111111111111111111111111;
     Set_Motor.open_led[MOTOR_4]     = 0b11111110111111111111111111111111;
+    Set_Motor.open_all_led[MOTOR_4] = 0b11111100111111111111111111111111;
     Set_Motor.stop_led[MOTOR_4]     = 0b00000011000000000000000000000000;
 
     Set_Motor.open_led[MOTOR_8]     = 0b11111111011111111111111111111111;
+    Set_Motor.open_all_led[MOTOR_8] = 0b11111111001111111111111111111111;
     Set_Motor.close_led[MOTOR_8]    = 0b11111111101111111111111111111111;
     Set_Motor.stop_led[MOTOR_8]     = 0b00000000110000000000000000000000;
 
     Set_Motor.open_led[MOTOR_7]     = 0b11111111110111111111111111111111;
+    Set_Motor.open_all_led[MOTOR_7] = 0b11111111110011111111111111111111;
     Set_Motor.close_led[MOTOR_7]    = 0b11111111111011111111111111111111;
     Set_Motor.stop_led[MOTOR_7]     = 0b00000000001100000000000000000000;
 
     Set_Motor.open_led[MOTOR_6]     = 0b11111111111101111111111111111111;
+    Set_Motor.open_all_led[MOTOR_6] = 0b11111111111100111111111111111111;
     Set_Motor.close_led[MOTOR_6]    = 0b11111111111110111111111111111111;
     Set_Motor.stop_led[MOTOR_6]     = 0b00000000000011000000000000000000;
 
     Set_Motor.open_led[MOTOR_5]     = 0b11111111111111011111111111111111;
+    Set_Motor.open_all_led[MOTOR_5] = 0b11111111111111001111111111111111;
     Set_Motor.close_led[MOTOR_5]    = 0b11111111111111101111111111111111;
     Set_Motor.stop_led[MOTOR_5]     = 0b00000000000000110000000000000000;
 
     Set_Motor.open_led[MOTOR_9]     = 0b11111111111111110111111111111111;
+    Set_Motor.open_all_led[MOTOR_9] = 0b11111111111111110011111111111111;
     Set_Motor.close_led[MOTOR_9]    = 0b11111111111111111011111111111111;
     Set_Motor.stop_led[MOTOR_9]     = 0b00000000000000001100000000000000;
     
@@ -329,6 +338,22 @@ void open_led(int number)
     // ECHO("led: ");
     // ECHOLN(number);
     Set_Motor.convert_data_led = Set_Motor.convert_data_led & Set_Motor.open_led[number];
+    Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
+    digitalWrite(LATCH_PIN_LED, LOW);
+    for(int i = 0; i < 4; i++)
+    {
+        shiftOut(DATA_PIN_LED, CLOCK_PIN_LED, LSBFIRST, *(Set_Motor.data_send_led + i));
+    }
+    digitalWrite(LATCH_PIN_LED, HIGH);
+    
+}
+
+//----------------------------------------------------------------------------------------
+void open_all_led(int number)
+{
+    // ECHO("led: ");
+    // ECHOLN(number);
+    Set_Motor.convert_data_led = Set_Motor.convert_data_led & (~Set_Motor.stop_led[number]);
     Set_Motor.data_send_led = (char*) &Set_Motor.convert_data_led;
     digitalWrite(LATCH_PIN_LED, LOW);
     for(int i = 0; i < 4; i++)

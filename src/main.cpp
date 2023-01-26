@@ -1190,6 +1190,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_1]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_1);
+                run_motor.off_led_servo[MOTOR_1] = true;
                 pwmController.setChannelPWM(MOTOR_1, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_1] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1208,6 +1210,8 @@ void checkButtonControl()
             if(select_servo[MOTOR_1]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                 pwmController.setChannelPWM(MOTOR_1, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_1] - 90));
+                close_led(MOTOR_1);
+                run_motor.off_led_servo[MOTOR_1] = true;
                 xSemaphoreGive( xMutexI2C );
             }
             else{
@@ -1234,6 +1238,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_2]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_2);
+                run_motor.off_led_servo[MOTOR_2] = true;
                 pwmController.setChannelPWM(MOTOR_2, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_2] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1251,6 +1257,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_2]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_2);
+                run_motor.off_led_servo[MOTOR_2] = true;
                 pwmController.setChannelPWM(MOTOR_2, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_2] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1278,6 +1286,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_3]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_3);
+                run_motor.off_led_servo[MOTOR_3] = true;
                 pwmController.setChannelPWM(MOTOR_3, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_3] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1295,6 +1305,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_3]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_3);
+                run_motor.off_led_servo[MOTOR_3] = true;
                 pwmController.setChannelPWM(MOTOR_3, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_3] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1322,6 +1334,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_4]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_4);
+                run_motor.off_led_servo[MOTOR_4] = true;
                 pwmController.setChannelPWM(MOTOR_4, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_4] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1339,6 +1353,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_4]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_4);
+                run_motor.off_led_servo[MOTOR_4] = true;
                 pwmController.setChannelPWM(MOTOR_4, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_4] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1366,6 +1382,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_5]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_5);
+                run_motor.off_led_servo[MOTOR_5] = true;
                 pwmController.setChannelPWM(MOTOR_5, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_5] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1383,6 +1401,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_5]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_5);
+                run_motor.off_led_servo[MOTOR_5] = true;
                 pwmController.setChannelPWM(MOTOR_5, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_5] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1410,6 +1430,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_6]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_6);
+                run_motor.off_led_servo[MOTOR_6] = true;
                 pwmController.setChannelPWM(MOTOR_6, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_6] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1427,6 +1449,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_6]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_6);
+                run_motor.off_led_servo[MOTOR_6] = true;
                 pwmController.setChannelPWM(MOTOR_6, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_6] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1453,6 +1477,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_7]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_7);
+                run_motor.off_led_servo[MOTOR_7] = true;
                 pwmController.setChannelPWM(MOTOR_7, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_7] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1470,6 +1496,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_7]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_7);
+                run_motor.off_led_servo[MOTOR_7] = true;
                 pwmController.setChannelPWM(MOTOR_7, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_7] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1496,6 +1524,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_8]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_8);
+                run_motor.off_led_servo[MOTOR_8] = true;
                 pwmController.setChannelPWM(MOTOR_8, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_8] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1513,6 +1543,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_8]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_8);
+                run_motor.off_led_servo[MOTOR_8] = true;
                 pwmController.setChannelPWM(MOTOR_8, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_8] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1539,6 +1571,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_9]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                open_led(MOTOR_9);
+                run_motor.off_led_servo[MOTOR_9] = true;
                 pwmController.setChannelPWM(MOTOR_9, pwmServo.pwmForAngle(setup_motor.define_end_angle[MOTOR_9] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1556,6 +1590,8 @@ void checkButtonControl()
         {
             if(select_servo[MOTOR_9]){
                 xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                close_led(MOTOR_9);
+                run_motor.off_led_servo[MOTOR_9] = true;
                 pwmController.setChannelPWM(MOTOR_9, pwmServo.pwmForAngle(setup_motor.define_start_angle[MOTOR_9] - 90));
                 xSemaphoreGive( xMutexI2C );
             }
@@ -1634,6 +1670,7 @@ void offLedServo(){
 
         if(start_check_time[i] && millis() > (check_time[i] + time_run_servo[i])){
             start_check_time[i] = false;
+            set_stop_motor(i);
             stop_led(i);
         }
     }
@@ -1766,26 +1803,29 @@ void checkPwmRxControlRun()
 
 void CheckMotorInit()
 {
-    for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
-    {
-		if(select_motor[i]){
-			open_motor(i);
-		}
-    }
+    // for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
+    // {
+	// 	if(select_motor[i]){
+	// 		open_motor(i);
+	// 	}
+    // }
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
 		if(select_servo[i]){
-			open_led(i);
-            // close_led(i);
+			open_all_led(i);
 		}
     }
-    delay(20);
+    // vTaskDelay(20/portTICK_RATE_MS);
 
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++)
     {
+        if(select_motor[i]){
+            open_motor(i);
+            vTaskDelay(50/portTICK_RATE_MS);
+		}
         setup_motor.value_current[i] = abs(ina219[i].getCurrent_mA());
         ECHO("motor ");
-        ECHO(i);
+        ECHO(i+1);
         ECHO(": ");
         ECHOLN(setup_motor.value_current[i]);
         
@@ -1831,7 +1871,7 @@ void ReadPulseIn(void *pvParameters){
                     run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
                 }
                 run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
-                ECHOLN(run_motor.pwm_value_mode_run);
+                // ECHOLN(run_motor.pwm_value_mode_run);
                 if(run_motor.pwm_value_mode_run != 0){
                     if(run_motor.pwm_value_mode_run > 1500)
                     {
@@ -1879,6 +1919,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            open_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -1893,6 +1934,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            close_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -1904,7 +1946,14 @@ void SetStepRunning(void *pvParameters){
                         break;
                     }
                 }
-                vTaskDelay(time_delay/portTICK_RATE_MS);
+                for(int i = 0; i <= time_delay; i++){
+                    for(int j = 0; j < MAX_NUMBER_MOTOR; j++){
+                        if(select_servo[j] && time_run_servo[j] == i){
+                            stop_led(j);
+                        }
+                    }
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
                 while (!is_done_step())
                 {
                     vTaskDelay(1/portTICK_RATE_MS);
@@ -1927,6 +1976,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            open_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -1940,6 +1990,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            close_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -1951,7 +2002,14 @@ void SetStepRunning(void *pvParameters){
                         break;
                     }
                 }
-                vTaskDelay(time_delay/portTICK_RATE_MS);
+                for(int i = 0; i <= time_delay; i++){
+                    for(int j = 0; j < MAX_NUMBER_MOTOR; j++){
+                        if(select_servo[j] && time_run_servo[j] == i){
+                            stop_led(j);
+                        }
+                    }
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
                 while (!is_done_step())
                 {
                     vTaskDelay(1/portTICK_RATE_MS);
@@ -1973,6 +2031,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            open_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -1986,6 +2045,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            close_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -1997,7 +2057,14 @@ void SetStepRunning(void *pvParameters){
                         break;
                     }
                 }
-                vTaskDelay(time_delay/portTICK_RATE_MS);
+                for(int i = 0; i <= time_delay; i++){
+                    for(int j = 0; j < MAX_NUMBER_MOTOR; j++){
+                        if(select_servo[j] && time_run_servo[j] == i){
+                            stop_led(j);
+                        }
+                    }
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
                 while (!is_done_step())
                 {
                     vTaskDelay(1/portTICK_RATE_MS);
@@ -2126,6 +2193,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            open_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -2140,6 +2208,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            close_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -2152,7 +2221,14 @@ void SetStepRunning(void *pvParameters){
                         break;
                     }
                 }
-                vTaskDelay(time_delay/portTICK_RATE_MS);
+                for(int i = 0; i <= time_delay; i++){
+                    for(int j = 0; j < MAX_NUMBER_MOTOR; j++){
+                        if(select_servo[j] && time_run_servo[j] == i){
+                            stop_led(j);
+                        }
+                    }
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
                 while (!is_done_step())
                 {
                     vTaskDelay(1/portTICK_RATE_MS);
@@ -2174,6 +2250,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            open_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -2187,6 +2264,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            close_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -2198,7 +2276,14 @@ void SetStepRunning(void *pvParameters){
                         break;
                     }
                 }
-                vTaskDelay(time_delay/portTICK_RATE_MS);
+                for(int i = 0; i <= time_delay; i++){
+                    for(int j = 0; j < MAX_NUMBER_MOTOR; j++){
+                        if(select_servo[j] && time_run_servo[j] == i){
+                            stop_led(j);
+                        }
+                    }
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
                 while (!is_done_step())
                 {
                     vTaskDelay(1/portTICK_RATE_MS);
@@ -2220,6 +2305,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            open_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_end_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -2233,6 +2319,7 @@ void SetStepRunning(void *pvParameters){
                         }
                         if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                            close_led(i);
                             pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_start_angle[i] - 90));
                             xSemaphoreGive( xMutexI2C );
                             if(time_run_servo[i] > time_delay){
@@ -2244,7 +2331,14 @@ void SetStepRunning(void *pvParameters){
                         break;
                     }
                 }
-                vTaskDelay(time_delay/portTICK_RATE_MS);
+                for(int i = 0; i <= time_delay; i++){
+                    for(int j = 0; j < MAX_NUMBER_MOTOR; j++){
+                        if(select_servo[j] && time_run_servo[j] == i){
+                            stop_led(j);
+                        }
+                    }
+                    vTaskDelay(1/portTICK_RATE_MS);
+                }
                 while (!is_done_step())
                 {
                     vTaskDelay(1/portTICK_RATE_MS);

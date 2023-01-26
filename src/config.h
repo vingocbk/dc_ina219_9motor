@@ -102,7 +102,7 @@
 
 
 // #define VALUE_CONVERT           10
-#define MIN_CURRENT_MOTOR_CHECK_START       200          //mA
+#define MIN_CURRENT_MOTOR_CHECK_START       50          //mA
 
 #define PWM_VOLATGE_MOTOR_12V       100
 #define PWM_VOLATGE_MOTOR_11V       70
