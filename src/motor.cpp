@@ -21,24 +21,30 @@ uint8_t set_voltage_motor[MAX_NUMBER_MOTOR] = {PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_M
                                                 ,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V};
 bool is_done_step()
 {
-    if(
-        motor_is_stop[MOTOR_1]
-        && motor_is_stop[MOTOR_2]
-        && motor_is_stop[MOTOR_3]
-        && motor_is_stop[MOTOR_4]
-        && motor_is_stop[MOTOR_5]
-        && motor_is_stop[MOTOR_6]
-        && motor_is_stop[MOTOR_7]
-        && motor_is_stop[MOTOR_8]
-        && motor_is_stop[MOTOR_9]
-    )
-    {
-        return true;
+    for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+        if(select_motor[i] && !motor_is_stop[i]){
+            return false;
+        }
     }
-    else
-    {
-        return false;
-    }
+    return true;
+    // if(
+    //     motor_is_stop[MOTOR_1]
+    //     && motor_is_stop[MOTOR_2]
+    //     && motor_is_stop[MOTOR_3]
+    //     && motor_is_stop[MOTOR_4]
+    //     && motor_is_stop[MOTOR_5]
+    //     && motor_is_stop[MOTOR_6]
+    //     && motor_is_stop[MOTOR_7]
+    //     && motor_is_stop[MOTOR_8]
+    //     && motor_is_stop[MOTOR_9]
+    // )
+    // {
+    //     return true;
+    // }
+    // else
+    // {
+    //     return false;
+    // }
 }
 
 void initMotor()
