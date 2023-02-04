@@ -405,11 +405,11 @@ void setupI2c()
     ina219[MOTOR_8].begin();
     ina219[MOTOR_9].begin();
     // ina219_bat.begin();
-    delay(10);
+    vTaskDelay(10/portTICK_RATE_MS);
     pwmController.resetDevices();       // Resets all PCA9685 devices on i2c line
     pwmController.init();               // Initializes module using default totem-pole driver mode, and default disabled phase balancer
     pwmController.setPWMFreqServo();    // 50Hz provides standard 20ms servo phase length
-    delay(10);
+    vTaskDelay(10/portTICK_RATE_MS);
     xMutexI2C = xSemaphoreCreateMutex();
 }
 
@@ -673,8 +673,8 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
     ECHOLN("Client Connected");
         // sendDataMinMaxCurrenttoApp();
         // delay(1);
-        // sendDataSteptoApp();
         APP_FLAG_SET(SEND_CURRENT_MIN_MAX);
+        // sendDataSteptoApp();
         // sendDatatoAppTicker.start();
     break;
     case ESP_SPP_CLOSE_EVT:
@@ -1783,16 +1783,16 @@ void checkPwmRxControlRun()
             run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
         }
         run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
-        // ECHOLN(run_motor.pwm_value_mode_run);
+        ECHOLN(run_motor.pwm_value_mode_run);
         // < 1500: CLOSE
         // > 1500: OPEN
         
-        if(run_motor.pwm_value_mode_run > 1650 && !run_motor.is_rx_position_open)
+        if(run_motor.pwm_value_mode_run > 1800 && !run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = true;
             run_motor.start_run_step_open = true; 
         }
-        else if(run_motor.pwm_value_mode_run < 1450 && run_motor.is_rx_position_open)
+        else if(run_motor.pwm_value_mode_run > 350 && run_motor.pwm_value_mode_run < 1350 && run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = false;
             run_motor.start_run_step_close = true;
@@ -1872,7 +1872,7 @@ void ReadPulseIn(void *pvParameters){
                     run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
                 }
                 run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
-                // ECHOLN(run_motor.pwm_value_mode_run);
+                ECHOLN(run_motor.pwm_value_mode_run);
                 if(run_motor.pwm_value_mode_run != 0){
                     if(run_motor.pwm_value_mode_run > 1500)
                     {
@@ -1958,14 +1958,14 @@ void SetStepRunning(void *pvParameters){
                                 stop_led(i);
                             }
                         }
-                        vTaskDelay(10/portTICK_RATE_MS);
+                        vTaskDelay(50/portTICK_RATE_MS);
                     } while(!((millis() - time_done_servo) > (time_delay + 500)));
                 }
 
                 ECHOLN(millis() - time_done_servo);
                 while (!is_done_step())
                 {
-                    vTaskDelay(1/portTICK_RATE_MS);
+                    vTaskDelay(100/portTICK_RATE_MS);
                 }
                 
 
@@ -2022,12 +2022,12 @@ void SetStepRunning(void *pvParameters){
                                 stop_led(i);
                             }
                         }
-                        vTaskDelay(10/portTICK_RATE_MS);
+                        vTaskDelay(50/portTICK_RATE_MS);
                     } while(!((millis() - time_done_servo) > (time_delay + 500)));
                 }
                 while (!is_done_step())
                 {
-                    vTaskDelay(1/portTICK_RATE_MS);
+                    vTaskDelay(100/portTICK_RATE_MS);
                 }
 
                 time_delay = 0;
@@ -2083,12 +2083,13 @@ void SetStepRunning(void *pvParameters){
                                 stop_led(i);
                             }
                         }
-                        vTaskDelay(10/portTICK_RATE_MS);
-                    } while(!((millis() - time_done_servo) > (time_delay + 500)));
+                        vTaskDelay(50/portTICK_RATE_MS);
+                    } while(!((millis() - time_done_servo) > (
+                        time_delay + 500)));
                 }
                 while (!is_done_step())
                 {
-                    vTaskDelay(1/portTICK_RATE_MS);
+                    vTaskDelay(100/portTICK_RATE_MS);
                 }
                 ECHOLN("DONE RUN OPEN MODE");
                 APP_FLAG_CLEAR(MODE_RUNNING);
@@ -2255,12 +2256,12 @@ void SetStepRunning(void *pvParameters){
                                 stop_led(i);
                             }
                         }
-                        vTaskDelay(10/portTICK_RATE_MS);
+                        vTaskDelay(50/portTICK_RATE_MS);
                     } while(!((millis() - time_done_servo) > (time_delay + 500)));
                 }
                 while (!is_done_step())
                 {
-                    vTaskDelay(1/portTICK_RATE_MS);
+                    vTaskDelay(100/portTICK_RATE_MS);
                 }
 
                 time_delay = 0;
@@ -2316,13 +2317,13 @@ void SetStepRunning(void *pvParameters){
                                 stop_led(i);
                             }
                         }
-                        vTaskDelay(10/portTICK_RATE_MS);
+                        vTaskDelay(50/portTICK_RATE_MS);
                     } while(!((millis() - time_done_servo) > (time_delay + 500)));
                 }
                 
                 while (!is_done_step())
                 {
-                    vTaskDelay(1/portTICK_RATE_MS);
+                    vTaskDelay(100/portTICK_RATE_MS);
                 }
 
                 time_delay = 0;
@@ -2378,12 +2379,12 @@ void SetStepRunning(void *pvParameters){
                                 stop_led(i);
                             }
                         }
-                        vTaskDelay(10/portTICK_RATE_MS);
+                        vTaskDelay(50/portTICK_RATE_MS);
                     } while(!((millis() - time_done_servo) > (time_delay + 500)));
                 }
                 while (!is_done_step())
                 {
-                    vTaskDelay(1/portTICK_RATE_MS);
+                    vTaskDelay(100/portTICK_RATE_MS);
                 }
                 ECHOLN("DONE RUN CLOSE MODE");
                 APP_FLAG_CLEAR(MODE_RUNNING);
