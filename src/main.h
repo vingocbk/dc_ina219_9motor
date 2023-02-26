@@ -54,7 +54,7 @@ struct RUNMOTOR
     bool beginChangeStep;
     int mode_run_open_step;
     int mode_run_close_step;
-    volatile int pwm_value_mode_run = 0;
+    volatile unsigned long pwm_value_mode_run = 0;
     volatile int prev_time_mode_run = 0;
     volatile int pwm_value_led1 = 0;
     volatile int prev_time_led1 = 0;
@@ -100,7 +100,8 @@ void checkPwmRxControlRun();
 void checkPwmRxControlLed();
 void CheckMotorInit();
 void ReadIna219Data(void *pvParameters);
-void ReadPulseIn(void *pvParameters);
+void ReadPulseInModeRun(void *pvParameters);
+void ReadPulseInLed(void *pvParameters);
 void SetStepRunning(void *pvParameters);
 void testControlMotor();
 // void checkMotorIsOnStart();

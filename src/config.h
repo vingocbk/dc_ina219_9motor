@@ -102,7 +102,7 @@
 
 
 // #define VALUE_CONVERT           10
-#define MIN_CURRENT_MOTOR_CHECK_START       50          //mA
+#define MIN_CURRENT_MOTOR_CHECK_START       10          //mA
 
 #define PWM_VOLATGE_MOTOR_12V       100
 #define PWM_VOLATGE_MOTOR_11V       70
@@ -118,7 +118,8 @@
 #define OFF_LED     false
 
 #define CONFIG_HOLD_TIME        3000
-#define TIME_OUT_PULSEIN        75000
+#define TIME_OUT_PULSEIN        50000
+#define COUNT_READ_PULSEIN      100
 // #define TIME_OUT_PULSEIN        5
 
 enum

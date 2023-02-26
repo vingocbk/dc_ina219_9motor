@@ -513,7 +513,7 @@ void loadDataBegin()
     }
     for (int i = 0; i < MAX_NUMBER_MOTOR; i++)
     {
-        set_voltage_motor[i] = EEPROM.read(EEPROM_SET_VOLTAGE_MOTOR_1 + i);
+        // set_voltage_motor[i] = EEPROM.read(EEPROM_SET_VOLTAGE_MOTOR_1 + i);
         ECHO("set_voltage_motor[");
         ECHO(i+1);
         ECHO("] : ");
@@ -630,7 +630,7 @@ void bluetoothInit()
 {
     SerialBT.flush();
     SerialBT.end(); 
-    if(!SerialBT.begin("Landing Gear")){
+    if(!SerialBT.begin("LD 004")){
         ECHOLN("An error occurred initializing Bluetooth");
     }else{
         ECHOLN("Bluetooth initialized");
@@ -905,16 +905,16 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                         EEPROM.commit();
                         sendDataSteptoApp();
                     }
-					else if(type == "voltage")
-                    {
-                        for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                        {
-                            set_voltage_motor[i] = rootData["1"][i];
-                            // ECHOLN(set_voltage_motor[i]);
-                            EEPROM.write(EEPROM_SET_VOLTAGE_MOTOR_1 + i, set_voltage_motor[i]);
-                        }
-                        EEPROM.commit();
-					}
+					// else if(type == "voltage")
+                    // {
+                    //     for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
+                    //     {
+                    //         set_voltage_motor[i] = rootData["1"][i];
+                    //         // ECHOLN(set_voltage_motor[i]);
+                    //         EEPROM.write(EEPROM_SET_VOLTAGE_MOTOR_1 + i, set_voltage_motor[i]);
+                    //     }
+                    //     EEPROM.commit();
+					// }
                 }
                 if(type == "request_data")
                 {
@@ -1744,6 +1744,7 @@ void checkPwmRxControlLed()
         for(int i = 0; i < 5; i++){
             run_motor.pwm_value_led1 += pulseIn(BTN_IN_LED_1, HIGH, TIME_OUT_PULSEIN);
             run_motor.pwm_value_led2 += pulseIn(BTN_IN_LED_2, HIGH, TIME_OUT_PULSEIN);
+            vTaskDelay(1/portTICK_RATE_MS);
         }
         run_motor.pwm_value_led1 = run_motor.pwm_value_led1/5;
         run_motor.pwm_value_led2 = run_motor.pwm_value_led2/5;
@@ -1779,20 +1780,25 @@ void checkPwmRxControlRun()
     {
         time_check = millis();
         run_motor.pwm_value_mode_run = 0;
-        for(int i = 0; i < 5; i++){
-            run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+        // ECHOLN("-----");
+        for(int i = 0; i < COUNT_READ_PULSEIN; i++){
+            unsigned long pulse = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+            run_motor.pwm_value_mode_run += pulse;
+            // ECHOLN(pulse);
+            vTaskDelay(1/portTICK_RATE_MS);
         }
-        run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
+        run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/COUNT_READ_PULSEIN;
+        // ECHO("is_get_position_rx_begin true: ");
         ECHOLN(run_motor.pwm_value_mode_run);
         // < 1500: CLOSE
         // > 1500: OPEN
         
-        if(run_motor.pwm_value_mode_run > 1800 && !run_motor.is_rx_position_open)
+        if(run_motor.pwm_value_mode_run > 1900 && !run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = true;
             run_motor.start_run_step_open = true; 
         }
-        else if(run_motor.pwm_value_mode_run > 350 && run_motor.pwm_value_mode_run < 1350 && run_motor.is_rx_position_open)
+        else if(run_motor.pwm_value_mode_run > 350 && run_motor.pwm_value_mode_run < 1450 && run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = false;
             run_motor.start_run_step_close = true;
@@ -1821,10 +1827,19 @@ void CheckMotorInit()
     {
         if(select_motor[i]){
             open_motor(i);
-            vTaskDelay(50/portTICK_RATE_MS);
+            vTaskDelay(10/portTICK_RATE_MS);
 		}
+        do{
+            setup_motor.value_current[i] = abs(ina219[i].getCurrent_mA());
+            vTaskDelay(1/portTICK_RATE_MS);
+        }
+        while(setup_motor.value_current[i] < 0.01);
         // while(!ina219[i].success());
-        setup_motor.value_current[i] = abs(ina219[i].getCurrent_mA());
+        // while(!ina219[i].success()){
+        //     setup_motor.value_current[i] = abs(ina219[i].getCurrent_mA());
+        // }
+        
+        
         ECHO("motor ");
         ECHO(i+1);
         ECHO(": ");
@@ -1842,6 +1857,7 @@ void CheckMotorInit()
 				close_led(i);
 			}
 		}
+        // vTaskDelay(50/portTICK_RATE_MS);
     }
     // blinkMotorOnStart.start();
     
@@ -1861,37 +1877,47 @@ void ReadIna219Data(void *pvParameters){
 	
 }
 
-void ReadPulseIn(void *pvParameters){
+void ReadPulseInModeRun(void *pvParameters){
 	for( ;; )
 	{
-		checkPwmRxControlLed();
-        if(!APP_FLAG(MODE_CONFIG)){
-            if(!run_motor.is_get_position_rx_begin){
-                run_motor.pwm_value_mode_run = 0;
-                for(int i = 0; i < 5; i++){
-                    run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
-                }
-                run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/5;
-                ECHOLN(run_motor.pwm_value_mode_run);
-                if(run_motor.pwm_value_mode_run != 0){
-                    if(run_motor.pwm_value_mode_run > 1500)
-                    {
-                        run_motor.is_rx_position_open = true; 
-                    }
-                    else
-                    {
-                        run_motor.is_rx_position_open = false; 
-                    }
-                    run_motor.is_get_position_rx_begin = true;
-                }
-            }
-            else{
-                checkPwmRxControlRun();
-            }
-        }
-		vTaskDelay(100/portTICK_RATE_MS);
+        // if(!APP_FLAG(MODE_CONFIG)){
+        //     if(!run_motor.is_get_position_rx_begin){
+        //         run_motor.pwm_value_mode_run = 0;
+        //         for(int i = 0; i < COUNT_READ_PULSEIN; i++){
+        //             run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+        //         }
+        //         run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/COUNT_READ_PULSEIN;
+        //         ECHO("is_get_position_rx_begin false: ");
+        //         ECHOLN(run_motor.pwm_value_mode_run);
+        //         if(run_motor.pwm_value_mode_run != 0){
+        //             if(run_motor.pwm_value_mode_run > 1900)
+        //             {
+        //                 run_motor.is_rx_position_open = true; 
+        //             }
+        //             else
+        //             {
+        //                 run_motor.is_rx_position_open = false; 
+        //             }
+        //             run_motor.is_get_position_rx_begin = true;
+        //         }
+        //     }
+        //     else{
+        //         checkPwmRxControlRun();
+        //     }
+        // }
+		// vTaskDelay(100/portTICK_RATE_MS);
+        unsigned long pulse = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+        ECHOLN(pulse);
+        vTaskDelay(1/portTICK_RATE_MS);
 	}
-	
+}
+
+void ReadPulseInLed(void *pvParameters){
+	for( ;; )
+	{
+        checkPwmRxControlLed();
+        vTaskDelay(100/portTICK_RATE_MS);
+    }
 }
 
 void SetStepRunning(void *pvParameters){
@@ -2584,8 +2610,16 @@ void setup()
 		NULL,             /* Task handle. */
 		0);               /* Core where the task should run */
     xTaskCreatePinnedToCore(
-		ReadPulseIn,    /* Function to implement the task */
-		"ReadPulseIn",  /* Name of the task */
+		ReadPulseInModeRun,    /* Function to implement the task */
+		"ReadPulseInModeRun",  /* Name of the task */
+		4096,             /* Stack size in words */
+		NULL,             /* Task input parameter */
+		1,                /* Priority of the task */
+		NULL,             /* Task handle. */
+		0);               /* Core where the task should run */
+    xTaskCreatePinnedToCore(
+		ReadPulseInLed,    /* Function to implement the task */
+		"ReadPulseInLed",  /* Name of the task */
 		4096,             /* Stack size in words */
 		NULL,             /* Task input parameter */
 		0,                /* Priority of the task */
@@ -2640,5 +2674,5 @@ void loop()
     if(APP_FLAG(MODE_CONFIG)){
         checkButtonControl();
     }
-    
+    vTaskDelay(10/portTICK_RATE_MS);
 }
