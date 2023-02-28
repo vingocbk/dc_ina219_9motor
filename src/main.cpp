@@ -29,11 +29,12 @@ void readValueIna219()
 	current[MOTOR_8] += abs(ina219[MOTOR_8].getCurrent_mA());
 	current[MOTOR_9] += abs(ina219[MOTOR_9].getCurrent_mA());
     voltage += 11.0*analogRead(INPUT_VOLTAGE)*3.3/4096.0;
-	if(count >= 10){
+	if(count >= 5){
 		for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
 			setup_motor.value_current[i] = current[i]/count;
             current[i] = 0;
-            setup_motor.total_power += setup_motor.value_current[i]*0.1/3600.0;
+            //25ms delay, 25ms read current -> total 50ms = 0.05
+            setup_motor.total_power += setup_motor.value_current[i]*0.05/3600.0; //mAh
 		}
         float calib12V = 1.1538;
         setup_motor.value_voltage_battery = calib12V*voltage/(count);
@@ -727,11 +728,11 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                 else{
                                     if(data == "open")
                                     {
-                                        set_open_motor(i);
+                                        open_motor(i);
                                     }
                                     else if(data == "stop")
                                     {
-                                        set_stop_motor(i);
+                                        // set_stop_motor(i);
                                         stop_motor(i);
                                         switch (i)
                                         {
@@ -768,7 +769,7 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                                     }
                                     else if(data == "close")
                                     {
-                                        set_close_motor(i);
+                                        close_motor(i);
                                     }
                                 }
                                 
@@ -955,14 +956,8 @@ void check_current_motor_1()
         {   
             count_to_start_check_current[MOTOR_1] = 0;
             ECHOLN("Qua Tai Motor 1");
-            set_stop_motor(MOTOR_1);
+            // set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor1.stop();
         }
     }
@@ -981,14 +976,8 @@ void check_current_motor_2()
         {   
             count_to_start_check_current[MOTOR_2] = 0;
             ECHOLN("Qua Tai Motor 2");
-            set_stop_motor(MOTOR_2);
+            // set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor2.stop();
         }
     }
@@ -1007,14 +996,8 @@ void check_current_motor_3()
         {   
             count_to_start_check_current[MOTOR_3] = 0;
             ECHOLN("Qua Tai Motor 3");
-            set_stop_motor(MOTOR_3);
+            // set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor3.stop();
         }
     }
@@ -1033,14 +1016,8 @@ void check_current_motor_4()
         {   
             count_to_start_check_current[MOTOR_4] = 0;
             ECHOLN("Qua Tai Motor 4");
-            set_stop_motor(MOTOR_4);
+            // set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor4.stop();
         }
     }
@@ -1059,14 +1036,8 @@ void check_current_motor_5()
         {   
             count_to_start_check_current[MOTOR_5] = 0;
             ECHOLN("Qua Tai Motor 5");
-            set_stop_motor(MOTOR_5);
+            // set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor5.stop();
         }
     }
@@ -1085,14 +1056,8 @@ void check_current_motor_6()
         {   
             count_to_start_check_current[MOTOR_6] = 0;
             ECHOLN("Qua Tai Motor 6");
-            set_stop_motor(MOTOR_6);
+            // set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor6.stop();
         }
     }
@@ -1111,14 +1076,8 @@ void check_current_motor_7()
         {   
             count_to_start_check_current[MOTOR_7] = 0;
             ECHOLN("Qua Tai Motor 7");
-            set_stop_motor(MOTOR_7);
+            // set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor7.stop();
         }
     }
@@ -1137,14 +1096,8 @@ void check_current_motor_8()
         {   
             count_to_start_check_current[MOTOR_8] = 0;
             ECHOLN("Qua Tai Motor 8");
-            set_stop_motor(MOTOR_8);
+            // set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor8.stop();
         }
     }
@@ -1163,14 +1116,8 @@ void check_current_motor_9()
         {   
             count_to_start_check_current[MOTOR_9] = 0;
             ECHOLN("Qua Tai Motor 9");
-            set_stop_motor(MOTOR_9);
+            // set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
-            // if(is_done_step())
-            // {
-            //     run_motor.mode_run_open_step++;
-            //     run_motor.mode_run_close_step++;
-            //     run_motor.beginChangeStep = true;
-            // }
             checkCurrentMotor9.stop();
         }
     }
@@ -1196,12 +1143,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_1);
+                open_motor(MOTOR_1);
             }
         }
         else if(btn_in_control_motor[MOTOR_1] == 2)
         {
-            set_stop_motor(MOTOR_1);
+            // set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
             checkCurrentMotor1.stop();
         }
@@ -1215,13 +1162,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_1);
+                close_motor(MOTOR_1);
             }
         }
         else if(btn_in_control_motor[MOTOR_1] == 4)
         {
             btn_in_control_motor[MOTOR_1] = 0;
-            set_stop_motor(MOTOR_1);
+            // set_stop_motor(MOTOR_1);
             stop_motor(MOTOR_1);
             checkCurrentMotor1.stop();
         }
@@ -1244,12 +1191,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_2);
+                open_motor(MOTOR_2);
             }
         }
         else if(btn_in_control_motor[MOTOR_2] == 2)
         {
-            set_stop_motor(MOTOR_2);
+            // set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
             checkCurrentMotor2.stop();
         }
@@ -1263,13 +1210,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_2);
+                close_motor(MOTOR_2);
             }
         }
         else if(btn_in_control_motor[MOTOR_2] == 4)
         {
             btn_in_control_motor[MOTOR_2] = 0;
-            set_stop_motor(MOTOR_2);
+            // set_stop_motor(MOTOR_2);
             stop_motor(MOTOR_2);
             checkCurrentMotor2.stop();
         }
@@ -1292,12 +1239,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_3);
+                open_motor(MOTOR_3);
             }
         }
         else if(btn_in_control_motor[MOTOR_3] == 2)
         {
-            set_stop_motor(MOTOR_3);
+            // set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
             checkCurrentMotor3.stop();
         }
@@ -1311,13 +1258,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_3);
+                close_motor(MOTOR_3);
             }
         }
         else if(btn_in_control_motor[MOTOR_3] == 4)
         {
             btn_in_control_motor[MOTOR_3] = 0;
-            set_stop_motor(MOTOR_3);
+            // set_stop_motor(MOTOR_3);
             stop_motor(MOTOR_3);
             checkCurrentMotor3.stop();
         }
@@ -1340,12 +1287,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_4);
+                open_motor(MOTOR_4);
             }
         }
         else if(btn_in_control_motor[MOTOR_4] == 2)
         {
-            set_stop_motor(MOTOR_4);
+            // set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
             checkCurrentMotor4.stop();
         }
@@ -1359,13 +1306,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_4);
+                close_motor(MOTOR_4);
             }
         }
         else if(btn_in_control_motor[MOTOR_4] == 4)
         {
             btn_in_control_motor[MOTOR_4] = 0;
-            set_stop_motor(MOTOR_4);
+            // set_stop_motor(MOTOR_4);
             stop_motor(MOTOR_4);
             checkCurrentMotor4.stop();
         }
@@ -1388,12 +1335,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_5);
+                open_motor(MOTOR_5);
             }
         }
         else if(btn_in_control_motor[MOTOR_5] == 2)
         {
-            set_stop_motor(MOTOR_5);
+            // set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
             checkCurrentMotor5.stop();
         }
@@ -1407,13 +1354,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_5);
+                close_motor(MOTOR_5);
             }
         }
         else if(btn_in_control_motor[MOTOR_5] == 4)
         {
             btn_in_control_motor[MOTOR_5] = 0;
-            set_stop_motor(MOTOR_5);
+            // set_stop_motor(MOTOR_5);
             stop_motor(MOTOR_5);
             checkCurrentMotor5.stop();
         }
@@ -1436,12 +1383,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_6);
+                open_motor(MOTOR_6);
             }
         }
         else if(btn_in_control_motor[MOTOR_6] == 2)
         {
-            set_stop_motor(MOTOR_6);
+            // set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
             checkCurrentMotor6.stop();
         }
@@ -1455,13 +1402,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_6);
+                close_motor(MOTOR_6);
             }
         }
         else if(btn_in_control_motor[MOTOR_6] == 4)
         {
             btn_in_control_motor[MOTOR_6] = 0;
-            set_stop_motor(MOTOR_6);
+            // set_stop_motor(MOTOR_6);
             stop_motor(MOTOR_6);
             checkCurrentMotor6.stop();
         }
@@ -1483,12 +1430,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_7);
+                open_motor(MOTOR_7);
             }
         }
         else if(btn_in_control_motor[MOTOR_7] == 2)
         {
-            set_stop_motor(MOTOR_7);
+            // set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
             checkCurrentMotor7.stop();
         }
@@ -1502,13 +1449,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_7);
+                close_motor(MOTOR_7);
             }
         }
         else if(btn_in_control_motor[MOTOR_7] == 4)
         {
             btn_in_control_motor[MOTOR_7] = 0;
-            set_stop_motor(MOTOR_7);
+            // set_stop_motor(MOTOR_7);
             stop_motor(MOTOR_7);
             checkCurrentMotor7.stop();
         }
@@ -1530,12 +1477,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_8);
+                open_motor(MOTOR_8);
             }
         }
         else if(btn_in_control_motor[MOTOR_8] == 2)
         {
-            set_stop_motor(MOTOR_8);
+            // set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
             checkCurrentMotor8.stop();
         }
@@ -1549,13 +1496,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_8);
+                close_motor(MOTOR_8);
             }
         }
         else if(btn_in_control_motor[MOTOR_8] == 4)
         {
             btn_in_control_motor[MOTOR_8] = 0;
-            set_stop_motor(MOTOR_8);
+            // set_stop_motor(MOTOR_8);
             stop_motor(MOTOR_8);
             checkCurrentMotor8.stop();
         }
@@ -1577,12 +1524,12 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_open_motor(MOTOR_9);
+                open_motor(MOTOR_9);
             }
         }
         else if(btn_in_control_motor[MOTOR_9] == 2)
         {
-            set_stop_motor(MOTOR_9);
+            // set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
             checkCurrentMotor9.stop();
         }
@@ -1596,13 +1543,13 @@ void checkButtonControl()
                 xSemaphoreGive( xMutexI2C );
             }
             else{
-                set_close_motor(MOTOR_9);
+                close_motor(MOTOR_9);
             }
         }
         else if(btn_in_control_motor[MOTOR_9] == 4)
         {
             btn_in_control_motor[MOTOR_9] = 0;
-            set_stop_motor(MOTOR_9);
+            // set_stop_motor(MOTOR_9);
             stop_motor(MOTOR_9);
             checkCurrentMotor9.stop();
         }
@@ -1659,18 +1606,18 @@ void checkStartCalCurrent()
 }
 
 void offLedServo(){
-    static bool start_check_time[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
+    static bool start_check_time_servo[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
     static uint32_t check_time[MAX_NUMBER_MOTOR];
     for(int i = MOTOR_1; i < MAX_NUMBER_MOTOR; i++){
         if(run_motor.off_led_servo[i]){
             run_motor.off_led_servo[i] = false;
-            start_check_time[i] = true;
+            start_check_time_servo[i] = true;
             check_time[i] = millis();
         }
 
-        if(start_check_time[i] && millis() > (check_time[i] + time_run_servo[i])){
-            start_check_time[i] = false;
-            set_stop_motor(i);
+        if(start_check_time_servo[i] && millis() > (check_time[i] + time_run_servo[i])){
+            start_check_time_servo[i] = false;
+            // set_stop_motor(i);
             stop_led(i);
         }
     }
@@ -1690,7 +1637,7 @@ void tickerUpdate()
     checkCurrentMotor7.update();
     checkCurrentMotor8.update();
     checkCurrentMotor9.update();
-    TickerControlMotor.update();
+    // TickerControlMotor.update();
 }
 
 void checkButtonConfigModeRun()
@@ -1741,13 +1688,13 @@ void checkPwmRxControlLed()
         time_check = millis();
         run_motor.pwm_value_led1 = 0;
         run_motor.pwm_value_led2 = 0;
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < COUNT_READ_PULSEIN; i++){
             run_motor.pwm_value_led1 += pulseIn(BTN_IN_LED_1, HIGH, TIME_OUT_PULSEIN);
             run_motor.pwm_value_led2 += pulseIn(BTN_IN_LED_2, HIGH, TIME_OUT_PULSEIN);
             vTaskDelay(1/portTICK_RATE_MS);
         }
-        run_motor.pwm_value_led1 = run_motor.pwm_value_led1/5;
-        run_motor.pwm_value_led2 = run_motor.pwm_value_led2/5;
+        run_motor.pwm_value_led1 = run_motor.pwm_value_led1/COUNT_READ_PULSEIN;
+        run_motor.pwm_value_led2 = run_motor.pwm_value_led2/COUNT_READ_PULSEIN;
         // ECHO(run_motor.pwm_value_led1);
         // ECHO(" - ");
         // ECHOLN(run_motor.pwm_value_led2);
@@ -1793,7 +1740,7 @@ void checkPwmRxControlRun()
         // < 1500: CLOSE
         // > 1500: OPEN
         
-        if(run_motor.pwm_value_mode_run > 1900 && !run_motor.is_rx_position_open)
+        if(run_motor.pwm_value_mode_run > 1800 && !run_motor.is_rx_position_open)
         {
             run_motor.is_rx_position_open = true;
             run_motor.start_run_step_open = true; 
@@ -1846,7 +1793,7 @@ void CheckMotorInit()
         ECHOLN(setup_motor.value_current[i]);
         
 		if(select_motor[i]){
-            set_stop_motor(i);
+            // set_stop_motor(i);
             stop_motor(i);
 			if(setup_motor.value_current[i] > MIN_CURRENT_MOTOR_CHECK_START)
 			{
@@ -1868,60 +1815,62 @@ void ReadIna219Data(void *pvParameters){
 	for( ;; )
 	{
         // Serial.println("lowPriorityTask gains key");
+        unsigned long time_tt = millis(); 
         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
         /* even low priority task delay high priority still in Block state */
         readValueIna219();
         xSemaphoreGive( xMutexI2C );
-		vTaskDelay(1/portTICK_PERIOD_MS);
+        // ECHOLN(millis() - time_tt);
+		vTaskDelay(5/portTICK_PERIOD_MS);
 	}
-	
 }
 
 void ReadPulseInModeRun(void *pvParameters){
 	for( ;; )
 	{
-        // if(!APP_FLAG(MODE_CONFIG)){
-        //     if(!run_motor.is_get_position_rx_begin){
-        //         run_motor.pwm_value_mode_run = 0;
-        //         for(int i = 0; i < COUNT_READ_PULSEIN; i++){
-        //             run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
-        //         }
-        //         run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/COUNT_READ_PULSEIN;
-        //         ECHO("is_get_position_rx_begin false: ");
-        //         ECHOLN(run_motor.pwm_value_mode_run);
-        //         if(run_motor.pwm_value_mode_run != 0){
-        //             if(run_motor.pwm_value_mode_run > 1900)
-        //             {
-        //                 run_motor.is_rx_position_open = true; 
-        //             }
-        //             else
-        //             {
-        //                 run_motor.is_rx_position_open = false; 
-        //             }
-        //             run_motor.is_get_position_rx_begin = true;
-        //         }
-        //     }
-        //     else{
-        //         checkPwmRxControlRun();
-        //     }
-        // }
-		// vTaskDelay(100/portTICK_RATE_MS);
-        unsigned long pulse = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
-        ECHOLN(pulse);
-        vTaskDelay(1/portTICK_RATE_MS);
+        checkPwmRxControlLed();
+        if(!APP_FLAG(MODE_CONFIG)){
+            if(!run_motor.is_get_position_rx_begin){
+                run_motor.pwm_value_mode_run = 0;
+                for(int i = 0; i < COUNT_READ_PULSEIN; i++){
+                    run_motor.pwm_value_mode_run += pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+                }
+                run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/COUNT_READ_PULSEIN;
+                ECHO("is_get_position_rx_begin false: ");
+                ECHOLN(run_motor.pwm_value_mode_run);
+                if(run_motor.pwm_value_mode_run != 0){
+                    if(run_motor.pwm_value_mode_run > 1800)
+                    {
+                        run_motor.is_rx_position_open = true; 
+                    }
+                    else
+                    {
+                        run_motor.is_rx_position_open = false; 
+                    }
+                    run_motor.is_get_position_rx_begin = true;
+                }
+            }
+            else{
+                checkPwmRxControlRun();
+            }
+        }
+		vTaskDelay(100/portTICK_RATE_MS);
+        
+        // unsigned long pulse = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
+        // ECHOLN(pulse);
+        // vTaskDelay(100/portTICK_RATE_MS);
 	}
 }
 
-void ReadPulseInLed(void *pvParameters){
-	for( ;; )
-	{
-        checkPwmRxControlLed();
-        vTaskDelay(100/portTICK_RATE_MS);
-    }
-}
+// void ReadPulseInLed(void *pvParameters){
+// 	for( ;; )
+// 	{
+//         checkPwmRxControlLed();
+//         vTaskDelay(100/portTICK_RATE_MS);
+//     }
+// }
 
 void SetStepRunning(void *pvParameters){
-    
     for(;;){
         if(!APP_FLAG(MODE_CONFIG))
         {
@@ -1937,12 +1886,12 @@ void SetStepRunning(void *pvParameters){
                     switch (setup_motor.open_step_1[i])
                     {
                     case MOTOR_STOP:
-                        set_stop_motor(i);
+                        // set_stop_motor(i);
                         stop_motor(i);
                         break;
                     case MOTOR_OPEN:
                         if(select_motor[i]){
-                            set_open_motor(i);
+                            open_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -1958,7 +1907,7 @@ void SetStepRunning(void *pvParameters){
                         break;
                     case MOTOR_CLOSE:
                         if(select_motor[i]){
-                            set_close_motor(i);
+                            close_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2002,12 +1951,12 @@ void SetStepRunning(void *pvParameters){
                     switch (setup_motor.open_step_2[i])
                     {
                     case MOTOR_STOP:
-                        set_stop_motor(i);
+                        // set_stop_motor(i);
                         stop_motor(i);
                         break;
                     case MOTOR_OPEN:
                         if(select_motor[i]){
-                            set_open_motor(i);
+                            open_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2022,7 +1971,7 @@ void SetStepRunning(void *pvParameters){
                         break;
                     case MOTOR_CLOSE:
                         if(select_motor[i]){
-                            set_close_motor(i);
+                            close_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2063,12 +2012,12 @@ void SetStepRunning(void *pvParameters){
                     switch (setup_motor.open_step_3[i])
                     {
                     case MOTOR_STOP:
-                        set_stop_motor(i);
+                        // set_stop_motor(i);
                         stop_motor(i);
                         break;
                     case MOTOR_OPEN:
                         if(select_motor[i]){
-                            set_open_motor(i);
+                            open_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2083,7 +2032,7 @@ void SetStepRunning(void *pvParameters){
                         break;
                     case MOTOR_CLOSE:
                         if(select_motor[i]){
-                            set_close_motor(i);
+                            close_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2124,102 +2073,6 @@ void SetStepRunning(void *pvParameters){
                 set_led_B(true);
                 run_motor.start_run_step_open = false;
                 
-
-
-
-                // run_motor.mode_run_close_step = CLOSE_STEP_1;
-                // switch (run_motor.mode_run_open_step)
-                // {
-                // case OPEN_STEP_1:
-                //     if(run_motor.beginChangeStep)
-                //     {
-                //         ECHOLN("START MODE RUN OPEN STEP 1");
-                //         APP_FLAG_SET(MODE_RUNNING);
-                //         set_led_B(false);
-                //         set_led_G(true);
-                //         run_motor.beginChangeStep = false;
-                //         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                //         {
-                //             switch (setup_motor.open_step_1[i])
-                //             {
-                //             case MOTOR_STOP:
-                //                 set_stop_motor(i);
-                //                 stop_motor(i);
-                //                 break;
-                //             case MOTOR_OPEN:
-                //                 set_open_motor(i);
-                //                 break;
-                //             case MOTOR_CLOSE:
-                //                 set_close_motor(i);
-                //                 break;
-                //             default:
-                //                 break;
-                //             }
-                //         }
-                //     }
-                //     break;
-                // case OPEN_STEP_2:
-                //     if(run_motor.beginChangeStep)
-                //     {
-                //         ECHOLN("START MODE RUN OPEN STEP 2");
-                //         run_motor.beginChangeStep = false;
-                //         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                //         {
-                //             switch (setup_motor.open_step_2[i])
-                //             {
-                //             case MOTOR_STOP:
-                //                 set_stop_motor(i);
-                //                 stop_motor(i);
-                //                 break;
-                //             case MOTOR_OPEN:
-                //                 set_open_motor(i);
-                //                 break;
-                //             case MOTOR_CLOSE:
-                //                 set_close_motor(i);
-                //                 break;
-                //             default:
-                //                 break;
-                //             }
-                //         }
-                //     }
-                //     break;
-                // case OPEN_STEP_3:
-                //     if(run_motor.beginChangeStep)
-                //     {
-                //         ECHOLN("START MODE RUN OPEN STEP 3");
-                //         run_motor.beginChangeStep = false;
-                //         for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-                //         {
-                //             switch (setup_motor.open_step_3[i])
-                //             {
-                //             case MOTOR_STOP:
-                //                 set_stop_motor(i);
-                //                 stop_motor(i);
-                //                 break;
-                //             case MOTOR_OPEN:
-                //                 set_open_motor(i);
-                //                 break;
-                //             case MOTOR_CLOSE:
-                //                 set_close_motor(i);
-                //                 break;
-                //             default:
-                //                 break;
-                //             }
-                //         }
-                //     }
-                //     break;
-                // case DONE_MODE_OPEN:
-                //     ECHOLN("DONE RUN OPEN MODE");
-                //     APP_FLAG_CLEAR(MODE_RUNNING);
-                //     APP_FLAG_SET(MODE_WAIT_RUNNING);
-                //     set_led_G(false);
-                //     set_led_B(true);
-                //     run_motor.mode_run_open_step++;
-                //     run_motor.start_run_step_open = false;
-                //     break;
-                // default:
-                //     break;
-                // }
             }
             //-----------------------------------------------
             else if(run_motor.start_run_step_close)
@@ -2234,12 +2087,12 @@ void SetStepRunning(void *pvParameters){
                     switch (setup_motor.close_step_1[i])
                     {
                     case MOTOR_STOP:
-                        set_stop_motor(i);
+                        // set_stop_motor(i);
                         stop_motor(i);
                         break;
                     case MOTOR_OPEN:
                         if(select_motor[i]){
-                            set_open_motor(i);
+                            open_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2255,7 +2108,7 @@ void SetStepRunning(void *pvParameters){
                         break;
                     case MOTOR_CLOSE:
                         if(select_motor[i]){
-                            set_close_motor(i);
+                            close_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2297,12 +2150,12 @@ void SetStepRunning(void *pvParameters){
                     switch (setup_motor.close_step_2[i])
                     {
                     case MOTOR_STOP:
-                        set_stop_motor(i);
+                        // set_stop_motor(i);
                         stop_motor(i);
                         break;
                     case MOTOR_OPEN:
                         if(select_motor[i]){
-                            set_open_motor(i);
+                            open_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2317,7 +2170,7 @@ void SetStepRunning(void *pvParameters){
                         break;
                     case MOTOR_CLOSE:
                         if(select_motor[i]){
-                            set_close_motor(i);
+                            close_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2359,12 +2212,12 @@ void SetStepRunning(void *pvParameters){
                     switch (setup_motor.close_step_3[i])
                     {
                     case MOTOR_STOP:
-                        set_stop_motor(i);
+                        // set_stop_motor(i);
                         stop_motor(i);
                         break;
                     case MOTOR_OPEN:
                         if(select_motor[i]){
-                            set_open_motor(i);
+                            open_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2379,7 +2232,7 @@ void SetStepRunning(void *pvParameters){
                         break;
                     case MOTOR_CLOSE:
                         if(select_motor[i]){
-                            set_close_motor(i);
+                            close_motor(i);
                         }
                         else if(select_servo[i]){
                             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
@@ -2418,173 +2271,73 @@ void SetStepRunning(void *pvParameters){
                 set_led_G(false);
                 set_led_B(true);
                 run_motor.start_run_step_close = false;
-
-
-
-
-
-
-            //     run_motor.mode_run_open_step = OPEN_STEP_1;
-            //     switch (run_motor.mode_run_close_step)
-            //     {
-            //     case CLOSE_STEP_1:
-            //         if(run_motor.beginChangeStep)
-            //         {
-            //             APP_FLAG_SET(MODE_RUNNING);
-            //             ECHOLN("START MODE RUN CLOSE STEP 1");
-            //             set_led_B(false);
-            //             set_led_G(true);
-            //             run_motor.beginChangeStep = false;
-            //             for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-            //             {
-            //                 switch (setup_motor.close_step_1[i])
-            //                 {
-            //                 case MOTOR_STOP:
-            //                     set_stop_motor(i);
-            //                     stop_motor(i);
-            //                     break;
-            //                 case MOTOR_OPEN:
-            //                     set_open_motor(i);
-            //                     break;
-            //                 case MOTOR_CLOSE:
-            //                     set_close_motor(i);
-            //                     break;
-            //                 default:
-            //                     break;
-            //                 }
-            //             }
-            //         }
-            //         break;
-            //     case CLOSE_STEP_2:
-            //         if(run_motor.beginChangeStep)
-            //         {
-            //             ECHOLN("START MODE RUN CLOSE STEP 2");
-            //             run_motor.beginChangeStep = false;
-            //             for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-            //             {
-            //                 switch (setup_motor.close_step_2[i])
-            //                 {
-            //                 case MOTOR_STOP:
-            //                     set_stop_motor(i);
-            //                     stop_motor(i);
-            //                     break;
-            //                 case MOTOR_OPEN:
-            //                     set_open_motor(i);
-            //                     break;
-            //                 case MOTOR_CLOSE:
-            //                     set_close_motor(i);
-            //                     break;
-            //                 default:
-            //                     break;
-            //                 }
-            //             }
-            //         }
-            //         break;
-            //     case CLOSE_STEP_3:
-            //         if(run_motor.beginChangeStep)
-            //         {
-            //             ECHOLN("START MODE RUN CLOSE STEP 3");
-            //             run_motor.beginChangeStep = false;
-            //             for(int i = 0; i < MAX_NUMBER_MOTOR; i++)
-            //             {
-            //                 switch (setup_motor.close_step_3[i])
-            //                 {
-            //                 case MOTOR_STOP:
-            //                     set_stop_motor(i);
-            //                     stop_motor(i);
-            //                     break;
-            //                 case MOTOR_OPEN:
-            //                     set_open_motor(i);
-            //                     break;
-            //                 case MOTOR_CLOSE:
-            //                     set_close_motor(i);
-            //                     break;
-            //                 default:
-            //                     break;
-            //                 }
-            //             }
-            //         }
-            //         break;
-            //     case DONE_MODE_CLOSE:
-            //         ECHOLN("DONE RUN CLOSE MODE");
-            //         APP_FLAG_CLEAR(MODE_RUNNING);
-            //         APP_FLAG_SET(MODE_WAIT_RUNNING);
-            //         set_led_G(false);
-            //         set_led_B(true);
-            //         run_motor.mode_run_close_step++;
-            //         run_motor.start_run_step_close = false;
-            //         break;
-            //     default:
-            //         break;
-            //     }
             }
         }
         vTaskDelay(100/portTICK_RATE_MS);
     }
 }
 
-void testControlMotor() {
-	static long counterUS = 0;  
-	counterUS ++;
-	if (counterUS == 100) {
-		counterUS = 0;
-	}
-    for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
-        if(statusCurrentMotor[i] == MOTOR_OPEN || statusCurrentMotor[i] == MOTOR_CLOSE){
-            if(statusCurrentMotor[i] == MOTOR_OPEN){
-                if(counterUS == 0){
-                    open_motor(i);
-                }
-            }
-            else if(statusCurrentMotor[i] == MOTOR_CLOSE){
-                if(counterUS == 0){
-                    close_motor(i);
-                }
-            }
-            switch (set_voltage_motor[i])
-            {
-            case PWM_MOTOR_11V:
-                if(counterUS == PWM_VOLATGE_MOTOR_11V){
-                    stop_motor(i);
-                }
-                break;
-            case PWM_MOTOR_10V:
-                if(counterUS == PWM_VOLATGE_MOTOR_10V){
-                    stop_motor(i);
-                }
-                break;
-            case PWM_MOTOR_9V:
-                if(counterUS == PWM_VOLATGE_MOTOR_9V){
-                    stop_motor(i);
-                }
-                break;
-            case PWM_MOTOR_8V:
-                if(counterUS == PWM_VOLATGE_MOTOR_8V){
-                    stop_motor(i);
-                }
-                break;
-            case PWM_MOTOR_7V:
-                if(counterUS == PWM_VOLATGE_MOTOR_7V){
-                    stop_motor(i);
-                }
-                break;
-            case PWM_MOTOR_6V:
-                if(counterUS == PWM_VOLATGE_MOTOR_6V){
-                    stop_motor(i);
-                }
-                break;
-            default:
-                break;
-            }
-        }
-        else if (statusCurrentMotor[i] == MOTOR_STOP)
-        {
-            /* code */
-        }
+// void testControlMotor() {
+// 	static long counterUS = 0;  
+// 	counterUS ++;
+// 	if (counterUS == 100) {
+// 		counterUS = 0;
+// 	}
+//     for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
+//         if(statusCurrentMotor[i] == MOTOR_OPEN || statusCurrentMotor[i] == MOTOR_CLOSE){
+//             if(statusCurrentMotor[i] == MOTOR_OPEN){
+//                 if(counterUS == 0){
+//                     open_motor(i);
+//                 }
+//             }
+//             else if(statusCurrentMotor[i] == MOTOR_CLOSE){
+//                 if(counterUS == 0){
+//                     close_motor(i);
+//                 }
+//             }
+//             switch (set_voltage_motor[i])
+//             {
+//             case PWM_MOTOR_11V:
+//                 if(counterUS == PWM_VOLATGE_MOTOR_11V){
+//                     stop_motor(i);
+//                 }
+//                 break;
+//             case PWM_MOTOR_10V:
+//                 if(counterUS == PWM_VOLATGE_MOTOR_10V){
+//                     stop_motor(i);
+//                 }
+//                 break;
+//             case PWM_MOTOR_9V:
+//                 if(counterUS == PWM_VOLATGE_MOTOR_9V){
+//                     stop_motor(i);
+//                 }
+//                 break;
+//             case PWM_MOTOR_8V:
+//                 if(counterUS == PWM_VOLATGE_MOTOR_8V){
+//                     stop_motor(i);
+//                 }
+//                 break;
+//             case PWM_MOTOR_7V:
+//                 if(counterUS == PWM_VOLATGE_MOTOR_7V){
+//                     stop_motor(i);
+//                 }
+//                 break;
+//             case PWM_MOTOR_6V:
+//                 if(counterUS == PWM_VOLATGE_MOTOR_6V){
+//                     stop_motor(i);
+//                 }
+//                 break;
+//             default:
+//                 break;
+//             }
+//         }
+//         else if (statusCurrentMotor[i] == MOTOR_STOP)
+//         {
+//             /* code */
+//         }
         
-    }
-    
-}
+//     }
+// }
 
 void setup()
 {
@@ -2616,15 +2369,15 @@ void setup()
 		NULL,             /* Task input parameter */
 		1,                /* Priority of the task */
 		NULL,             /* Task handle. */
-		0);               /* Core where the task should run */
-    xTaskCreatePinnedToCore(
-		ReadPulseInLed,    /* Function to implement the task */
-		"ReadPulseInLed",  /* Name of the task */
-		4096,             /* Stack size in words */
-		NULL,             /* Task input parameter */
-		0,                /* Priority of the task */
-		NULL,             /* Task handle. */
-		0);               /* Core where the task should run */
+		1);               /* Core where the task should run */
+    // xTaskCreatePinnedToCore(
+	// 	ReadPulseInLed,    /* Function to implement the task */
+	// 	"ReadPulseInLed",  /* Name of the task */
+	// 	4096,             /* Stack size in words */
+	// 	NULL,             /* Task input parameter */
+	// 	0,                /* Priority of the task */
+	// 	NULL,             /* Task handle. */
+	// 	0);               /* Core where the task should run */
     xTaskCreatePinnedToCore(
 		SetStepRunning,    /* Function to implement the task */
 		"SetStepRunning",  /* Name of the task */
@@ -2634,7 +2387,7 @@ void setup()
 		NULL,             /* Task handle. */
 		0);               /* Core where the task should run */
     
-    TickerControlMotor.start();
+    // TickerControlMotor.start();
 }
 
 
@@ -2659,17 +2412,16 @@ void loop()
     {
         sendDataMinMaxCurrenttoApp();
     }
-	if(APP_FLAG(SEND_DATA_VOLTAGE) && millis() >= (run_motor.time_delay_send_step_after_send_current + 900))
-    {
-		APP_FLAG_CLEAR(SEND_DATA_VOLTAGE);
-        sendDataVoltagetoApp();
-    }
+	// if(APP_FLAG(SEND_DATA_VOLTAGE) && millis() >= (run_motor.time_delay_send_step_after_send_current + 900))
+    // {
+	// 	APP_FLAG_CLEAR(SEND_DATA_VOLTAGE);
+    //     sendDataVoltagetoApp();
+    // }
     if(APP_FLAG(SEND_DATA_STEP) && millis() >= (run_motor.time_delay_send_step_after_send_current + 1300))
     {
 		APP_FLAG_CLEAR(SEND_DATA_STEP);
         sendDataSteptoApp();
     }
-
 
     if(APP_FLAG(MODE_CONFIG)){
         checkButtonControl();

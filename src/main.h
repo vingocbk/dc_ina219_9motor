@@ -101,9 +101,9 @@ void checkPwmRxControlLed();
 void CheckMotorInit();
 void ReadIna219Data(void *pvParameters);
 void ReadPulseInModeRun(void *pvParameters);
-void ReadPulseInLed(void *pvParameters);
+// void ReadPulseInLed(void *pvParameters);
 void SetStepRunning(void *pvParameters);
-void testControlMotor();
+// void testControlMotor();
 // void checkMotorIsOnStart();
 
 // void IRAM_ATTR readRxModeRunRising();
@@ -123,7 +123,7 @@ Ticker checkCurrentMotor7(check_current_motor_7, 100);   //every 100ms
 Ticker checkCurrentMotor8(check_current_motor_8, 100);   //every 100ms
 Ticker checkCurrentMotor9(check_current_motor_9, 100);   //every 100ms
 Ticker sendDatatoAppTicker(sendDatatoApp, 1000);   //every 1000ms
-Ticker TickerControlMotor(testControlMotor, 10, 0, MICROS_MICROS);  //every 10us
+// Ticker TickerControlMotor(testControlMotor, 10, 0, MICROS_MICROS);  //every 10us
 
 
 #endif
