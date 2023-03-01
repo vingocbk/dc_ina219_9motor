@@ -631,7 +631,7 @@ void bluetoothInit()
 {
     SerialBT.flush();
     SerialBT.end(); 
-    if(!SerialBT.begin("LD 004")){
+    if(!SerialBT.begin("LD 005")){
         ECHOLN("An error occurred initializing Bluetooth");
     }else{
         ECHOLN("Bluetooth initialized");
@@ -1826,10 +1826,14 @@ void ReadIna219Data(void *pvParameters){
 }
 
 void ReadPulseInModeRun(void *pvParameters){
+    bool check_start_connect_mode_run = false;
+    unsigned long check_time_begin;
 	for( ;; )
 	{
         checkPwmRxControlLed();
         if(!APP_FLAG(MODE_CONFIG)){
+            
+
             if(!run_motor.is_get_position_rx_begin){
                 run_motor.pwm_value_mode_run = 0;
                 for(int i = 0; i < COUNT_READ_PULSEIN; i++){
@@ -1838,7 +1842,11 @@ void ReadPulseInModeRun(void *pvParameters){
                 run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/COUNT_READ_PULSEIN;
                 ECHO("is_get_position_rx_begin false: ");
                 ECHOLN(run_motor.pwm_value_mode_run);
-                if(run_motor.pwm_value_mode_run != 0){
+                if(run_motor.pwm_value_mode_run != 0 && !check_start_connect_mode_run){
+                    check_start_connect_mode_run = true;
+                    check_time_begin = millis();
+                }
+                if(check_start_connect_mode_run &&  millis() - check_time_begin >= 1000){
                     if(run_motor.pwm_value_mode_run > 1800)
                     {
                         run_motor.is_rx_position_open = true; 
@@ -1855,10 +1863,6 @@ void ReadPulseInModeRun(void *pvParameters){
             }
         }
 		vTaskDelay(100/portTICK_RATE_MS);
-        
-        // unsigned long pulse = pulseIn(BTN_MODE_RUN, HIGH, TIME_OUT_PULSEIN);
-        // ECHOLN(pulse);
-        // vTaskDelay(100/portTICK_RATE_MS);
 	}
 }
 
