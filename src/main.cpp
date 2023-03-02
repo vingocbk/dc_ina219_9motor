@@ -1832,8 +1832,6 @@ void ReadPulseInModeRun(void *pvParameters){
 	{
         checkPwmRxControlLed();
         if(!APP_FLAG(MODE_CONFIG)){
-            
-
             if(!run_motor.is_get_position_rx_begin){
                 run_motor.pwm_value_mode_run = 0;
                 for(int i = 0; i < COUNT_READ_PULSEIN; i++){
@@ -1842,7 +1840,7 @@ void ReadPulseInModeRun(void *pvParameters){
                 run_motor.pwm_value_mode_run = run_motor.pwm_value_mode_run/COUNT_READ_PULSEIN;
                 ECHO("is_get_position_rx_begin false: ");
                 ECHOLN(run_motor.pwm_value_mode_run);
-                if(run_motor.pwm_value_mode_run != 0 && !check_start_connect_mode_run){
+                if(run_motor.pwm_value_mode_run >= 300 && !check_start_connect_mode_run){
                     check_start_connect_mode_run = true;
                     check_time_begin = millis();
                 }
@@ -1946,7 +1944,6 @@ void SetStepRunning(void *pvParameters){
                 {
                     vTaskDelay(100/portTICK_RATE_MS);
                 }
-                
 
                 time_delay = 0;
                 ECHOLN("START MODE RUN OPEN STEP 2");
