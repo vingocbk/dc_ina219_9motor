@@ -30,9 +30,9 @@ struct SETUPMOTOR
     float total_power;        //mAh
     uint16_t define_max_current[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
     uint8_t define_min_current[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
-    uint16_t define_end_angle[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
-    uint16_t define_start_angle[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
-    bool isMotorOn[MAX_NUMBER_MOTOR];
+    uint16_t define_close_angle[MAX_NUMBER_MOTOR];   //gia tri max. neu vuot gia tri nay thi se ngat
+    uint16_t define_open_angle[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
+    uint8_t define_speed_servo[MAX_NUMBER_MOTOR];   //gia tri min. neu vuot gia tri nay thi se ngat
     uint8_t open_step_1[MAX_NUMBER_MOTOR];
     uint8_t open_step_2[MAX_NUMBER_MOTOR];
     uint8_t open_step_3[MAX_NUMBER_MOTOR];
@@ -42,10 +42,11 @@ struct SETUPMOTOR
     // uint8_t define_time_return[MAX_NUMBER_MOTOR];
 };
 
-// struct VALUEINA
-// {
-//     /* data */
-// };
+enum StatusCurrentServo{
+    SERVO_STOP,
+    SERVO_OPENING,
+    SERVO_CLOSING,
+};
 
 
 struct RUNMOTOR
@@ -67,8 +68,17 @@ struct RUNMOTOR
     bool is_get_position_rx_begin = false;
     //when servo start -> off_led_servo = true. led will off after time_run_servor (ms)
     bool off_led_servo[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
-
 };
+
+struct RUNSERVO
+{
+    StatusCurrentServo statusCurrentServo[MAX_NUMBER_MOTOR] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP
+                            , SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
+    int value_current_servo[MAX_NUMBER_MOTOR] = {0};    //gia tri goc hien tai cua servo
+    //102 ->> -90 degree ->> 470
+    //512 --> 90 degree ->> 2340
+};
+
 
 
 void readValueIna219();
@@ -98,11 +108,20 @@ void tickerUpdate();
 void checkButtonConfigModeRun();
 void checkPwmRxControlRun();
 void checkPwmRxControlLed();
-void CheckMotorInit();
-void ReadIna219Data(void *pvParameters);
-void ReadPulseInModeRun(void *pvParameters);
+void checkMotorInit();
+void readIna219Data(void *pvParameters);
+void readPulseInModeRun(void *pvParameters);
 // void ReadPulseInLed(void *pvParameters);
-void SetStepRunning(void *pvParameters);
+void setStepRunning(void *pvParameters);
+void controlServo1(void *pvParameters);
+void controlServo2(void *pvParameters);
+void controlServo3(void *pvParameters);
+void controlServo4(void *pvParameters);
+void controlServo5(void *pvParameters);
+void controlServo6(void *pvParameters);
+void controlServo7(void *pvParameters);
+void controlServo8(void *pvParameters);
+void controlServo9(void *pvParameters);
 // void testControlMotor();
 // void checkMotorIsOnStart();
 

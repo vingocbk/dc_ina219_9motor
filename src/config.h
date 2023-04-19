@@ -75,30 +75,31 @@
 #define ADDRESS_INA_M9          0x48
 #define ADDRESS_INA_M10         0x49
 #define ADDRESS_INA_M11         0x50
-#define ADDRESS_PCA9685         0x61    //97
 
+#define ADDRESS_PCA9685         0x61    //97
 #define MAX_NUMBER_MOTOR        9
 #define MAX_NUMBER_LED_MOSFET   2
 // #define MAX_ALL_MOTOR           12
 #define MAX_NUMBER_LED          18
 #define MAX_RESPONSE_LENGTH     2048
 
-#define MAX_SIZE_EEPROM_BUFFER      512
-#define EEPROM_MIN_CURRENT_1        11
-#define EEPROM_REVERSE_MOTOR_1      21
-#define EEPROM_OPEN_STEP_1_MTOR_1   31
-#define EEPROM_OPEN_STEP_2_MTOR_1   41
-#define EEPROM_OPEN_STEP_3_MTOR_1   51
-#define EEPROM_CLOSE_STEP_1_MTOR_1  61
-#define EEPROM_CLOSE_STEP_2_MTOR_1  71
-#define EEPROM_CLOSE_STEP_3_MTOR_1  81
-#define EEPROM_SELECT_MOTOR_1       91
-#define EEPROM_SET_VOLTAGE_MOTOR_1  101
-#define EEPROM_SELECT_SERVO_1       111
-#define EEPROM_START_ANGLE_SERVO_1  121         //2 byte for each variable
-#define EEPROM_END_ANGLE_SERVO_1    141         //2 byte for each variable
-#define EEPROM_TIME_SERVO_1         161         //2 byte for each variable
-#define EEPROM_MAX_CURRENT_1        181         //2 byte for each variable
+#define MAX_SIZE_EEPROM_BUFFER          512
+#define EEPROM_MIN_CURRENT_1            11
+#define EEPROM_REVERSE_MOTOR_1          21
+#define EEPROM_OPEN_STEP_1_MTOR_1       31
+#define EEPROM_OPEN_STEP_2_MTOR_1       41
+#define EEPROM_OPEN_STEP_3_MTOR_1       51
+#define EEPROM_CLOSE_STEP_1_MTOR_1      61
+#define EEPROM_CLOSE_STEP_2_MTOR_1      71
+#define EEPROM_CLOSE_STEP_3_MTOR_1      81
+#define EEPROM_SELECT_MOTOR_1           91
+#define EEPROM_SET_VOLTAGE_MOTOR_1      101
+#define EEPROM_SELECT_SERVO_1           111
+#define EEPROM_OPEN_ANGLE_SERVO_1       121         //2 byte for each variable
+#define EEPROM_CLOSE_ANGLE_SERVO_1      141         //2 byte for each variable
+#define EEPROM_TIME_SERVO_1             161         //2 byte for each variable
+#define EEPROM_MAX_CURRENT_1            181         //2 byte for each variable
+#define EEPROM_SPEED_SERVO_1            201         
 
 
 // #define VALUE_CONVERT           10
@@ -122,6 +123,11 @@
 #define COUNT_READ_PULSEIN      5
 // #define TIME_OUT_PULSEIN        5
 
+#define PULSE_MS_SERVO_LOW      470
+#define PULSE_MS_SERVO_HIGH     2340
+#define PWM_SERVO_LOW           102
+#define PWM_SERVO_HIGH          512
+
 enum
 {
     MOTOR_1 = 0,
@@ -134,6 +140,20 @@ enum
     MOTOR_8,
     MOTOR_9,
     MOTOR_10
+};
+
+enum
+{
+    SERVO_1 = 0,
+    SERVO_2,
+    SERVO_3,
+    SERVO_4,
+    SERVO_5,
+    SERVO_6,
+    SERVO_7,
+    SERVO_8,
+    SERVO_9,
+    SERVO_10
 };
 
 enum
