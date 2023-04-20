@@ -731,43 +731,46 @@ void callbackBluetooth(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                             if(i == name.toInt())
                             {
                                 if(select_servo[i]){
-                                    xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                                    // xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                                     if(data == "open")
                                     {
                                         run_servo.statusCurrentServo[i] = SERVO_OPENING;
-                                        stop_led(i);
-                                        open_led(i);
-                                        run_motor.off_led_servo[i] = true;
-                                        if(reverse_motor[i]){
-                                            // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_close_angle[i] - 90));
-                                            pwmController.setChannelPWM(i, 
-                                            (uint16_t)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
-                                        }
-                                        else{
-                                            // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_open_angle[i] - 90));
-                                            pwmController.setChannelPWM(i, 
-                                            (uint16_t)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
-                                        }
-                                        
+                                        // stop_led(i);
+                                        // open_led(i);
+                                        // run_motor.off_led_servo[i] = true;
+                                        // if(reverse_motor[i]){
+                                        //     // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_close_angle[i] - 90));
+                                        //     pwmController.setChannelPWM(i, 
+                                        //     (uint16_t)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        //     ECHOLN((uint16_t)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        // }
+                                        // else{
+                                        //     // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_open_angle[i] - 90));
+                                        //     pwmController.setChannelPWM(i, 
+                                        //     (uint16_t)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        //     ECHOLN((uint16_t)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        // }
                                     }
                                     if(data == "close")
                                     {
                                         run_servo.statusCurrentServo[i] = SERVO_CLOSING;
-                                        stop_led(i);
-                                        close_led(i);
-                                        run_motor.off_led_servo[i] = true;
-                                        if(reverse_motor[i]){
-                                            // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_open_angle[i] - 90));
-                                            pwmController.setChannelPWM(i, 
-                                            (uint16_t)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
-                                        }
-                                        else{
-                                            // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_close_angle[i] - 90));
-                                            pwmController.setChannelPWM(i, 
-                                            (uint16_t)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
-                                        }
+                                        // stop_led(i);
+                                        // close_led(i);
+                                        // run_motor.off_led_servo[i] = true;
+                                        // if(reverse_motor[i]){
+                                        //     // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_open_angle[i] - 90));
+                                        //     pwmController.setChannelPWM(i, 
+                                        //     (uint16_t)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        //     ECHOLN((uint16_t)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        // }
+                                        // else{
+                                        //     // pwmController.setChannelPWM(i, pwmServo.pwmForAngle(setup_motor.define_close_angle[i] - 90));
+                                        //     pwmController.setChannelPWM(i, 
+                                        //     (uint16_t)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        //     ECHOLN((uint16_t)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH));
+                                        // }
                                     }
-                                    xSemaphoreGive( xMutexI2C );
+                                    // xSemaphoreGive( xMutexI2C );
                                 }
                                 else{
                                     if(data == "open")
@@ -1816,6 +1819,10 @@ void checkMotorInit()
     {
 		if(select_servo[i]){
 			open_all_led(i);
+            run_servo.value_current_pwm_servo[i] = (int)map(1500, PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+            xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+            pwmController.setChannelPWM(i, run_servo.value_current_pwm_servo[i]);
+            xSemaphoreGive( xMutexI2C );
 		}
     }
     // vTaskDelay(20/portTICK_RATE_MS);
@@ -2327,22 +2334,144 @@ void setStepRunning(void *pvParameters){
     }
 }
 
-
 void controlServo1(void *pvParameters){
     for(;;){
         if(run_servo.statusCurrentServo[SERVO_1] == SERVO_OPENING){
             stop_led(SERVO_1);
             open_led(SERVO_1);
-            run_servo.value_current_servo;
-            run_servo.statusCurrentServo[SERVO_1] == SERVO_STOP;
+            uint32_t start_time = millis();
+            if(!reverse_motor[SERVO_1]){
+                run_servo.value_open_pwm_servo[SERVO_1] = map(setup_motor.define_open_angle[SERVO_1], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+                if(run_servo.value_open_pwm_servo[SERVO_1] < PWM_SERVO_LOW){
+                    run_servo.value_open_pwm_servo[SERVO_1] = PWM_SERVO_LOW;
+                }
+                if(run_servo.value_open_pwm_servo[SERVO_1] > PWM_SERVO_HIGH){
+                    run_servo.value_open_pwm_servo[SERVO_1] = PWM_SERVO_HIGH;
+                }
+                uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
+                ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_open_pwm_servo[SERVO_1]){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_open_pwm_servo[SERVO_1]; i++){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        vTaskDelay(time_delay/portTICK_RATE_MS);
+                    }
+                }else{
+                    for(int i = run_servo.value_open_pwm_servo[SERVO_1]; i <= run_servo.value_current_pwm_servo[SERVO_1]; i++){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        vTaskDelay(time_delay/portTICK_RATE_MS);
+                    }
+                }
+                run_servo.value_current_pwm_servo[SERVO_1] = run_servo.value_open_pwm_servo[SERVO_1];
+            }
+            else{
+                run_servo.value_close_pwm_servo[SERVO_1] = map(setup_motor.define_close_angle[SERVO_1], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+                if(run_servo.value_close_pwm_servo[SERVO_1] < PWM_SERVO_LOW){
+                    run_servo.value_close_pwm_servo[SERVO_1] = PWM_SERVO_LOW;
+                }
+                if(run_servo.value_close_pwm_servo[SERVO_1] > PWM_SERVO_HIGH){
+                    run_servo.value_close_pwm_servo[SERVO_1] = PWM_SERVO_HIGH;
+                }
+                uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
+                ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_close_pwm_servo[SERVO_1]){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_close_pwm_servo[SERVO_1]; i++){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        vTaskDelay(time_delay/portTICK_RATE_MS);
+                    }
+                }else{
+                    for(int i = run_servo.value_close_pwm_servo[SERVO_1]; i <= run_servo.value_current_pwm_servo[SERVO_1]; i++){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        vTaskDelay(time_delay/portTICK_RATE_MS);
+                    }
+                }
+                run_servo.value_current_pwm_servo[SERVO_1] = run_servo.value_close_pwm_servo[SERVO_1];
+            }
+            if(time_run_servo[SERVO_1] > (millis() - start_time)){
+                vTaskDelay((time_run_servo[SERVO_1] - (millis() - start_time))/portTICK_RATE_MS);
+            }
+            stop_led(SERVO_1);
+            run_servo.statusCurrentServo[SERVO_1] = SERVO_STOP;
         }
         else if(run_servo.statusCurrentServo[SERVO_1] == SERVO_CLOSING){
             stop_led(SERVO_1);
             close_led(SERVO_1);
-
-            run_servo.statusCurrentServo[SERVO_1] == SERVO_STOP;
+            uint32_t start_time = millis();
+            if(reverse_motor[SERVO_1]){
+                run_servo.value_open_pwm_servo[SERVO_1] = map(setup_motor.define_open_angle[SERVO_1], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+                if(run_servo.value_open_pwm_servo[SERVO_1] < PWM_SERVO_LOW){
+                    run_servo.value_open_pwm_servo[SERVO_1] = PWM_SERVO_LOW;
+                }
+                if(run_servo.value_open_pwm_servo[SERVO_1] > PWM_SERVO_HIGH){
+                    run_servo.value_open_pwm_servo[SERVO_1] = PWM_SERVO_HIGH;
+                }
+                uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
+                ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_open_pwm_servo[SERVO_1]){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_open_pwm_servo[SERVO_1]; i++){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        if(time_delay != 0 && i % 3 == 0){
+                            vTaskDelay(time_delay/portTICK_RATE_MS);
+                        }
+                    }
+                }else{
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_open_pwm_servo[SERVO_1]; i--){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        if(time_delay != 0 && i % 3 == 0){
+                            vTaskDelay(time_delay/portTICK_RATE_MS);
+                        }
+                    }
+                }
+                run_servo.value_current_pwm_servo[SERVO_1] = run_servo.value_close_pwm_servo[SERVO_1];
+            }
+            else{
+                run_servo.value_close_pwm_servo[SERVO_1] = map(setup_motor.define_close_angle[SERVO_1], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+                if(run_servo.value_close_pwm_servo[SERVO_1] < PWM_SERVO_LOW){
+                    run_servo.value_close_pwm_servo[SERVO_1] = PWM_SERVO_LOW;
+                }
+                if(run_servo.value_close_pwm_servo[SERVO_1] > PWM_SERVO_HIGH){
+                    run_servo.value_close_pwm_servo[SERVO_1] = PWM_SERVO_HIGH;
+                }
+                uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
+                ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_close_pwm_servo[SERVO_1]){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_close_pwm_servo[SERVO_1]; i++){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        if(time_delay != 0 && i % 3 == 0){
+                            vTaskDelay(time_delay/portTICK_RATE_MS);
+                        }
+                    }
+                }else{
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_close_pwm_servo[SERVO_1]; i--){
+                        xSemaphoreTake( xMutexI2C, portMAX_DELAY );
+                        pwmController.setChannelPWM(SERVO_1, i);
+                        xSemaphoreGive( xMutexI2C );
+                        if(time_delay != 0 && i % 3 == 0){
+                            vTaskDelay(time_delay/portTICK_RATE_MS);
+                        }
+                    }
+                }
+                run_servo.value_current_pwm_servo[SERVO_1] = run_servo.value_close_pwm_servo[SERVO_1];
+            }
+            if(time_run_servo[SERVO_1] > (millis() - start_time)){
+                vTaskDelay((time_run_servo[SERVO_1] - (millis() - start_time))/portTICK_RATE_MS);
+            }
+            stop_led(SERVO_1);
+            run_servo.statusCurrentServo[SERVO_1] = SERVO_STOP;
         }
-STOP_SERVO:
         vTaskDelay(100/portTICK_RATE_MS);
     }
 }
@@ -2365,7 +2494,7 @@ void setup()
     xTaskCreatePinnedToCore(
 		readIna219Data,    /* Function to implement the task */
 		"readIna219Data",  /* Name of the task */
-		2048,             /* Stack size in words */
+		4096,             /* Stack size in words */
 		NULL,             /* Task input parameter */
 		0,                /* Priority of the task */
 		NULL,             /* Task handle. */
@@ -2389,20 +2518,20 @@ void setup()
     xTaskCreatePinnedToCore(
 		setStepRunning,    /* Function to implement the task */
 		"setStepRunning",  /* Name of the task */
-		2048,             /* Stack size in words */
+		4096,             /* Stack size in words */
 		NULL,             /* Task input parameter */
 		0,                /* Priority of the task */
 		NULL,             /* Task handle. */
 		0);               /* Core where the task should run */
-    // xTaskCreatePinnedToCore(controlServo1,"controlServo1",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo2,"controlServo2",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo3,"controlServo3",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo4,"controlServo4",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo5,"controlServo5",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo6,"controlServo6",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo7,"controlServo7",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo8,"controlServo8",512,NULL,0,NULL,0);
-    // xTaskCreatePinnedToCore(controlServo9,"controlServo9",512,NULL,0,NULL,0);
+    xTaskCreatePinnedToCore(controlServo1,"controlServo1",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo2,"controlServo2",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo3,"controlServo3",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo4,"controlServo4",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo5,"controlServo5",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo6,"controlServo6",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo7,"controlServo7",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo8,"controlServo8",4096,NULL,0,NULL,0);
+    // xTaskCreatePinnedToCore(controlServo9,"controlServo9",4096,NULL,0,NULL,0);
     // TickerControlMotor.start();
 }
 

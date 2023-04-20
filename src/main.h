@@ -42,8 +42,8 @@ struct SETUPMOTOR
     // uint8_t define_time_return[MAX_NUMBER_MOTOR];
 };
 
-enum StatusCurrentServo{
-    SERVO_STOP,
+enum {
+    SERVO_STOP = 0,
     SERVO_OPENING,
     SERVO_CLOSING,
 };
@@ -72,9 +72,11 @@ struct RUNMOTOR
 
 struct RUNSERVO
 {
-    StatusCurrentServo statusCurrentServo[MAX_NUMBER_MOTOR] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP
+    uint8_t statusCurrentServo[MAX_NUMBER_MOTOR] = {SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP
                             , SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP, SERVO_STOP};
-    int value_current_servo[MAX_NUMBER_MOTOR] = {0};    //gia tri goc hien tai cua servo
+    int value_current_pwm_servo[MAX_NUMBER_MOTOR] = {0};    //gia tri pwm hien tai cua servo    
+    int value_open_pwm_servo[MAX_NUMBER_MOTOR] = {0};    //gia tri pwm open cua servo gia tri tu 102->512
+    int value_close_pwm_servo[MAX_NUMBER_MOTOR] = {0};    //gia tri pwm close cua servo gia tri tu 102->512
     //102 ->> -90 degree ->> 470
     //512 --> 90 degree ->> 2340
 };
