@@ -129,7 +129,7 @@
 #define PWM_SERVO_HIGH          512
 #define MAX_PERCENT_SPEED_SERVO    100
 #define MIN_PERCENT_SPEED_SERVO    20
-#define MAX_DELAY_SPEED_SERVO      20
+#define MAX_DELAY_SPEED_SERVO      50
 #define MIN_DELAY_SPEED_SERVO      0
 
 enum
@@ -171,7 +171,11 @@ enum
     PWM_MOTOR_6V
 };
 
-
+enum {
+    SERVO_STOP = 0,
+    SERVO_OPENING,
+    SERVO_CLOSING,
+};
 // // #define 
 // enum
 // {

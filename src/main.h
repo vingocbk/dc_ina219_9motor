@@ -42,12 +42,6 @@ struct SETUPMOTOR
     // uint8_t define_time_return[MAX_NUMBER_MOTOR];
 };
 
-enum {
-    SERVO_STOP = 0,
-    SERVO_OPENING,
-    SERVO_CLOSING,
-};
-
 
 struct RUNMOTOR
 {
@@ -67,7 +61,7 @@ struct RUNMOTOR
     bool is_rx_position_open;
     bool is_get_position_rx_begin = false;
     //when servo start -> off_led_servo = true. led will off after time_run_servor (ms)
-    bool off_led_servo[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
+    // bool off_led_servo[MAX_NUMBER_MOTOR] = {false,false,false,false,false,false,false,false,false};
 };
 
 struct RUNSERVO
@@ -105,7 +99,7 @@ void check_current_motor_8();
 void check_current_motor_9();
 void checkButtonControl();
 void checkStartCalCurrent();
-void offLedServo();
+// void offLedServo();
 void tickerUpdate();
 void checkButtonConfigModeRun();
 void checkPwmRxControlRun();
@@ -114,6 +108,7 @@ void checkMotorInit();
 void readIna219Data(void *pvParameters);
 void readPulseInModeRun(void *pvParameters);
 // void ReadPulseInLed(void *pvParameters);
+bool is_done_step_servo();
 void setStepRunning(void *pvParameters);
 void controlServo1(void *pvParameters);
 void controlServo2(void *pvParameters);

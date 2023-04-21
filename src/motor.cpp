@@ -19,7 +19,7 @@ uint8_t reverse_motor[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 uint16_t time_run_servo[MAX_NUMBER_MOTOR] = {0,0,0,0,0,0,0,0,0};
 uint8_t set_voltage_motor[MAX_NUMBER_MOTOR] = {PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V
                                                 ,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V,PWM_MOTOR_12V};
-bool is_done_step()
+bool is_done_step_motor()
 {
     for(int i = 0; i < MAX_NUMBER_MOTOR; i++){
         if(select_motor[i] && !motor_is_stop[i]){

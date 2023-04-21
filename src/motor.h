@@ -77,7 +77,7 @@ struct motor
 
 
 void initMotor();
-bool is_done_step();
+bool is_done_step_motor();
 // void set_stop_motor(int number);
 // void set_open_motor(int number);
 // void set_close_motor(int number);
