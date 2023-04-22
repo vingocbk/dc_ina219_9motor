@@ -654,7 +654,7 @@ void bluetoothInit()
 {
     SerialBT.flush();
     SerialBT.end(); 
-    if(!SerialBT.begin("LD 005")){
+    if(!SerialBT.begin("LD 003")){
         ECHOLN("An error occurred initializing Bluetooth");
     }else{
         ECHOLN("Bluetooth initialized");
@@ -2389,6 +2389,9 @@ void controlServo1(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] == run_servo.value_open_pwm_servo[SERVO_1]){
+                    goto BREAK_OPEN_SERVO_1;
+                }
                 if(setup_motor.define_speed_servo[SERVO_1] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_1, run_servo.value_open_pwm_servo[SERVO_1]);
@@ -2396,14 +2399,14 @@ void controlServo1(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_1;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_open_pwm_servo[SERVO_1]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_open_pwm_servo[SERVO_1]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_open_pwm_servo[SERVO_1]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_open_pwm_servo[SERVO_1]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_open_pwm_servo[SERVO_1]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2423,6 +2426,9 @@ void controlServo1(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] == run_servo.value_close_pwm_servo[SERVO_1]){
+                    goto BREAK_OPEN_SERVO_1;
+                }
                 if(setup_motor.define_speed_servo[SERVO_1] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_1, run_servo.value_close_pwm_servo[SERVO_1]);
@@ -2430,14 +2436,14 @@ void controlServo1(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_1;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_close_pwm_servo[SERVO_1]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_close_pwm_servo[SERVO_1]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_close_pwm_servo[SERVO_1]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_close_pwm_servo[SERVO_1]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_close_pwm_servo[SERVO_1]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2450,6 +2456,7 @@ void controlServo1(void *pvParameters){
             if(time_run_servo[SERVO_1] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_1] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_1:
             stop_led(SERVO_1);
             run_servo.statusCurrentServo[SERVO_1] = SERVO_STOP;
         }
@@ -2467,6 +2474,9 @@ void controlServo1(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] == run_servo.value_open_pwm_servo[SERVO_1]){
+                    goto BREAK_CLOSE_SERVO_1;
+                }
                 if(setup_motor.define_speed_servo[SERVO_1] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_1, run_servo.value_open_pwm_servo[SERVO_1]);
@@ -2474,14 +2484,14 @@ void controlServo1(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_1;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_open_pwm_servo[SERVO_1]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_open_pwm_servo[SERVO_1]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_open_pwm_servo[SERVO_1]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_open_pwm_servo[SERVO_1]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_open_pwm_servo[SERVO_1]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2501,6 +2511,9 @@ void controlServo1(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_1], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_1] == run_servo.value_close_pwm_servo[SERVO_1]){
+                    goto BREAK_CLOSE_SERVO_1;
+                }
                 if(setup_motor.define_speed_servo[SERVO_1] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_1, run_servo.value_close_pwm_servo[SERVO_1]);
@@ -2508,14 +2521,14 @@ void controlServo1(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_1;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_1] <= run_servo.value_close_pwm_servo[SERVO_1]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_close_pwm_servo[SERVO_1]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i <= run_servo.value_close_pwm_servo[SERVO_1]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_close_pwm_servo[SERVO_1]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_1]; i >= run_servo.value_close_pwm_servo[SERVO_1]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_1, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2528,6 +2541,7 @@ void controlServo1(void *pvParameters){
             if(time_run_servo[SERVO_1] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_1] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_1:
             stop_led(SERVO_1);
             run_servo.statusCurrentServo[SERVO_1] = SERVO_STOP;
         }
@@ -2551,6 +2565,9 @@ void controlServo2(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_2], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_2] == run_servo.value_open_pwm_servo[SERVO_2]){
+                    goto BREAK_OPEN_SERVO_2;
+                }
                 if(setup_motor.define_speed_servo[SERVO_2] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_2, run_servo.value_open_pwm_servo[SERVO_2]);
@@ -2558,14 +2575,14 @@ void controlServo2(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_2;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_2] <= run_servo.value_open_pwm_servo[SERVO_2]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_open_pwm_servo[SERVO_2]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_open_pwm_servo[SERVO_2]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_open_pwm_servo[SERVO_2]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_open_pwm_servo[SERVO_2]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2585,6 +2602,9 @@ void controlServo2(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_2], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_2] == run_servo.value_close_pwm_servo[SERVO_2]){
+                    goto BREAK_OPEN_SERVO_2;
+                }
                 if(setup_motor.define_speed_servo[SERVO_2] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_2, run_servo.value_close_pwm_servo[SERVO_2]);
@@ -2592,14 +2612,14 @@ void controlServo2(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_2;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_2] <= run_servo.value_close_pwm_servo[SERVO_2]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_close_pwm_servo[SERVO_2]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_close_pwm_servo[SERVO_2]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_close_pwm_servo[SERVO_2]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_close_pwm_servo[SERVO_2]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2612,6 +2632,7 @@ void controlServo2(void *pvParameters){
             if(time_run_servo[SERVO_2] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_2] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_2:
             stop_led(SERVO_2);
             run_servo.statusCurrentServo[SERVO_2] = SERVO_STOP;
         }
@@ -2629,6 +2650,9 @@ void controlServo2(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_2], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_2] == run_servo.value_open_pwm_servo[SERVO_2]){
+                    goto BREAK_CLOSE_SERVO_2;
+                }
                 if(setup_motor.define_speed_servo[SERVO_2] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_2, run_servo.value_open_pwm_servo[SERVO_2]);
@@ -2636,14 +2660,14 @@ void controlServo2(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_2;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_2] <= run_servo.value_open_pwm_servo[SERVO_2]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_open_pwm_servo[SERVO_2]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_open_pwm_servo[SERVO_2]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_open_pwm_servo[SERVO_2]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_open_pwm_servo[SERVO_2]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2663,6 +2687,9 @@ void controlServo2(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_2], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_2] == run_servo.value_close_pwm_servo[SERVO_2]){
+                    goto BREAK_CLOSE_SERVO_2;
+                }
                 if(setup_motor.define_speed_servo[SERVO_2] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_2, run_servo.value_close_pwm_servo[SERVO_2]);
@@ -2670,14 +2697,14 @@ void controlServo2(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_2;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_2] <= run_servo.value_close_pwm_servo[SERVO_2]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_close_pwm_servo[SERVO_2]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i <= run_servo.value_close_pwm_servo[SERVO_2]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_close_pwm_servo[SERVO_2]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_2]; i >= run_servo.value_close_pwm_servo[SERVO_2]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_2, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2690,6 +2717,7 @@ void controlServo2(void *pvParameters){
             if(time_run_servo[SERVO_2] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_2] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_2:
             stop_led(SERVO_2);
             run_servo.statusCurrentServo[SERVO_2] = SERVO_STOP;
         }
@@ -2713,6 +2741,9 @@ void controlServo3(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_3], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_3] == run_servo.value_open_pwm_servo[SERVO_3]){
+                    goto BREAK_OPEN_SERVO_3;
+                }
                 if(setup_motor.define_speed_servo[SERVO_3] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_3, run_servo.value_open_pwm_servo[SERVO_3]);
@@ -2720,14 +2751,14 @@ void controlServo3(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_3;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_3] <= run_servo.value_open_pwm_servo[SERVO_3]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_open_pwm_servo[SERVO_3]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_open_pwm_servo[SERVO_3]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_open_pwm_servo[SERVO_3]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_open_pwm_servo[SERVO_3]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2747,6 +2778,9 @@ void controlServo3(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_3], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_3] == run_servo.value_close_pwm_servo[SERVO_3]){
+                    goto BREAK_OPEN_SERVO_3;
+                }
                 if(setup_motor.define_speed_servo[SERVO_3] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_3, run_servo.value_close_pwm_servo[SERVO_3]);
@@ -2754,14 +2788,14 @@ void controlServo3(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_3;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_3] <= run_servo.value_close_pwm_servo[SERVO_3]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_close_pwm_servo[SERVO_3]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_close_pwm_servo[SERVO_3]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_close_pwm_servo[SERVO_3]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_close_pwm_servo[SERVO_3]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2774,6 +2808,7 @@ void controlServo3(void *pvParameters){
             if(time_run_servo[SERVO_3] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_3] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_3:
             stop_led(SERVO_3);
             run_servo.statusCurrentServo[SERVO_3] = SERVO_STOP;
         }
@@ -2791,6 +2826,9 @@ void controlServo3(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_3], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_3] == run_servo.value_open_pwm_servo[SERVO_3]){
+                    goto BREAK_CLOSE_SERVO_3;
+                }
                 if(setup_motor.define_speed_servo[SERVO_3] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_3, run_servo.value_open_pwm_servo[SERVO_3]);
@@ -2798,14 +2836,14 @@ void controlServo3(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_3;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_3] <= run_servo.value_open_pwm_servo[SERVO_3]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_open_pwm_servo[SERVO_3]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_open_pwm_servo[SERVO_3]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_open_pwm_servo[SERVO_3]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_open_pwm_servo[SERVO_3]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2825,6 +2863,9 @@ void controlServo3(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_3], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_3] == run_servo.value_close_pwm_servo[SERVO_3]){
+                    goto BREAK_CLOSE_SERVO_3;
+                }
                 if(setup_motor.define_speed_servo[SERVO_3] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_3, run_servo.value_close_pwm_servo[SERVO_3]);
@@ -2832,14 +2873,14 @@ void controlServo3(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_3;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_3] <= run_servo.value_close_pwm_servo[SERVO_3]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_close_pwm_servo[SERVO_3]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i <= run_servo.value_close_pwm_servo[SERVO_3]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_close_pwm_servo[SERVO_3]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_3]; i >= run_servo.value_close_pwm_servo[SERVO_3]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_3, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2852,6 +2893,7 @@ void controlServo3(void *pvParameters){
             if(time_run_servo[SERVO_3] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_3] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_3:
             stop_led(SERVO_3);
             run_servo.statusCurrentServo[SERVO_3] = SERVO_STOP;
         }
@@ -2875,6 +2917,9 @@ void controlServo4(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_4], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_4] == run_servo.value_open_pwm_servo[SERVO_4]){
+                    goto BREAK_OPEN_SERVO_4;
+                }
                 if(setup_motor.define_speed_servo[SERVO_4] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_4, run_servo.value_open_pwm_servo[SERVO_4]);
@@ -2882,14 +2927,14 @@ void controlServo4(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_4;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_4] <= run_servo.value_open_pwm_servo[SERVO_4]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_open_pwm_servo[SERVO_4]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_open_pwm_servo[SERVO_4]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_open_pwm_servo[SERVO_4]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_open_pwm_servo[SERVO_4]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2909,6 +2954,9 @@ void controlServo4(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_4], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_4] == run_servo.value_close_pwm_servo[SERVO_4]){
+                    goto BREAK_OPEN_SERVO_4;
+                }
                 if(setup_motor.define_speed_servo[SERVO_4] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_4, run_servo.value_close_pwm_servo[SERVO_4]);
@@ -2916,14 +2964,14 @@ void controlServo4(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_4;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_4] <= run_servo.value_close_pwm_servo[SERVO_4]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_close_pwm_servo[SERVO_4]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_close_pwm_servo[SERVO_4]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_close_pwm_servo[SERVO_4]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_close_pwm_servo[SERVO_4]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2936,6 +2984,7 @@ void controlServo4(void *pvParameters){
             if(time_run_servo[SERVO_4] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_4] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_4:
             stop_led(SERVO_4);
             run_servo.statusCurrentServo[SERVO_4] = SERVO_STOP;
         }
@@ -2953,6 +3002,9 @@ void controlServo4(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_4], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_4] == run_servo.value_open_pwm_servo[SERVO_4]){
+                    goto BREAK_CLOSE_SERVO_4;
+                }
                 if(setup_motor.define_speed_servo[SERVO_4] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_4, run_servo.value_open_pwm_servo[SERVO_4]);
@@ -2960,14 +3012,14 @@ void controlServo4(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_4;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_4] <= run_servo.value_open_pwm_servo[SERVO_4]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_open_pwm_servo[SERVO_4]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_open_pwm_servo[SERVO_4]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_open_pwm_servo[SERVO_4]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_open_pwm_servo[SERVO_4]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
@@ -2987,6 +3039,9 @@ void controlServo4(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_4], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_4] == run_servo.value_close_pwm_servo[SERVO_4]){
+                    goto BREAK_CLOSE_SERVO_4;
+                }
                 if(setup_motor.define_speed_servo[SERVO_4] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_4, run_servo.value_close_pwm_servo[SERVO_4]);
@@ -2994,14 +3049,14 @@ void controlServo4(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_4;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_4] <= run_servo.value_close_pwm_servo[SERVO_4]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_close_pwm_servo[SERVO_4]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i <= run_servo.value_close_pwm_servo[SERVO_4]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_close_pwm_servo[SERVO_4]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_4]; i >= run_servo.value_close_pwm_servo[SERVO_4]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_4, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3014,6 +3069,7 @@ void controlServo4(void *pvParameters){
             if(time_run_servo[SERVO_4] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_4] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_4:
             stop_led(SERVO_4);
             run_servo.statusCurrentServo[SERVO_4] = SERVO_STOP;
         }
@@ -3037,6 +3093,9 @@ void controlServo5(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_5], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_5] == run_servo.value_open_pwm_servo[SERVO_5]){
+                    goto BREAK_OPEN_SERVO_5;
+                }
                 if(setup_motor.define_speed_servo[SERVO_5] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_5, run_servo.value_open_pwm_servo[SERVO_5]);
@@ -3044,14 +3103,14 @@ void controlServo5(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_5;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_5] <= run_servo.value_open_pwm_servo[SERVO_5]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_open_pwm_servo[SERVO_5]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_open_pwm_servo[SERVO_5]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_open_pwm_servo[SERVO_5]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_open_pwm_servo[SERVO_5]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3071,6 +3130,9 @@ void controlServo5(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_5], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_5] == run_servo.value_close_pwm_servo[SERVO_5]){
+                    goto BREAK_OPEN_SERVO_5;
+                }
                 if(setup_motor.define_speed_servo[SERVO_5] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_5, run_servo.value_close_pwm_servo[SERVO_5]);
@@ -3078,14 +3140,14 @@ void controlServo5(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_5;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_5] <= run_servo.value_close_pwm_servo[SERVO_5]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_close_pwm_servo[SERVO_5]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_close_pwm_servo[SERVO_5]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_close_pwm_servo[SERVO_5]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_close_pwm_servo[SERVO_5]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3098,6 +3160,7 @@ void controlServo5(void *pvParameters){
             if(time_run_servo[SERVO_5] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_5] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_5:
             stop_led(SERVO_5);
             run_servo.statusCurrentServo[SERVO_5] = SERVO_STOP;
         }
@@ -3115,6 +3178,9 @@ void controlServo5(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_5], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_5] == run_servo.value_open_pwm_servo[SERVO_5]){
+                    goto BREAK_CLOSE_SERVO_5;
+                }
                 if(setup_motor.define_speed_servo[SERVO_5] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_5, run_servo.value_open_pwm_servo[SERVO_5]);
@@ -3122,14 +3188,14 @@ void controlServo5(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_5;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_5] <= run_servo.value_open_pwm_servo[SERVO_5]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_open_pwm_servo[SERVO_5]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_open_pwm_servo[SERVO_5]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_open_pwm_servo[SERVO_5]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_open_pwm_servo[SERVO_5]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3149,6 +3215,9 @@ void controlServo5(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_5], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_5] == run_servo.value_close_pwm_servo[SERVO_5]){
+                    goto BREAK_CLOSE_SERVO_5;
+                }
                 if(setup_motor.define_speed_servo[SERVO_5] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_5, run_servo.value_close_pwm_servo[SERVO_5]);
@@ -3156,14 +3225,14 @@ void controlServo5(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_5;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_5] <= run_servo.value_close_pwm_servo[SERVO_5]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_close_pwm_servo[SERVO_5]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i <= run_servo.value_close_pwm_servo[SERVO_5]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_close_pwm_servo[SERVO_5]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_5]; i >= run_servo.value_close_pwm_servo[SERVO_5]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_5, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3176,6 +3245,7 @@ void controlServo5(void *pvParameters){
             if(time_run_servo[SERVO_5] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_5] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_5:
             stop_led(SERVO_5);
             run_servo.statusCurrentServo[SERVO_5] = SERVO_STOP;
         }
@@ -3199,6 +3269,9 @@ void controlServo6(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_6], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_6] == run_servo.value_open_pwm_servo[SERVO_6]){
+                    goto BREAK_OPEN_SERVO_6;
+                }
                 if(setup_motor.define_speed_servo[SERVO_6] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_6, run_servo.value_open_pwm_servo[SERVO_6]);
@@ -3206,14 +3279,14 @@ void controlServo6(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_6;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_6] <= run_servo.value_open_pwm_servo[SERVO_6]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_open_pwm_servo[SERVO_6]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_open_pwm_servo[SERVO_6]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_open_pwm_servo[SERVO_6]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_open_pwm_servo[SERVO_6]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3233,6 +3306,9 @@ void controlServo6(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_6], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_6] == run_servo.value_close_pwm_servo[SERVO_6]){
+                    goto BREAK_OPEN_SERVO_6;
+                }
                 if(setup_motor.define_speed_servo[SERVO_6] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_6, run_servo.value_close_pwm_servo[SERVO_6]);
@@ -3240,14 +3316,14 @@ void controlServo6(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_6;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_6] <= run_servo.value_close_pwm_servo[SERVO_6]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_close_pwm_servo[SERVO_6]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_close_pwm_servo[SERVO_6]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_close_pwm_servo[SERVO_6]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_close_pwm_servo[SERVO_6]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3260,6 +3336,7 @@ void controlServo6(void *pvParameters){
             if(time_run_servo[SERVO_6] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_6] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_6:
             stop_led(SERVO_6);
             run_servo.statusCurrentServo[SERVO_6] = SERVO_STOP;
         }
@@ -3277,6 +3354,9 @@ void controlServo6(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_6], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_6] == run_servo.value_open_pwm_servo[SERVO_6]){
+                    goto BREAK_CLOSE_SERVO_6;
+                }
                 if(setup_motor.define_speed_servo[SERVO_6] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_6, run_servo.value_open_pwm_servo[SERVO_6]);
@@ -3284,14 +3364,14 @@ void controlServo6(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_6;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_6] <= run_servo.value_open_pwm_servo[SERVO_6]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_open_pwm_servo[SERVO_6]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_open_pwm_servo[SERVO_6]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_open_pwm_servo[SERVO_6]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_open_pwm_servo[SERVO_6]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3311,6 +3391,9 @@ void controlServo6(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_6], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_6] == run_servo.value_close_pwm_servo[SERVO_6]){
+                    goto BREAK_CLOSE_SERVO_6;
+                }
                 if(setup_motor.define_speed_servo[SERVO_6] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_6, run_servo.value_close_pwm_servo[SERVO_6]);
@@ -3318,14 +3401,14 @@ void controlServo6(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_6;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_6] <= run_servo.value_close_pwm_servo[SERVO_6]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_close_pwm_servo[SERVO_6]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i <= run_servo.value_close_pwm_servo[SERVO_6]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_close_pwm_servo[SERVO_6]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_6]; i >= run_servo.value_close_pwm_servo[SERVO_6]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_6, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3338,6 +3421,7 @@ void controlServo6(void *pvParameters){
             if(time_run_servo[SERVO_6] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_6] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_6:
             stop_led(SERVO_6);
             run_servo.statusCurrentServo[SERVO_6] = SERVO_STOP;
         }
@@ -3361,6 +3445,9 @@ void controlServo7(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_7], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_7] == run_servo.value_open_pwm_servo[SERVO_7]){
+                    goto BREAK_OPEN_SERVO_7;
+                }
                 if(setup_motor.define_speed_servo[SERVO_7] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_7, run_servo.value_open_pwm_servo[SERVO_7]);
@@ -3368,14 +3455,14 @@ void controlServo7(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_7;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_7] <= run_servo.value_open_pwm_servo[SERVO_7]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_open_pwm_servo[SERVO_7]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_open_pwm_servo[SERVO_7]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_open_pwm_servo[SERVO_7]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_open_pwm_servo[SERVO_7]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3395,6 +3482,9 @@ void controlServo7(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_7], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_7] == run_servo.value_close_pwm_servo[SERVO_7]){
+                    goto BREAK_OPEN_SERVO_7;
+                }
                 if(setup_motor.define_speed_servo[SERVO_7] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_7, run_servo.value_close_pwm_servo[SERVO_7]);
@@ -3402,14 +3492,14 @@ void controlServo7(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_7;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_7] <= run_servo.value_close_pwm_servo[SERVO_7]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_close_pwm_servo[SERVO_7]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_close_pwm_servo[SERVO_7]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_close_pwm_servo[SERVO_7]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_close_pwm_servo[SERVO_7]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3422,6 +3512,7 @@ void controlServo7(void *pvParameters){
             if(time_run_servo[SERVO_7] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_7] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_7:
             stop_led(SERVO_7);
             run_servo.statusCurrentServo[SERVO_7] = SERVO_STOP;
         }
@@ -3439,6 +3530,9 @@ void controlServo7(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_7], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_7] == run_servo.value_open_pwm_servo[SERVO_7]){
+                    goto BREAK_CLOSE_SERVO_7;
+                }
                 if(setup_motor.define_speed_servo[SERVO_7] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_7, run_servo.value_open_pwm_servo[SERVO_7]);
@@ -3446,14 +3540,14 @@ void controlServo7(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_7;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_7] <= run_servo.value_open_pwm_servo[SERVO_7]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_open_pwm_servo[SERVO_7]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_open_pwm_servo[SERVO_7]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_open_pwm_servo[SERVO_7]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_open_pwm_servo[SERVO_7]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3473,6 +3567,9 @@ void controlServo7(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_7], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_7] == run_servo.value_close_pwm_servo[SERVO_7]){
+                    goto BREAK_CLOSE_SERVO_7;
+                }
                 if(setup_motor.define_speed_servo[SERVO_7] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_7, run_servo.value_close_pwm_servo[SERVO_7]);
@@ -3480,14 +3577,14 @@ void controlServo7(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_7;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_7] <= run_servo.value_close_pwm_servo[SERVO_7]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_close_pwm_servo[SERVO_7]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i <= run_servo.value_close_pwm_servo[SERVO_7]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_close_pwm_servo[SERVO_7]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_7]; i >= run_servo.value_close_pwm_servo[SERVO_7]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_7, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3500,6 +3597,7 @@ void controlServo7(void *pvParameters){
             if(time_run_servo[SERVO_7] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_7] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_7:
             stop_led(SERVO_7);
             run_servo.statusCurrentServo[SERVO_7] = SERVO_STOP;
         }
@@ -3523,6 +3621,9 @@ void controlServo8(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_8], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_8] == run_servo.value_open_pwm_servo[SERVO_8]){
+                    goto BREAK_OPEN_SERVO_8;
+                }
                 if(setup_motor.define_speed_servo[SERVO_8] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_8, run_servo.value_open_pwm_servo[SERVO_8]);
@@ -3530,14 +3631,14 @@ void controlServo8(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_8;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_8] <= run_servo.value_open_pwm_servo[SERVO_8]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_open_pwm_servo[SERVO_8]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_open_pwm_servo[SERVO_8]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_open_pwm_servo[SERVO_8]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_open_pwm_servo[SERVO_8]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3557,6 +3658,9 @@ void controlServo8(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_8], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_8] == run_servo.value_close_pwm_servo[SERVO_8]){
+                    goto BREAK_OPEN_SERVO_8;
+                }
                 if(setup_motor.define_speed_servo[SERVO_8] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_8, run_servo.value_close_pwm_servo[SERVO_8]);
@@ -3564,14 +3668,14 @@ void controlServo8(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_8;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_8] <= run_servo.value_close_pwm_servo[SERVO_8]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_close_pwm_servo[SERVO_8]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_close_pwm_servo[SERVO_8]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_close_pwm_servo[SERVO_8]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_close_pwm_servo[SERVO_8]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3584,6 +3688,7 @@ void controlServo8(void *pvParameters){
             if(time_run_servo[SERVO_8] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_8] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_8:
             stop_led(SERVO_8);
             run_servo.statusCurrentServo[SERVO_8] = SERVO_STOP;
         }
@@ -3601,6 +3706,9 @@ void controlServo8(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_8], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_8] == run_servo.value_open_pwm_servo[SERVO_8]){
+                    goto BREAK_CLOSE_SERVO_8;
+                }
                 if(setup_motor.define_speed_servo[SERVO_8] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_8, run_servo.value_open_pwm_servo[SERVO_8]);
@@ -3608,14 +3716,14 @@ void controlServo8(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_8;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_8] <= run_servo.value_open_pwm_servo[SERVO_8]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_open_pwm_servo[SERVO_8]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_open_pwm_servo[SERVO_8]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_open_pwm_servo[SERVO_8]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_open_pwm_servo[SERVO_8]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3635,6 +3743,9 @@ void controlServo8(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_8], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_8] == run_servo.value_close_pwm_servo[SERVO_8]){
+                    goto BREAK_CLOSE_SERVO_8;
+                }
                 if(setup_motor.define_speed_servo[SERVO_8] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_8, run_servo.value_close_pwm_servo[SERVO_8]);
@@ -3642,14 +3753,14 @@ void controlServo8(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_8;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_8] <= run_servo.value_close_pwm_servo[SERVO_8]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_close_pwm_servo[SERVO_8]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i <= run_servo.value_close_pwm_servo[SERVO_8]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_close_pwm_servo[SERVO_8]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_8]; i >= run_servo.value_close_pwm_servo[SERVO_8]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_8, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3662,13 +3773,13 @@ void controlServo8(void *pvParameters){
             if(time_run_servo[SERVO_8] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_8] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_8:
             stop_led(SERVO_8);
             run_servo.statusCurrentServo[SERVO_8] = SERVO_STOP;
         }
         vTaskDelay(100/portTICK_RATE_MS);
     }
 }
-
 
 void controlServo9(void *pvParameters){
     for(;;){
@@ -3686,6 +3797,9 @@ void controlServo9(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_9], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_9] == run_servo.value_open_pwm_servo[SERVO_9]){
+                    goto BREAK_OPEN_SERVO_9;
+                }
                 if(setup_motor.define_speed_servo[SERVO_9] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_9, run_servo.value_open_pwm_servo[SERVO_9]);
@@ -3693,14 +3807,14 @@ void controlServo9(void *pvParameters){
                     goto DONE_OPEN_SERVO_NOT_REVERSE_9;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_9] <= run_servo.value_open_pwm_servo[SERVO_9]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_open_pwm_servo[SERVO_9]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_open_pwm_servo[SERVO_9]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_open_pwm_servo[SERVO_9]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_open_pwm_servo[SERVO_9]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3720,6 +3834,9 @@ void controlServo9(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_9], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_9] == run_servo.value_close_pwm_servo[SERVO_9]){
+                    goto BREAK_OPEN_SERVO_9;
+                }
                 if(setup_motor.define_speed_servo[SERVO_9] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_9, run_servo.value_close_pwm_servo[SERVO_9]);
@@ -3727,14 +3844,14 @@ void controlServo9(void *pvParameters){
                     goto DONE_OPEN_SERVO_REVERSE_9;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_9] <= run_servo.value_close_pwm_servo[SERVO_9]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_close_pwm_servo[SERVO_9]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_close_pwm_servo[SERVO_9]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_close_pwm_servo[SERVO_9]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_close_pwm_servo[SERVO_9]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3747,6 +3864,7 @@ void controlServo9(void *pvParameters){
             if(time_run_servo[SERVO_9] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_9] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_OPEN_SERVO_9:
             stop_led(SERVO_9);
             run_servo.statusCurrentServo[SERVO_9] = SERVO_STOP;
         }
@@ -3764,6 +3882,9 @@ void controlServo9(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_9], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_9] == run_servo.value_open_pwm_servo[SERVO_9]){
+                    goto BREAK_CLOSE_SERVO_9;
+                }
                 if(setup_motor.define_speed_servo[SERVO_9] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_9, run_servo.value_open_pwm_servo[SERVO_9]);
@@ -3771,14 +3892,14 @@ void controlServo9(void *pvParameters){
                     goto DONE_CLOSE_SERVO_REVERSE_9;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_9] <= run_servo.value_open_pwm_servo[SERVO_9]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_open_pwm_servo[SERVO_9]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_open_pwm_servo[SERVO_9]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_open_pwm_servo[SERVO_9]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_open_pwm_servo[SERVO_9]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3798,6 +3919,9 @@ void controlServo9(void *pvParameters){
                 }
                 uint8_t time_delay = map(setup_motor.define_speed_servo[SERVO_9], MAX_PERCENT_SPEED_SERVO, MIN_PERCENT_SPEED_SERVO, MIN_DELAY_SPEED_SERVO, MAX_DELAY_SPEED_SERVO);
                 ECHOLN(time_delay);
+                if(run_servo.value_current_pwm_servo[SERVO_9] == run_servo.value_close_pwm_servo[SERVO_9]){
+                    goto BREAK_CLOSE_SERVO_9;
+                }
                 if(setup_motor.define_speed_servo[SERVO_9] == MAX_PERCENT_SPEED_SERVO){
                     xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                     pwmController.setChannelPWM(SERVO_9, run_servo.value_close_pwm_servo[SERVO_9]);
@@ -3805,14 +3929,14 @@ void controlServo9(void *pvParameters){
                     goto DONE_CLOSE_SERVO_NOT_REVERSE_9;
                 }
                 if(run_servo.value_current_pwm_servo[SERVO_9] <= run_servo.value_close_pwm_servo[SERVO_9]){
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_close_pwm_servo[SERVO_9]; i+=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i <= run_servo.value_close_pwm_servo[SERVO_9]; i=i+5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
                         vTaskDelay(time_delay/portTICK_RATE_MS);
                     }
                 }else{
-                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_close_pwm_servo[SERVO_9]; i-=5){
+                    for(int i = run_servo.value_current_pwm_servo[SERVO_9]; i >= run_servo.value_close_pwm_servo[SERVO_9]; i=i-5){
                         xSemaphoreTake( xMutexI2C, portMAX_DELAY );
                         pwmController.setChannelPWM(SERVO_9, i);
                         xSemaphoreGive( xMutexI2C );
@@ -3825,12 +3949,14 @@ void controlServo9(void *pvParameters){
             if(time_run_servo[SERVO_9] > (millis() - start_time)){
                 vTaskDelay((time_run_servo[SERVO_9] - (millis() - start_time))/portTICK_RATE_MS);
             }
+        BREAK_CLOSE_SERVO_9:
             stop_led(SERVO_9);
             run_servo.statusCurrentServo[SERVO_9] = SERVO_STOP;
         }
         vTaskDelay(100/portTICK_RATE_MS);
     }
 }
+
 
 
 void setup()
