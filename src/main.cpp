@@ -654,10 +654,12 @@ void bluetoothInit()
 {
     SerialBT.flush();
     SerialBT.end(); 
-    if(!SerialBT.begin("LD 003")){
+    String name = "LD 005";
+    if(!SerialBT.begin(name)){
         ECHOLN("An error occurred initializing Bluetooth");
     }else{
-        ECHOLN("Bluetooth initialized");
+        ECHO("Bluetooth initialized: ");
+        ECHOLN(name);
     }
   SerialBT.register_callback(callbackBluetooth);
 }
@@ -1841,7 +1843,13 @@ void checkMotorInit()
     {
 		if(select_servo[i]){
 			open_all_led(i);
-            run_servo.value_current_pwm_servo[i] = (int)map(1500, PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+            if(reverse_motor[i]){
+                run_servo.value_current_pwm_servo[i] = (int)map(setup_motor.define_close_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+            }
+            else{
+                run_servo.value_current_pwm_servo[i] = (int)map(setup_motor.define_open_angle[i], PULSE_MS_SERVO_LOW, PULSE_MS_SERVO_HIGH, PWM_SERVO_LOW, PWM_SERVO_HIGH);
+            }
+            
             xSemaphoreTake( xMutexI2C, portMAX_DELAY );
             pwmController.setChannelPWM(i, run_servo.value_current_pwm_servo[i]);
             xSemaphoreGive( xMutexI2C );

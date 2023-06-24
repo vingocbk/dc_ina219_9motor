@@ -127,9 +127,9 @@
 #define PULSE_MS_SERVO_HIGH     2340
 #define PWM_SERVO_LOW           102
 #define PWM_SERVO_HIGH          512
-#define MAX_PERCENT_SPEED_SERVO    100
-#define MIN_PERCENT_SPEED_SERVO    20
-#define MAX_DELAY_SPEED_SERVO      50
+#define MAX_PERCENT_SPEED_SERVO    10
+#define MIN_PERCENT_SPEED_SERVO    1
+#define MAX_DELAY_SPEED_SERVO      100
 #define MIN_DELAY_SPEED_SERVO      0
 
 enum
